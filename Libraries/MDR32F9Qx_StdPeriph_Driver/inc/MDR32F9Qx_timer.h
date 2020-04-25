@@ -1,23 +1,4 @@
 /**
-  ******************************************************************************
-  * @file    MDR32F9Qx_timer.h
-  * @author  Phyton Application Team
-  * @version V1.4.0
-  * @date    16/02/2011
-  * @brief   This file contains all the functions prototypes for the TIMER
-  *          firmware library.
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2010 Phyton</center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_timer.h
   */
 
@@ -30,6 +11,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "MDR32F9Qx_config.h"
 #include "MDR32F9Qx_lib.h"
 
 /** @addtogroup __MDR32F9Qx_StdPeriph_Driver MDR32F9Qx Standard Peripherial Driver
@@ -50,7 +32,7 @@ extern "C" {
 
 typedef struct {
 
-#if defined(USE_MDR1986VE9x) /* For Cortex M3 */
+#if defined(USE_MDR1986VE9x) || defined (USE_MDR1901VC1T) /* For Cortex M3 */
 	uint16_t TIMER_IniCounter; 		 /*!< Specifies the initial counter value.
 	 	 	 	 	 	 	 	     	  This parameter can be a number between 0x0000 and 0xFFFF. */
 #elif ((defined (USE_MDR1986VE3)) || (defined (USE_MDR1986VE1T)))
@@ -62,7 +44,7 @@ typedef struct {
 	 	 	 	 	 	 	 	   	 	  This parameter can be a number between 0x0000 and 0xFFFF.
 	 	 	 	 	 	 	 	   	 	  CLK = TIMER_CLK/(TIMER_Prescaler + 1) */
 
-#if defined(USE_MDR1986VE9x) 		 /* For Cortex M3 */
+#if defined(USE_MDR1986VE9x) || defined (USE_MDR1901VC1T) /* For Cortex M3 */
 	uint16_t TIMER_Period; 			 /*!< Specifies the period value to be loaded into the
 	 	 	 	 	 	 	 	 	 	  Auto-Reload Register (ARR) at the next update event.
 	 	 	 	 	 	 	 	 	 	  This parameter must be a number between 0x0000 and 0xFFFF.  */
@@ -188,10 +170,11 @@ typedef struct
   * @{
   */
 
-#if defined (USE_MDR1986VE9x)
+#if ((defined (USE_MDR1986VE9x)) || (defined (USE_MDR1901VC1T)))
+
 #define IS_TIMER_ALL_PERIPH(PERIPH) (((PERIPH) == MDR_TIMER1) || \
                                      ((PERIPH) == MDR_TIMER2) || \
-                                     ((PERIPH) == MDR_TIMER3)))
+                                     ((PERIPH) == MDR_TIMER3))
 #elif ((defined (USE_MDR1986VE3)) || (defined (USE_MDR1986VE1T)))
 #define IS_TIMER_ALL_PERIPH(PERIPH) (((PERIPH) == MDR_TIMER1) || \
                                      ((PERIPH) == MDR_TIMER2) || \
@@ -729,25 +712,25 @@ void TIMER_Cmd(MDR_TIMER_TypeDef* TIMERx, FunctionalState NewState);
 
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	void TIMER_SetCounter(MDR_TIMER_TypeDef* TIMERx, uint32_t Counter);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	void TIMER_SetCounter(MDR_TIMER_TypeDef* TIMERx, uint16_t Counter);
 #endif
 
 void TIMER_SetCntPrescaler(MDR_TIMER_TypeDef* TIMERx, uint16_t Prescaler);
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	void TIMER_SetCntAutoreload(MDR_TIMER_TypeDef* TIMERx, uint32_t Autoreload);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	void TIMER_SetCntAutoreload(MDR_TIMER_TypeDef* TIMERx, uint16_t Autoreload);
 #endif
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	void TIMER_CntAutoreloadConfig(MDR_TIMER_TypeDef* TIMERx, uint32_t Autoreload, uint32_t UpdateMode);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	void TIMER_CntAutoreloadConfig(MDR_TIMER_TypeDef* TIMERx, uint16_t Autoreload, uint32_t UpdateMode);
 #endif
 
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	uint32_t TIMER_GetCounter(MDR_TIMER_TypeDef* TIMERx);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	uint16_t TIMER_GetCounter(MDR_TIMER_TypeDef* TIMERx);
 #endif
 
@@ -768,37 +751,37 @@ void TIMER_ChnStructInit(TIMER_ChnInitTypeDef* TIMER_ChnInitStruct);
 
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	void TIMER_SetChnCompare(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel, uint32_t Compare);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	void TIMER_SetChnCompare(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel, uint16_t Compare);
 #endif
 
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	void TIMER_SetChnCompare1(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel, uint32_t Compare);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	void TIMER_SetChnCompare1(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel, uint16_t Compare);
 #endif
 
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	void TIMER_ChnCompareConfig(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel, uint32_t Compare, uint32_t UpdateMode);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	void TIMER_ChnCompareConfig(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel, uint16_t Compare, uint32_t UpdateMode);
 #endif
 
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	void TIMER_ChnCompare1Config(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel, uint32_t Compare, uint32_t UpdateMode);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	void TIMER_ChnCompare1Config(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel, uint16_t Compare, uint32_t UpdateMode);
 #endif
 
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	uint32_t TIMER_GetChnCapture(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	uint16_t TIMER_GetChnCapture(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel);
 #endif
 
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
 	uint32_t TIMER_GetChnCapture1(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel);
-#elif defined (USE_MDR1986VE9x)
+#elif defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	uint16_t TIMER_GetChnCapture1(MDR_TIMER_TypeDef* TIMERx, uint32_t Channel);
 #endif
 
@@ -831,10 +814,10 @@ uint32_t TIMER_GetStatus(MDR_TIMER_TypeDef* TIMERx);
 FlagStatus TIMER_GetFlagStatus(MDR_TIMER_TypeDef* TIMERx, uint32_t Flag);
 void TIMER_ClearFlag(MDR_TIMER_TypeDef* TIMERx, uint32_t Flags);
 #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
-void TIMER_DMACmd(MDR_TIMER_TypeDef* TIMERx, uint32_t TIMER_DMASource, uint32_t TIMER_DMAChannel, FunctionalState NewState);
+	void TIMER_DMACmd(MDR_TIMER_TypeDef* TIMERx, uint32_t TIMER_DMASource, uint32_t TIMER_DMAChannel, FunctionalState NewState);
 #endif
-#if defined (USE_MDR1986VE9x)
-void TIMER_DMACmd(MDR_TIMER_TypeDef* TIMERx, uint32_t TIMER_DMASource, FunctionalState NewState);
+#if defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
+	void TIMER_DMACmd(MDR_TIMER_TypeDef* TIMERx, uint32_t TIMER_DMASource, FunctionalState NewState);
 #endif
 
 void TIMER_ITConfig(MDR_TIMER_TypeDef* TIMERx, uint32_t TIMER_IT, FunctionalState NewState);
@@ -853,6 +836,6 @@ void TIMER_BRGInit(MDR_TIMER_TypeDef* TIMERx, uint32_t TIMER_BRG);
 
 #endif /* __MDR32F9QX_TIMER_H */
 
-/******************* (C) COPYRIGHT 2010 Phyton *********************************
+/*
 *
 * END OF FILE MDR32F9Qx_timer.h */

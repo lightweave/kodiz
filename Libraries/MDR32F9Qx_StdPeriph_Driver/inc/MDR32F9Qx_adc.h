@@ -1,23 +1,4 @@
 /**
-  ******************************************************************************
-  * @file    MDR32F9Qx_adc.h
-  * @author  Phyton Application Team
-  * @version V1.4.0
-  * @date    21/07/2011
-  * @brief   This file contains all the functions prototypes for the ADC
-  *          firmware library.
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2011 Phyton</center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_adc.h
   */
 
@@ -50,7 +31,7 @@ extern "C" {
   */
 
 typedef struct {
-#if defined (USE_MDR1986VE9x)
+#if defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	uint32_t ADC_SynchronousMode; 		/*!< Enables or disables the ADC1, ADC2 synchronous mode operation.
 	 	 	 	 	 	 	 	 	 	 	 This parameter can be a value of @ref ADC_Synchronous_Mode */
 #endif
@@ -105,10 +86,10 @@ typedef struct
                                              This parameter can be a value of @ref ADCx_Level_Control */
 
   uint16_t ADC_LowLevel;                /*!< Specifies the ADCx value low level.
-                                             This parameter can be a number between 0x0000 and 0x07FF. */
+                                             This parameter can be a number between 0x0000 and 0x0FFF. */
 
   uint16_t ADC_HighLevel;                /*!< Specifies the ADCx value high level.
-                                             This parameter can be a number between 0x0000 and 0x07FF. */
+                                             This parameter can be a number between 0x0000 and 0x0FFF. */
 
   uint32_t ADC_VRefSource;              /*!< Specifies the ADCx voltage reference source (internal or external).
                                              This parameter can be a value of @ref ADCx_VRef_Source */
@@ -129,7 +110,7 @@ typedef struct
   * @{
   */
 
-#if defined (USE_MDR1986VE9x)
+#if defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 
 /** @defgroup ADC_Synchronous_Mode ADC Synchronous Mode
   * @{
@@ -205,7 +186,7 @@ typedef struct
   * @{
   */
 
-#if defined (USE_MDR1986VE9x)
+#if defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	#define IS_ADC_VREF_TRIMMING_VALUE(VALUE) (((VALUE) >= 0) && ((VALUE) <= 0x0F))
 #elif defined (USE_MDR1986VE3) || defined (USE_MDR1986VE1T)
 	#define IS_ADC_VREF_TRIMMING_VALUE(VALUE) (((VALUE) >= 0) && ((VALUE) <= 0x1F))
@@ -358,7 +339,8 @@ typedef struct
 #define IS_ADC_LEVEL_CONTROL_CONFIG(CONFIG) (((CONFIG) == ADC_LEVEL_CONTROL_Disable) || \
                                              ((CONFIG) == ADC_LEVEL_CONTROL_Enable ))
 
-#define IS_ADC_VALUE(VALUE) (((VALUE) >= 0) && ((VALUE) <= 0x07FF))
+#define ADC_VALUE_MAX                        (0x0FFF)
+#define IS_ADC_VALUE(VALUE) (((VALUE) >= 0) && ((VALUE) <= ADC_VALUE_MAX))
 
 /** @} */ /* End of group ADCx_Level_Control */
 
@@ -438,9 +420,31 @@ typedef struct
   * @{
   */
 
-#define ADCx_FLAG_OVERWRITE                   (((uint32_t)0x1) << ADC_STATUS_FLG_REG_OVERWRITE_Pos)
-#define ADCx_FLAG_OUT_OF_RANGE                (((uint32_t)0x1) << ADC_STATUS_FLG_REG_AWOIFEN_Pos)
-#define ADCx_FLAG_END_OF_CONVERSION           (((uint32_t)0x1) << ADC_STATUS_FLG_REG_EOCIF_Pos)
+#if defined ADC_STATUS_FLG_REG_OVERWRITE_Pos
+	#define ADCx_FLAG_OVERWRITE                   (((uint32_t)0x1) << ADC_STATUS_FLG_REG_OVERWRITE_Pos)
+#endif
+
+#if defined ADC1_STATUS_FLG_REG_OVERWRITE_Pos
+	#define ADCx_FLAG_OVERWRITE                   (((uint32_t)0x1) << ADC1_STATUS_FLG_REG_OVERWRITE_Pos)
+#endif
+
+#if defined (ADC_STATUS_FLG_REG_AWOIFEN_Pos)
+	#define ADCx_FLAG_OUT_OF_RANGE                (((uint32_t)0x1) << ADC_STATUS_FLG_REG_AWOIFEN_Pos)
+#endif
+
+#if defined (ADC1_STATUS_FLG_REG_AWOIFEN_Pos)
+	#define ADCx_FLAG_OUT_OF_RANGE                (((uint32_t)0x1) << ADC1_STATUS_FLG_REG_AWOIFEN_Pos)
+#endif
+
+#if defined (ADC_STATUS_FLG_REG_EOCIF_Pos)
+	#define ADCx_FLAG_END_OF_CONVERSION           (((uint32_t)0x1) << ADC_STATUS_FLG_REG_EOCIF_Pos)
+#endif
+
+#if defined (ADC1_STATUS_FLG_REG_EOCIF_Pos)
+	#define ADCx_FLAG_END_OF_CONVERSION           (((uint32_t)0x1) << ADC1_STATUS_FLG_REG_EOCIF_Pos)
+#endif
+
+
 
 #define IS_ADCx_STATUS_FLAG(FLAG) (((FLAG) == ADCx_FLAG_OVERWRITE        ) || \
                                    ((FLAG) == ADCx_FLAG_OUT_OF_RANGE     ) || \
@@ -453,7 +457,7 @@ typedef struct
 #define ADC2_FLAG_OUT_OF_RANGE                (ADCx_FLAG_OUT_OF_RANGE      << 16)
 #define ADC2_FLAG_END_OF_CONVERSION           (ADCx_FLAG_END_OF_CONVERSION << 16)
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 #define IS_ADC_STATUS_FLAG(FLAG) (((FLAG) == ADC1_FLAG_OVERWRITE        ) || \
                                   ((FLAG) == ADC1_FLAG_OUT_OF_RANGE     ) || \
                                   ((FLAG) == ADC1_FLAG_END_OF_CONVERSION) || \
@@ -485,7 +489,7 @@ typedef struct
 #define ADC2_IT_OUT_OF_RANGE               (ADCx_IT_OUT_OF_RANGE      << 16)
 #define ADC2_IT_END_OF_CONVERSION          (ADCx_IT_END_OF_CONVERSION << 16)
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 #define IS_ADC_CONFIG_IT(IT)              (((IT) == ADC1_IT_OUT_OF_RANGE     ) || \
                                            ((IT) == ADC1_IT_END_OF_CONVERSION) || \
                                            ((IT) == ADC2_IT_OUT_OF_RANGE     ) || \
@@ -596,7 +600,7 @@ ITStatus ADC2_GetITStatus(uint32_t ADC_IT);
 
 #endif /* __MDR32F9QX_ADC_H */
 
-/******************* (C) COPYRIGHT 2011 Phyton *********************************
+/*
 *
 * END OF FILE MDR32F9Qx_adc.h */
 

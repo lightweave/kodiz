@@ -23,10 +23,13 @@
 #include "MDR32Fx.h"
 #include "MDR32F9Qx_uart.h"
 #include "MDR32F9Qx_port.h"
+
+#include "MDR32F9Qx_adc.h"
+
 #include "MDR32F9Qx_rst_clk.h"
 #include "MDR32F9Qx_it.h"
 
-#include "MDR32F9Qx_adc.h"
+
 
 #include "MDR32F9Qx_timer.h"
 
@@ -56,8 +59,8 @@ ADCx_InitTypeDef sADCx;
 uint32_t tmp ;
 
 
-TIMER_CntInitTypeDef sTIM_CntInit;
-TIMER_ChnInitTypeDef sTIM_ChnInit;
+//TIMER_CntInitTypeDef sTIM_CntInit;
+//TIMER_ChnInitTypeDef sTIM_ChnInit;
 
 
 uint32_t ext_IT_flag;

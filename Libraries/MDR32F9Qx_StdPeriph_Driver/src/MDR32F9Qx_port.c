@@ -1,27 +1,8 @@
 /**
-  ******************************************************************************
-  * @file    MDR32F9Qx_port.c
-  * @author  Phyton Application Team
-  * @version V1.4.0
-  * @date    22/06/2010
-  * @brief   This file provides all the PORT firmware functions.
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2010 Phyton</center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_port.c
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "MDR32F9Qx_config.h"
 #include "MDR32F9Qx_port.h"
 
 #define ASSERT_INFO_FILE_ID FILEID__MDR32F9X_PORT_C
@@ -124,7 +105,7 @@ void PORT_Init(MDR_PORT_TypeDef* PORTx, const PORT_InitTypeDef* PORT_InitStruct)
     mask_d <<= 1;
     pos++;
   }
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
   /* Configure PORT registers with new values */
   PORTx->OE     = tmpreg_OE & (~JTAG_PINS(PORTx));
   PORTx->FUNC   = tmpreg_FUNC & (~JTAG_PINS(PORTx));
@@ -221,7 +202,7 @@ void PORT_SetBits ( MDR_PORT_TypeDef* PORTx, uint32_t PORT_Pin )
 	assert_param(IS_PORT_PIN(PORT_Pin));
 	assert_param(IS_NOT_JTAG_PIN(PORTx, PORT_Pin));
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 	PORTx->RXTX = PORT_Pin | (PORTx->RXTX & (~JTAG_PINS(PORTx)));
 #endif
 
@@ -244,7 +225,7 @@ void PORT_ResetBits(MDR_PORT_TypeDef* PORTx, uint32_t PORT_Pin)
   assert_param(IS_PORT_PIN(PORT_Pin));
   assert_param(IS_NOT_JTAG_PIN(PORTx, PORT_Pin));
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
   PORTx->RXTX &= ~(PORT_Pin | JTAG_PINS(PORTx));
 #endif
 
@@ -306,7 +287,7 @@ void PORT_Write(MDR_PORT_TypeDef* PORTx, uint32_t PortVal)
 
 /** @} */ /* End of group __MDR32F9Qx_StdPeriph_Driver */
 
-/******************* (C) COPYRIGHT 2010 Phyton *********************************
+/*
 *
 * END OF FILE MDR32F9Qx_port.c */
 

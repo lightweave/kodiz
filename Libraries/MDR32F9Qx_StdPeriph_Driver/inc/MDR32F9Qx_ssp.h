@@ -1,23 +1,4 @@
 /**
-  ******************************************************************************
-  * @file    MDR32F9Qx_ssp.h
-  * @author  Phyton Application Team
-  * @version V1.4.0
-  * @date    01/02/2011
-  * @brief   This file contains all the functions prototypes for the SSP
-  *          firmware library.
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2011 Phyton</center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_ssp.h
   */
 
@@ -30,6 +11,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "MDR32F9Qx_config.h"
 #include "MDR32F9Qx_lib.h"
 
 /** @addtogroup __MDR32F9Qx_StdPeriph_Driver MDR32F9Qx Standard Peripherial Driver
@@ -192,7 +174,8 @@ typedef struct
 
 #define SSP_HardwareFlowControl_MASK		((uint16_t)(SSP_HardwareFlowControl_None |\
 													  SSP_HardwareFlowControl_SSE |\
-													  SSP_HardwareFlowControl_LBM))
+													  SSP_HardwareFlowControl_LBM |\
+													  SSP_HardwareFlowControl_SOD))
 
 #define IS_SSP_HARDWARE_FLOW_CONTROL(CONTROL) \
                               ((CONTROL & (~SSP_HardwareFlowControl_MASK)) == 0)
@@ -228,14 +211,11 @@ typedef struct
 #define SSP_IT_MASK							(SSP_IT_TX | SSP_IT_RX |\
 											 SSP_IT_RT | SSP_IT_ROR)
 
-#define IS_SSP_CONFIG_IT(IT)				((IT) & (~SSP_IT_MASK) == 0)
-
-/*
 #define IS_SSP_CONFIG_IT(IT)                (((IT) == SSP_IT_TX) || \
                                              ((IT) == SSP_IT_RX) || \
                                              ((IT) == SSP_IT_RT) || \
                                              ((IT) == SSP_IT_ROR))
-*/
+
 
 #define IS_SSP_RESET_IT(IT)                 (((IT) == SSP_IT_RT) || \
                                              ((IT) == SSP_IT_ROR))
@@ -313,6 +293,6 @@ void SSP_BRGInit(MDR_SSP_TypeDef* SSPx, uint32_t SSP_BRG);
 
 #endif /* __MDR32F9Qx_SSP_H */
 
-/******************* (C) COPYRIGHT 2011 Phyton *********
+/*
 *
 * END OF FILE MDR32F9Qx_ssp.h */

@@ -1,27 +1,8 @@
 /**
-  ******************************************************************************
-  * @file    MDR32F9Qx_adc.c
-  * @author  Phyton Application Team
-  * @version V1.4.0
-  * @date    22/07/2011
-  * @brief   This file provides all the ADC firmware functions.
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2011 Phyton</center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_adc.c
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "MDR32F9Qx_config.h"
 #include "MDR32F9Qx_adc.h"
 
 #define ASSERT_INFO_FILE_ID FILEID__MDR32F9X_ADC_C
@@ -53,7 +34,7 @@ void ADC_DeInit ( void )
   MDR_ADC->ADC1_STATUS = 0;
   MDR_ADC->ADC1_CHSEL = 0;
 
-#if defined ( USE_MDR1986VE9x ) /* For Cortex M3 */
+#if defined ( USE_MDR1986VE9x ) || defined (USE_MDR1901VC1T)
   MDR_ADC->ADC2_H_LEVEL = 0;
   MDR_ADC->ADC2_L_LEVEL = 0;
   MDR_ADC->ADC2_RESULT;
@@ -83,7 +64,7 @@ void ADC_Init(const ADC_InitTypeDef* ADC_InitStruct)
 #endif
 
   /* Check the parameters */
-#if defined (USE_MDR1986VE9x)
+#if defined (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
   assert_param(IS_ADC_SYNC_MODE(ADC_InitStruct->ADC_SynchronousMode));
 #endif
   assert_param(IS_ADC_START_DELAY_VALUE(ADC_InitStruct->ADC_StartDelay));
@@ -102,7 +83,7 @@ void ADC_Init(const ADC_InitTypeDef* ADC_InitStruct)
              + ADC_InitStruct->ADC_TempSensorConversion
              + ADC_InitStruct->ADC_IntVRefConversion;
 
-#if defined( USE_MDR1986VE9x ) /* For Cortex M3*/
+#if defined( USE_MDR1986VE9x ) || defined (USE_MDR1901VC1T) /* For Cortex M3*/
   tmpreg_CFG += (ADC_InitStruct->ADC_IntVRefTrimming << ADC1_CFG_TR_Pos)
              +   ADC_InitStruct->ADC_SynchronousMode;
 #endif // #if defined(USE_MDR1986VE9x) /* For Cortex M3*/
@@ -112,7 +93,7 @@ void ADC_Init(const ADC_InitTypeDef* ADC_InitStruct)
              | ADC1_CFG_TS_BUF_EN
              | ADC1_CFG_SEL_TS
              | ADC1_CFG_SEL_VREF;
-#if defined( USE_MDR1986VE9x ) /* For Cortex M3*/
+#if defined( USE_MDR1986VE9x ) || defined (USE_MDR1901VC1T) /* For Cortex M3*/
   tmpreg_MSK |= ADC1_CFG_TR_Msk
              |  ADC1_CFG_SYNC_CONVER;
 #elif defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
@@ -133,7 +114,7 @@ void ADC_Init(const ADC_InitTypeDef* ADC_InitStruct)
 void ADC_StructInit(ADC_InitTypeDef* ADC_InitStruct)
 {
 
-#if defined( USE_MDR1986VE9x )
+#if defined( USE_MDR1986VE9x ) || defined (USE_MDR1901VC1T)
   ADC_InitStruct->ADC_SynchronousMode     = ADC_SyncMode_Independent;
 #endif
 
@@ -162,7 +143,7 @@ void ADC_SetTrim(uint32_t Trim)
   /* Check the parameters */
   assert_param(IS_ADC_VREF_TRIMMING_VALUE(Trim));
 
-#if defined(USE_MDR1986VE9x) /* For Cortex M3*/
+#if defined(USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
   tmpreg = MDR_ADC->ADC1_CFG & ~ADC1_CFG_TR_Msk;
   MDR_ADC->ADC1_CFG = tmpreg + (Trim << ADC1_CFG_TR_Pos);
 
@@ -234,7 +215,7 @@ void ADC1_Init(const ADCx_InitTypeDef* ADCx_InitStruct)
   MDR_ADC->ADC1_CHSEL   = ADCx_InitStruct->ADC_Channels;
 }
 
-#if defined  (USE_MDR1986VE9x) /* For Cortex M3 */
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Initializes the ADC2 peripheral according to
   *         the specified parameters in the ADCx_InitStruct.
@@ -289,7 +270,6 @@ void ADC2_Init(const ADCx_InitTypeDef* ADCx_InitStruct)
   MDR_ADC->ADC2_L_LEVEL = ADCx_InitStruct->ADC_LowLevel;
   MDR_ADC->ADC2_H_LEVEL = ADCx_InitStruct->ADC_HighLevel;
   MDR_ADC->ADC2_CHSEL   = ADCx_InitStruct->ADC_Channels;
-
 }
 
 #endif /* #if defined  (USE_MDR1986VE9x) */
@@ -347,7 +327,7 @@ void ADC1_Cmd(FunctionalState NewState)
   MDR_ADC->ADC1_CFG = tmpreg_CFG;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Enables or disables the ADC1 peripheral.
   * @warning 	This function can be used only for microcontroller
@@ -400,7 +380,7 @@ void ADC1_SetChannel(uint32_t Channel)
   MDR_ADC->ADC1_CFG = tmpreg_CFG;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Selects the ADC2 Channel number for Single Channel Mode conversion.
   * @warning 	This function can be used only for microcontroller
@@ -435,7 +415,7 @@ void ADC1_SetChannels(uint32_t ChannelMask)
   MDR_ADC->ADC1_CHSEL = ChannelMask;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Selects the ADC2 Channels for conversion with Channels switching.
   * @param  ChannelMask: specifies the ADC Channels Mask.
@@ -470,7 +450,7 @@ void ADC1_OperationModeConfig(uint32_t SamplingMode, uint32_t SwitchingMode)
   MDR_ADC->ADC1_CFG = tmpreg_CFG;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Sets the ADC2 operation mode.
   * @warning 	This function can be used only for microcontroller
@@ -512,7 +492,7 @@ void ADC1_SamplingModeConfig(uint32_t SamplingMode)
   MDR_ADC->ADC1_CFG = tmpreg_CFG;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Sets the ADC2 sampling mode.
   * @warning 	This function can be used only for microcontroller
@@ -552,7 +532,7 @@ void ADC1_ChannelSwithingConfig(uint32_t SwitchingMode)
   MDR_ADC->ADC1_CFG = tmpreg_CFG;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Sets the ADC2 channel switching mode.
   * @warning 	This function can be used only for microcontroller
@@ -599,7 +579,7 @@ void ADC1_LevelsConfig(uint32_t LowLevel, uint32_t HighLevel, uint32_t NewState)
   MDR_ADC->ADC1_H_LEVEL = HighLevel;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Configures the ADC2 threshould levels.
   * @warning 	This function can be used only for microcontroller
@@ -641,7 +621,7 @@ void ADC1_SetLowLevel(uint32_t LowLevel)
   MDR_ADC->ADC1_L_LEVEL = LowLevel;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Sets the ADC2 low level.
   * @param  LowLevel: specifies the ADC2 low level value.
@@ -669,7 +649,7 @@ void ADC1_SetHighLevel(uint32_t HighLevel)
   MDR_ADC->ADC1_H_LEVEL = HighLevel;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Sets the ADC2 high level.
   * @warning 	This function can be used only for microcontroller
@@ -696,7 +676,7 @@ void ADC1_Start(void)
   MDR_ADC->ADC1_CFG |= ADC1_CFG_REG_GO;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Starts the ADC2 conversion.
   * @warning 	This function can be used only for microcontroller
@@ -720,7 +700,7 @@ uint32_t ADC1_GetResult(void)
   return MDR_ADC->ADC1_RESULT;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Returns the ADC2 result.
   * @warning 	This function can be used only for microcontroller
@@ -741,7 +721,7 @@ uint32_t ADC2_GetResult(void)
   */
 uint32_t ADC_GetStatus ( void )
 {
-#if defined  (USE_MDR1986VE9x) 									/* For Cortex M3 */
+#if defined  (USE_MDR1986VE9x)|| defined (USE_MDR1901VC1T)		/* For Cortex M3 */
   return MDR_ADC->ADC1_STATUS + (MDR_ADC->ADC2_STATUS << 16);
 #elif defined ( USE_MDR1986VE3 ) || defined (USE_MDR1986VE1T) 	/* For Cortex M1 */
   return MDR_ADC->ADC1_STATUS;
@@ -758,7 +738,7 @@ uint32_t ADC1_GetStatus(void)
   return MDR_ADC->ADC1_STATUS;
 }
 
-#ifdef USE_MDR1986VE9x /* For Cortex M3 */
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T) /* For Cortex M3 */
 /**
   * @brief  Returns the ADC2 Status Register value.
   * @warning 	This function can be used only for microcontroller
@@ -831,7 +811,7 @@ FlagStatus ADC1_GetFlagStatus(uint32_t Flag)
   return bitstatus;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Checks whether the specified ADC2 Status flag is set or not.
   * @warning 	This function can be used only for microcontroller
@@ -873,7 +853,7 @@ void ADC1_ClearOverwriteFlag(void)
   MDR_ADC->ADC1_STATUS &= ~ADCx_FLAG_OVERWRITE;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Clears the ADC2 Overwrite flag.
   * @warning 	This function can be used only for microcontroller
@@ -897,7 +877,7 @@ void ADC1_ClearOutOfRangeFlag(void)
   MDR_ADC->ADC1_STATUS &= ~ADCx_FLAG_OUT_OF_RANGE;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Clears the ADC2 AWOIFEN flag.
   * @warning 	This function can be used only for microcontroller
@@ -927,7 +907,7 @@ void ADC_ITConfig(uint32_t ADC_IT, FunctionalState NewState)
 {
   uint32_t tmpreg_ADC1_IE;
   uint32_t tmpreg_ADC_IT;
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
   uint32_t tmpreg_ADC2_IE;
 #endif
 
@@ -953,7 +933,7 @@ void ADC_ITConfig(uint32_t ADC_IT, FunctionalState NewState)
   /* Configure ADCx_STATUS registers with new value */
   MDR_ADC->ADC1_STATUS = tmpreg_ADC1_IE;
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 
   tmpreg_ADC2_IE = MDR_ADC->ADC2_STATUS;
 
@@ -1009,7 +989,7 @@ void ADC1_ITConfig(uint32_t ADC_IT, FunctionalState NewState)
   MDR_ADC->ADC1_STATUS = tmpreg_ADC1_IE;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Enables or disables the ADC2 interrupts.
   * @warning 	This function can be used only for microcontroller
@@ -1113,7 +1093,7 @@ ITStatus ADC1_GetITStatus(uint32_t ADC_IT)
   return bitstatus;
 }
 
-#if defined  (USE_MDR1986VE9x)
+#if defined  (USE_MDR1986VE9x) || defined (USE_MDR1901VC1T)
 /**
   * @brief  Checks whether the ADC2 interrupt has occurred or not.
   * @warning 	This function can be used only for microcontroller
@@ -1154,7 +1134,7 @@ ITStatus ADC2_GetITStatus(uint32_t ADC_IT)
 
 /** @} */ /* End of group __MDR32F9Qx_StdPeriph_Driver */
 
-/******************* (C) COPYRIGHT 2011 Phyton *********************************
+/*
 *
 * END OF FILE MDR32F9Qx_adc.c */
 

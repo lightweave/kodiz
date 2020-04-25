@@ -1,22 +1,4 @@
 /**
-  ******************************************************************************
-  * @file    MDR32F9Qx_port.c
-  * @author  Phyton Application Team
-  * @version V1.4.0
-  * @date    22/06/2010
-  * @brief   This file provides all the PORT firmware functions.
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2010 Phyton</center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_port.c
   */
 
@@ -203,13 +185,12 @@ uint32_t PORT_ReadInputData(MDR_PORT_TypeDef* PORTx)
   */
 void PORT_SetBits ( MDR_PORT_TypeDef* PORTx, uint32_t PORT_Pin )
 {
-	/* Check the parameters */
-	assert_param(IS_PORT_ALL_PERIPH(PORTx));
-	assert_param(IS_PORT_PIN(PORT_Pin));
-	assert_param(IS_NOT_JTAG_PIN(PORTx, PORT_Pin));
+  /* Check the parameters */
+  assert_param(IS_PORT_ALL_PERIPH(PORTx));
+  assert_param(IS_PORT_PIN(PORT_Pin));
+  assert_param(IS_NOT_JTAG_PIN(PORTx, PORT_Pin));
 
-
-	PORTx->RXTX = PORT_Pin | (PORTx->RXTX & (~JTAG_PINS(PORTx)));
+  PORTx->SETTX = PORT_Pin & (~JTAG_PINS(PORTx));
 }
 
 /**
@@ -226,7 +207,7 @@ void PORT_ResetBits(MDR_PORT_TypeDef* PORTx, uint32_t PORT_Pin)
   assert_param(IS_PORT_PIN(PORT_Pin));
   assert_param(IS_NOT_JTAG_PIN(PORTx, PORT_Pin));
 
-  PORTx->RXTX &= ~(PORT_Pin | JTAG_PINS(PORTx));
+  PORTx->CLRTX = PORT_Pin & (~JTAG_PINS(PORTx));
 }
 
 /**
@@ -242,21 +223,19 @@ void PORT_ResetBits(MDR_PORT_TypeDef* PORTx, uint32_t PORT_Pin)
   */
 void PORT_WriteBit(MDR_PORT_TypeDef* PORTx, uint32_t PORT_Pin, BitAction BitVal)
 {
-  uint32_t portdata;
   /* Check the parameters */
   assert_param(IS_PORT_ALL_PERIPH(PORTx));
   assert_param(IS_GET_PORT_PIN(PORT_Pin));
   assert_param(IS_PORT_BIT_ACTION(BitVal));
   assert_param(IS_NOT_JTAG_PIN(PORTx, PORT_Pin));
 
-  portdata = PORTx->RXTX & (~JTAG_PINS(PORTx));
   if (BitVal != Bit_RESET)
   {
-    PORTx->RXTX = portdata | PORT_Pin;
+    PORTx->SETTX = PORT_Pin & (~JTAG_PINS(PORTx));
   }
   else
   {
-    PORTx->RXTX = portdata & (~PORT_Pin);
+    PORTx->CLRTX = PORT_Pin & (~JTAG_PINS(PORTx));
   }
 }
 
@@ -282,7 +261,7 @@ void PORT_Write(MDR_PORT_TypeDef* PORTx, uint32_t PortVal)
 
 /** @} */ /* End of group __MDR32F9Qx_StdPeriph_Driver */
 
-/******************* (C) COPYRIGHT 2010 Phyton *********************************
+/*
 *
 * END OF FILE MDR32F9Qx_port.c */
 

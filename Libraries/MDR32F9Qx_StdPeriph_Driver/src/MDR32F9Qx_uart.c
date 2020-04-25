@@ -1,27 +1,8 @@
 /**
-  ******************************************************************************
-  * @file    MDR32F9Qx_uart.c
-  * @author  Phyton Application Team
-  * @version V1.4.0
-  * @date    22/06/2010
-  * @brief   This file contains all the UART firmware functions.
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2010 Phyton</center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_uart.c
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "MDR32F9Qx_config.h"
 #include "MDR32F9Qx_uart.h"
 #include "MDR32F9Qx_rst_clk.h"
 
@@ -62,11 +43,16 @@
 
 
 #if defined (USE_MDR1986VE3)
-#define UART3_BRG_Mask				((uint32_t)0x0007) /*!< UART3  clock divider Mask */
-#define UART4_BRG_Mask				((uint32_t)0x0700) /*!< UART4 clock divider Mask */
-#define UART4_BRG_Offs              ((uint32_t)0x0008) /*!< UART4 clock divider Offset */
-
+	#define UART3_BRG_Mask				((uint32_t)0x0007) /*!< UART3  clock divider Mask */
+	#define UART3_BRG_Offs              ((uint32_t)0x0000) /*!< UART3 clock divider Offset */
+	#define UART4_BRG_Mask				((uint32_t)0x0700) /*!< UART4 clock divider Mask */
+	#define UART4_BRG_Offs              ((uint32_t)0x0008) /*!< UART4 clock divider Offset */
 #endif // #if defined (USE_MDR1986VE3)
+
+#if defined (USE_MDR1901VC1T)
+	#define UART3_BRG_Mask				((uint32_t)0x70000) /*!< UART3  clock divider Mask */
+	#define UART3_BRG_Offs              ((uint32_t)0x0010) /*!< UART4 clock divider Offset */
+#endif
 
 /** @} */ /* End of group UART_Private_Defines */
 
@@ -147,11 +133,13 @@ BaudRateStatus UART_Init ( MDR_UART_TypeDef* UARTx,
 		if (UARTx == MDR_UART2) {
 			cpuclock /= (1 << ((tmpreg & UART2_BRG_Mask) >> UART2_BRG_Offs));
 		}
-#if defined (USE_MDR1986VE3) /* For Cortex M1 */
+#if defined (USE_MDR1986VE3) || defined (USE_MDR1901VC1T)
 		else
 			if(UARTx == MDR_UART3) {
-				cpuclock /= (1 << (tmpreg & UART3_BRG_Mask ));
+				cpuclock /= (1 << ((tmpreg & UART3_BRG_Mask ) >> UART3_BRG_Offs));
 			}
+#endif
+#if defined (USE_MDR1986VE3)
 			else
 				if(UARTx == MDR_UART4) {
 					cpuclock /= (1 << ((tmpreg & UART4_BRG_Mask) >> UART4_BRG_Offs));
@@ -360,7 +348,7 @@ ITStatus UART_GetITStatusMasked(MDR_UART_TypeDef* UARTx, uint32_t UART_IT)
 }
 
 /**
-  * @brief  Clears the UARTx’s interrupt pending bits.
+  * @brief  Clears the UARTx's interrupt pending bits.
   * @param  UARTx: Select the UART or the UART peripheral.
   *         This parameter can be one of the following values:
   *         UART1, UART2.
@@ -420,7 +408,7 @@ void UART_DMAConfig(MDR_UART_TypeDef* UARTx, uint32_t UART_IT_RB_LVL, uint32_t U
 }
 
 /**
-  * @brief  Enables or disables the UART’s DMA interface.
+  * @brief  Enables or disables the UART's DMA interface.
   * @param  UARTx: Select the UART peripheral.
   *         This parameter can be one of the following values:
   *         UART1, UART2.
@@ -512,12 +500,12 @@ void UART_BreakLine(MDR_UART_TypeDef* UARTx, FunctionalState NewState)
   else
   {
     /* Reset BRK bit in the UART LCR_H register */
-    UARTx->LCR_H |= LCR_H_BRK_Reset;
+    UARTx->LCR_H &= LCR_H_BRK_Reset;
   }
 }
 
 /**
-  * @brief  Configures the UART’s IrDA interface.
+  * @brief  Configures the UART's IrDA interface.
   * @param  UARTx: Select the UART peripheral.
   *         This parameter can be one of the following values:
   *         UART1, UART2.
@@ -547,7 +535,7 @@ void UART_IrDAConfig(MDR_UART_TypeDef* UARTx, uint32_t UART_IrDAMode)
 }
 
 /**
-  * @brief  Enables or disables the UART’s IrDA interface.
+  * @brief  Enables or disables the UART's IrDA interface.
   * @param  UARTx: Select the UART peripheral.
   *         This parameter can be one of the following values:
   *         UART1, UART2.
@@ -569,7 +557,7 @@ void UART_IrDACmd(MDR_UART_TypeDef* UARTx, FunctionalState NewState)
   else
   {
     /* Reset SIREN bit in the UART CR register */
-    UARTx->CR |= CR_SIREN_Reset;
+    UARTx->CR &= CR_SIREN_Reset;
   }
 }
 
@@ -636,7 +624,14 @@ void UART_BRGInit(MDR_UART_TypeDef* UARTx, uint32_t UART_BRG)
   assert_param(IS_UART_ALL_PERIPH(UARTx));
   assert_param(IS_UART_CLOCK_BRG(UART_BRG));
 
+
+#if defined (USE_MDR1986VE3)
+  if((UARTx == MDR_UART3) || (UARTx == MDR_UART4))
+	  tmpreg = MDR_RST_CLK->UART_SSP_CLOCK;
+  else
+#endif
   tmpreg = MDR_RST_CLK->UART_CLOCK;
+
 
   if (UARTx == MDR_UART1)
   {
@@ -650,6 +645,34 @@ void UART_BRGInit(MDR_UART_TypeDef* UARTx, uint32_t UART_BRG)
     tmpreg &= ~RST_CLK_UART_CLOCK_UART2_BRG_Msk;
     tmpreg |= (UART_BRG << 8);
   }
+#if defined (USE_MDR1901VC1T)
+  else if( UARTx == MDR_UART3)
+  {
+	  tmpreg |= RST_CLK_UART_CLOCK_UART3_CLK_EN;
+	  tmpreg &= ~ RST_CLK_UART_CLOCK_UART3_BRG_Msk;
+	  tmpreg |= (UART_BRG << RST_CLK_UART_CLOCK_UART3_BRG_Pos);
+  }
+#endif
+#if defined (USE_MDR1986VE3)
+  else if(UARTx == MDR_UART3)
+  {
+	  tmpreg |= RST_CLK_UART_SSP_CLOCK_UART3_CLK_EN;
+	  tmpreg &= ~RST_CLK_UART_SSP_CLOCK_UART3_BRG_Msk;
+	  tmpreg |= (UART_BRG << RST_CLK_UART_SSP_CLOCK_UART3_BRG_Pos);
+  }
+  else if(UARTx == MDR_UART4)
+  {
+	  tmpreg |= RST_CLK_UART_SSP_CLOCK_UART4_CLK_EN;
+	  tmpreg &= ~RST_CLK_UART_SSP_CLOCK_UART4_BRG_Msk;
+	  tmpreg |= (UART_BRG << RST_CLK_UART_SSP_CLOCK_UART4_BRG_Pos);
+  }
+#endif
+
+#if defined (USE_MDR1986VE3)
+  if((UARTx == MDR_UART3) || (UARTx == MDR_UART4))
+	  MDR_RST_CLK->UART_SSP_CLOCK = tmpreg;
+  else
+#endif
   MDR_RST_CLK->UART_CLOCK = tmpreg;
 }
 
@@ -659,7 +682,7 @@ void UART_BRGInit(MDR_UART_TypeDef* UARTx, uint32_t UART_BRG)
 
 /** @} */ /* End of group __MDR32F9Qx_StdPeriph_Driver */
 
-/******************* (C) COPYRIGHT 2010 Phyton *********************************
+/*
 *
 * END OF FILE MDR32F9Qx_uart.c */
 

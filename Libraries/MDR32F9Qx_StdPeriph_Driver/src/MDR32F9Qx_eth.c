@@ -1,23 +1,4 @@
 /**
-  ******************************************************************************
-  * @file	 MDR32F9Qx_eth.c
-  * @author	 sidorov.a
-  * @version V1.4.0
-  * @date    26.04.2013
-  * @brief   This file contains all the ethernet firmware functions.
-  ******************************************************************************
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, MILANDR SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2013 Milandr </center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_eth.c
   */
 
@@ -25,11 +6,13 @@
 #include "MDR32F9Qx_config.h"
 #include "MDR32F9Qx_dma.h"
 #include "MDR32F9Qx_eth.h"
+#include "MDR32F9Qx_rst_clk.h"
 
 #include <math.h>
 #include <stdio.h>
 
 #define ASSERT_INFO_FILE_ID FILEID__MDR32F9X_ETH_C
+
 
 /** @addtogroup __MDR32F9Qx_StdPeriph_Driver MDR32F9Qx Standard Peripherial Driver
   * @{
@@ -54,7 +37,7 @@ extern DMA_CtrlDataTypeDef DMA_ControlTable[DMA_Channels_Number * (1 + DMA_Alter
 
 #if defined (USE_MDR1986VE3)
 	#define IS_ETH_ALL_PERIPH(PERIPH)				((PERIPH == MDR_ETHERNET1) ||\
-													 (PERIPH == MDR_ETHERNET1))
+																					 (PERIPH == MDR_ETHERNET2))
 #elif defined (USE_MDR1986VE1T)
 	#define IS_ETH_ALL_PERIPH(PERIPH)				(PERIPH == MDR_ETHERNET1)
 #endif
@@ -261,7 +244,7 @@ void ETH_DeInit(MDR_ETHERNET_TypeDef * ETHERNETx )
 	/* PHY reset */
 	ETH_PHY_Reset(ETHERNETx);
 
-	ETHERNETx->ETH_Dilimiter 	= 0x0800;
+	ETHERNETx->ETH_Dilimiter 	= 0x1000;
 	ETHERNETx->ETH_MAC_T 		= 0x78AB;
 	ETHERNETx->ETH_MAC_M 		= 0x3456;
 	ETHERNETx->ETH_MAC_H 		= 0x0012;
@@ -280,7 +263,8 @@ void ETH_DeInit(MDR_ETHERNET_TypeDef * ETHERNETx )
 	ETHERNETx->ETH_IMR 			= 0x0000;
 	ETHERNETx->ETH_IFR 			= 0x0000;
 	ETHERNETx->ETH_R_Head 		= 0x0000;
-	ETHERNETx->ETH_X_Tail 		= 0x0800;
+	ETHERNETx->ETH_X_Tail 		= 0x1000;  
+  	ETHERNETx->ETH_STAT = 0;
 }
 
 /**
@@ -382,9 +366,9 @@ void ETH_StructInit(ETH_InitTypeDef * ETH_InitStruct)
 	ETH_InitStruct->ETH_Hash_Table_Low	= 0x00000000;
 	ETH_InitStruct->ETH_Hash_Table_High = 0x08000000;
 
-	/* Set the pacet interval fo falf duplex mode. */
+	/* Set the pacet interval fo half duplex mode. */
 	ETH_InitStruct->ETH_IPG = 0x0060;
-	/* Set the prescaler increment values ​​BAG and JitterWnd. */
+	/* Set the prescaler increment values for BAG and JitterWnd. */
 	ETH_InitStruct->ETH_PSC = 0x0031;
 	/* Set period the following of packages.*/
 	ETH_InitStruct->ETH_BAG = 0x0064;
@@ -523,12 +507,15 @@ void ETH_Init(MDR_ETHERNET_TypeDef * ETHERNETx, ETH_InitTypeDef * ETH_InitStruct
 
 	/* Set the pacet interval fo falf duplex mode. */
 	ETHERNETx->ETH_IPG = ETH_InitStruct->ETH_IPG;
-	/* Set the prescaler increment values ​​BAG and JitterWnd. */
+	/* Set the prescaler increment values for BAG and JitterWnd. */
 	ETHERNETx->ETH_PSC = ETH_InitStruct->ETH_PSC;
 	/* Set period the following of packages.*/
 	ETHERNETx->ETH_BAG = ETH_InitStruct->ETH_BAG;
 	/* Set jitter of packets transmitted. */
 	ETHERNETx->ETH_JitterWnd = ETH_InitStruct->ETH_JitterWnd;
+  
+	if (ETH_InitStruct->ETH_Buffer_Mode == ETH_BUFFER_MODE_FIFO)
+		ETH_DMAPrepare();  
 }
 
 /**
@@ -706,7 +693,7 @@ FlagStatus ETH_GetFlagStatus(MDR_ETHERNET_TypeDef * ETHERNETx, uint16_t ETH_MAC_
 	assert_param(IS_ETH_ALL_PERIPH(ETHERNETx));
 	assert_param(IS_ETH_MAC_FLAG(ETH_MAC_FLAG));
 
-	if(ETHERNETx->ETH_IFR & ETH_MAC_FLAG){
+	if(ETHERNETx->ETH_STAT & ETH_MAC_FLAG){
 		bitstatus = SET;
 	}
 	else{
@@ -925,6 +912,8 @@ uint32_t ETH_WritePHYRegister(MDR_ETHERNET_TypeDef * ETHERNETx, uint16_t PHYAddr
 	tmpreg = ETHERNETx->ETH_MDIO_CTRL;
 	/* Keep only the CSR Clock Range CR[2:0] bits value */
 	tmpreg &= ~ETH_MDIO_CTRL_DIV_Msk;
+	
+	tmpreg &= ~(1 << ETH_MDIO_CTRL_OP_Pos);
 	/* Prepare the MII address register value */
 	tmpreg |= (uint32_t)(PHYAddress << 8) | (PHYReg << 0) | (0 << ETH_MDIO_CTRL_OP_Pos) | (1 << ETH_MDIO_CTRL_RDY_Pos) | (1 << ETH_MDIO_CTRL_PRE_EN_Pos) | (1<<5);
 	/* Give the value to the MII data register */
@@ -959,6 +948,7 @@ uint32_t ETH_ReceivedFrame(MDR_ETHERNET_TypeDef * ETHERNETx, uint32_t * ptr_Inpu
 	uint32_t PacketLength, i, Rhead, EthBaseBufferAddr, * ptr_InputFrame, tmp;
 	uint16_t BufferMode;
 	int32_t EthReceiverFreeBufferSize;
+  uint32_t RHead;
 
 	/* Check the parameters */
 	assert_param(IS_ETH_ALL_PERIPH(ETHERNETx));
@@ -997,7 +987,11 @@ uint32_t ETH_ReceivedFrame(MDR_ETHERNET_TypeDef * ETHERNETx, uint32_t * ptr_Inpu
 				}
 			}
 			/* Set the new value of the ETH_R_Head register */
-			ETHERNETx->ETH_R_Head = ((uint32_t)ptr_InputFrame)&0x1FFF;
+      RHead = ((uint32_t)ptr_InputFrame)&0x1FFF;
+      if (RHead < ETHERNETx->ETH_Dilimiter)
+        ETHERNETx->ETH_R_Head = RHead;
+      else
+        ETHERNETx->ETH_R_Head = 0;
 			break;
 		/* The buffer mode is aoutomatic */
 		case ETH_BUFFER_MODE_AUTOMATIC_CHANGE_POINTERS:
@@ -1093,7 +1087,7 @@ void ETH_SendFrame(MDR_ETHERNET_TypeDef * ETHERNETx, uint32_t * ptr_OutputBuffer
 				}
 			}
 			ptr_OutputFrame++;
-			Xtail = (uint32_t)ptr_OutputFrame&0x1FFC;
+      Xtail = (uint32_t)ptr_OutputFrame&0x3FFC;
 			if(Xtail >= ETH_BUFFER_SIZE)
 				Xtail = ETHERNETx->ETH_Dilimiter;
 			/* Write the new value of the ETH_X_Tail register */
@@ -1139,6 +1133,7 @@ void ETH_DMAPrepare(void)
 	DMA_CtrlDataInitTypeDef DMA_PriCtrlStr;
 	DMA_ChannelInitTypeDef DMA_InitStr;
 	
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_DMA, ENABLE);
 	DMA_DeInit();
 	
 	DMA_StructInit(&DMA_InitStr);
@@ -1150,6 +1145,7 @@ void ETH_DMAPrepare(void)
 	DMA_InitStr.DMA_SelectDataStructure = DMA_CTRL_DATA_PRIMARY;
 	/* Init DMA channel */
 	DMA_Init(DMA_Channel_SW1, &DMA_InitStr);
+    DMA_Init(DMA_Channel_SW2, &DMA_InitStr);
 }
 
 /**
@@ -1182,7 +1178,7 @@ void ETH_DMAFrameRx(uint32_t * DstBuf, uint32_t BufferSize, uint32_t *  SrcBuf)
 	ptrControltable = (uint32_t *)&DMA_ControlTable[DMA_Channel_SW1].DMA_Control;
 	/* Wait while DMA running */
 	while( 1 ){
-		tmpval = (*ptrControltable)&0x3;
+		tmpval = (*ptrControltable)&0x7;
 		if(tmpval == 0)
 			break;
 	}
@@ -1220,7 +1216,7 @@ void ETH_DMAFrameTx(uint32_t * DstBuf, uint32_t BufferSize, uint32_t * SrcBuf)
 	ptrControltable = (uint32_t *)&DMA_ControlTable[DMA_Channel_SW2].DMA_Control;
 	/* Wait while DMA running */
 	while( 1 ){
-		tmpval = (*ptrControltable)&0x3;
+		tmpval = (*ptrControltable)&0x7;
 		if(tmpval == 0)
 			break;
 	}
@@ -1236,6 +1232,6 @@ void ETH_DMAFrameTx(uint32_t * DstBuf, uint32_t BufferSize, uint32_t * SrcBuf)
 
 /** @} */ /* End of group __MDR32F9Qx_StdPeriph_Driver */
 
-/******************* (C) COPYRIGHT 2013 Milandr ********************************
+/*
 *
 * END OF FILE MDR32F9Qx_eth.c */

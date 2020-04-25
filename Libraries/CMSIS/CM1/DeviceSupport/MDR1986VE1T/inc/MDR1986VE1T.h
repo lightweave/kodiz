@@ -1,23 +1,4 @@
 /**
-  ******************************************************************************
-  * @file	 MDR1986VE1T.h
-  * @author  Sidorov Andrey
-  * @version V1.4.0
-  * @date	 22/02/2013
-  * @brief	 This file contains all the Special Function Registers definitions
-  * 		 for the Milandr 1986V1T microcontroller.
-  ******************************************************************************
-  * @copy
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2013 Milandr </center></h2>
-  ******************************************************************************
   * FILE MDR1986VE1T.h
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -1963,6 +1944,7 @@ typedef struct
 #define POWER_PVDCS_IEPVD_Pos                   9
 #define POWER_PVDCS_INVB_Pos                    10
 #define POWER_PVDCS_INV_Pos                     11
+#define POWER_PVDCS_PVDBEN_Pos                  12
 
 /* Bit field masks: */
 #define POWER_PVDCS_PVDEN                       ((uint32_t)0x00000001)
@@ -1974,6 +1956,7 @@ typedef struct
 #define POWER_PVDCS_IEPVD                       ((uint32_t)0x00000200)
 #define POWER_PVDCS_INVB                        ((uint32_t)0x00000400)
 #define POWER_PVDCS_INV                         ((uint32_t)0x00000800)
+#define POWER_PVDCS_PVDBEN                      ((uint32_t)0x00001000)
 
 /** @} */ /* End of group POWER_PVDCS */
 
@@ -2782,6 +2765,9 @@ typedef struct
 	__IO uint32_t DATA_R_Direct[8];
 		 uint32_t RESERVED2[6];
 	__IO uint32_t INTMASK;
+	__IO uint32_t RESERVED3;
+	__IO uint32_t CONTROL8;
+	__IO uint32_t CONTROL9;
 }MDR_ARINC429R_TypeDef;
 
 /** @} */ /* End of group Periph_ARINC429R_Data_Structures */
@@ -3154,6 +3140,7 @@ typedef struct
 	__IO uint32_t DATA3_T;
 	__IO uint32_t DATA4_T;
 	__IO uint32_t CONTROL3;
+	__IO uint32_t CONTROL4;
 }MDR_ARINC429T_TypeDef;
 
 /** @} */ /* End of group Periph_ARINC429T_Data_Structures */
@@ -3983,8 +3970,12 @@ typedef struct {
 
 /** @} */ /* End of group __CMSIS */
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* __MDR1986VE1T_H */
 
-/******************* (C) COPYRIGHT 2013 Milandr ********************************
+/*
 *
 * END OF FILE MDR1986VE1T.h */

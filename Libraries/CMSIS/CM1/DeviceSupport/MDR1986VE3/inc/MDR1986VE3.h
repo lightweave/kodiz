@@ -1,23 +1,4 @@
 /**
-  ******************************************************************************
-  * @file	 MDR1986VE3.h
-  * @author  Sidorov Andrey
-  * @version V1.4.0
-  * @date	 22/02/2013
-  * @brief	 This file contains all the Special Function Registers definitions
-  * 		 for the Milandr 1986VE3 microcontroller.
-  ******************************************************************************
-  * @copy
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2013 Milandr </center></h2>
-  ******************************************************************************
   * FILE MDR1986VE3.h
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -1944,6 +1925,7 @@ typedef struct
 #define POWER_PVDCS_IEPVD_Pos                   9
 #define POWER_PVDCS_INVB_Pos                    10
 #define POWER_PVDCS_INV_Pos                     11
+#define POWER_PVDCS_PVDBEN_Pos                  12
 
 /* Bit field masks: */
 #define POWER_PVDCS_PVDEN                       ((uint32_t)0x00000001)
@@ -1955,6 +1937,7 @@ typedef struct
 #define POWER_PVDCS_IEPVD                       ((uint32_t)0x00000200)
 #define POWER_PVDCS_INVB                        ((uint32_t)0x00000400)
 #define POWER_PVDCS_INV                         ((uint32_t)0x00000800)
+#define POWER_PVDCS_PVDBEN                      ((uint32_t)0x00001000)
 
 /** @} */ /* End of group POWER_PVDCS */
 
@@ -2750,6 +2733,15 @@ typedef struct
 	__IO uint32_t DATA_R;
 	__IO uint32_t CONTROL6;
 	__IO uint32_t CONTROL7;
+	__IO uint32_t DATA_R_Direct [14];
+	__IO uint32_t INTMASK1;
+	__IO uint32_t INTMASK2;
+	__IO uint32_t CONTROL8;
+	__IO uint32_t CONTROL9;
+	__IO uint32_t CONTROL10;
+	__IO uint32_t CONTROL11;
+	__IO uint32_t CONTROL12;
+	__IO uint32_t CONTROL13;
 }MDR_ARINC429R_TypeDef;
 
 /** @} */ /* End of group Periph_ARINC429R_Data_Structures */
@@ -3193,6 +3185,8 @@ typedef struct
 	__IO uint32_t DATA3_T;
 	__IO uint32_t DATA4_T;
 	__IO uint32_t CONTROL3;
+	__IO uint32_t CONTROL4;
+	__IO uint32_t CONTROL5;
 }MDR_ARINC429T_TypeDef;
 
 /** @} */ /* End of group Periph_ARINC429T_Data_Structures */
@@ -4004,7 +3998,7 @@ typedef struct
 #define AUDIO_IP_DACCTL_DAGAIN_Pos            	 0
 #define AUDIO_IP_DACCTL_MUTE1_Pos            	 6
 #define AUDIO_IP_DACCTL_ODAMP_Pos            	 7
-#define AUDIO_IP_DACCTL_BIAS_Pos            	 8
+#define AUDIO_IP_DACCTL_ODBIAS_Pos            	 8
 #define AUDIO_IP_DACCTL_ODDAC_Pos            	 9
 #define AUDIO_IP_DACCTL_OVECBA_Pos            	 10
 #define AUDIO_IP_DACCTL_OVECBS_Pos            	 11
@@ -4015,7 +4009,7 @@ typedef struct
 #define AUDIO_IP_DACCTL_DAGAIN_Msk	             	((uint32_t)0x0000003F)
 #define AUDIO_IP_DACCTL_MUTE1		             	((uint32_t)0x00000040)
 #define AUDIO_IP_DACCTL_ODAMP						((uint32_t)0x00000080)
-#define AUDIO_IP_DACCTL_BIAS                	 	((uint32_t)0x00000100)
+#define AUDIO_IP_DACCTL_ODBIAS                	 	((uint32_t)0x00000100)
 #define AUDIO_IP_DACCTL_ODDAC                	 	((uint32_t)0x00000200)
 #define AUDIO_IP_DACCTL_OVECBA                	 	((uint32_t)0x00000400)
 #define AUDIO_IP_DACCTL_OVECBS                	 	((uint32_t)0x00000800)
@@ -4401,8 +4395,12 @@ typedef struct
 
 /** @} */ /* End of group __CMSIS */
 
+#ifdef __cplusplus
+    } // extern "C" block end
+#endif
+
 #endif /* __MDR1986VE3_H */
 
-/******************* (C) COPYRIGHT 2013 Milandr ********************************
+/*
 *
 * END OF FILE MDR1986VE3.h */

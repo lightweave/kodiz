@@ -1,23 +1,4 @@
 /**
-  ******************************************************************************
-  * @file    MDR32F9Qx_uart.h
-  * @author  Phyton Application Team
-  * @version V1.4.0
-  * @date    27/04/2010
-  * @brief   This file contains all the functions prototypes for the UART
-  *          firmware library.
-  ******************************************************************************
-  * <br><br>
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, PHYTON SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT
-  * OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2010 Phyton</center></h2>
-  ******************************************************************************
   * FILE MDR32F9Qx_uart.h
   */
 
@@ -86,6 +67,12 @@ typedef struct
                                             ((PERIPH) == MDR_UART2) || \
                                             ((PERIPH) == MDR_UART3) || \
                                             ((PERIPH) == MDR_UART4))
+
+#elif defined (USE_MDR1901VC1T)
+
+#define IS_UART_ALL_PERIPH(PERIPH)          (((PERIPH) == MDR_UART1) || \
+											 ((PERIPH) == MDR_UART2) || \
+											 ((PERIPH) == MDR_UART3))
 #endif
 
 /** @defgroup UART_Word_Length UART Word Length
@@ -273,9 +260,9 @@ typedef struct
 #define UART_Data_PE_Msk                    ((uint32_t)(1 << UART_Data_FE))
 #define UART_Data_FE_Msk                    ((uint32_t)(1 << UART_Data_PE))
 
-#define UART_Data(DATA)                     ((uint8_t)DATA)
-#define UART_Flags(DATA)                    ((uint8_t)(DATA >> 8))
-#define UART_CheckDataStatus(DATA, BIT)     ((((uint32_t)DATA) << (31 - BIT)) >> 31)
+#define UART_Data(DATA)                     ((uint8_t)(DATA))
+#define UART_Flags(DATA)                    ((uint8_t)((DATA) >> 8))
+#define UART_CheckDataStatus(DATA, BIT)     ((((uint32_t)(DATA)) << (31 - (BIT))) >> 31)
 
 #define IS_UART_DATA(DATA)                  ((DATA) <= 0xFF)
 
@@ -346,6 +333,6 @@ void UART_BRGInit(MDR_UART_TypeDef* UARTx, uint32_t UART_BRG);
 
 #endif /* __MDR32F9Qx_UART_H */
 
-/******************* (C) COPYRIGHT 2010 Phyton *********
+/*
 *
 * END OF FILE MDR32F9Qx_uart.h */
