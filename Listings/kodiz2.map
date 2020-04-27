@@ -4,6 +4,26 @@ Component: ARM Compiler 5.06 update 6 (build 750) Tool: armlink [4d35ed]
 
 Section Cross References
 
+    main.o(i.ADC1_Config) refers to mdr32f9qx_adc.o(i.ADC_DeInit) for ADC_DeInit
+    main.o(i.ADC1_Config) refers to mdr32f9qx_adc.o(i.ADC_StructInit) for ADC_StructInit
+    main.o(i.ADC1_Config) refers to mdr32f9qx_adc.o(i.ADC_Init) for ADC_Init
+    main.o(i.ADC1_Config) refers to mdr32f9qx_adc.o(i.ADCx_StructInit) for ADCx_StructInit
+    main.o(i.ADC1_Config) refers to mdr32f9qx_adc.o(i.ADC2_Init) for ADC2_Init
+    main.o(i.ADC1_Config) refers to mdr32f9qx_adc.o(i.ADC1_ITConfig) for ADC1_ITConfig
+    main.o(i.ADC1_Config) refers to main.o(.bss) for sADC
+    main.o(i.ADC2_Config) refers to mdr32f9qx_adc.o(i.ADC_DeInit) for ADC_DeInit
+    main.o(i.ADC2_Config) refers to mdr32f9qx_adc.o(i.ADC_StructInit) for ADC_StructInit
+    main.o(i.ADC2_Config) refers to mdr32f9qx_adc.o(i.ADC_Init) for ADC_Init
+    main.o(i.ADC2_Config) refers to mdr32f9qx_adc.o(i.ADCx_StructInit) for ADCx_StructInit
+    main.o(i.ADC2_Config) refers to mdr32f9qx_adc.o(i.ADC2_Init) for ADC2_Init
+    main.o(i.ADC2_Config) refers to mdr32f9qx_adc.o(i.ADC2_ITConfig) for ADC2_ITConfig
+    main.o(i.ADC2_Config) refers to main.o(.bss) for sADC
+    main.o(i.ADC_Temp_Sensor_Config) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_PCLKcmd) for RST_CLK_PCLKcmd
+    main.o(i.ADC_Temp_Sensor_Config) refers to mdr32f9qx_adc.o(i.ADC_DeInit) for ADC_DeInit
+    main.o(i.ADC_Temp_Sensor_Config) refers to mdr32f9qx_adc.o(i.ADC_StructInit) for ADC_StructInit
+    main.o(i.ADC_Temp_Sensor_Config) refers to mdr32f9qx_adc.o(i.ADC_Init) for ADC_Init
+    main.o(i.ADC_Temp_Sensor_Config) refers to mdr32f9qx_adc.o(i.ADC1_Init) for ADC1_Init
+    main.o(i.ADC_Temp_Sensor_Config) refers to main.o(.bss) for sADC
     main.o(i.MltPinCfg) refers to mdr32f9qx_port.o(i.PORT_Init) for PORT_Init
     main.o(i.MltPinCfg) refers to main.o(.bss) for PortInit
     main.o(i.Uart1PinCfg) refers to mdr32f9qx_port.o(i.PORT_Init) for PORT_Init
@@ -29,16 +49,20 @@ Section Cross References
     main.o(i.main) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_HSEstatus) for RST_CLK_HSEstatus
     main.o(i.main) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_PCLKcmd) for RST_CLK_PCLKcmd
     main.o(i.main) refers to main.o(i.MltPinCfg) for MltPinCfg
-    main.o(i.main) refers to mdr32f9qx_adc.o(i.ADC_DeInit) for ADC_DeInit
-    main.o(i.main) refers to mdr32f9qx_adc.o(i.ADC_StructInit) for ADC_StructInit
-    main.o(i.main) refers to mdr32f9qx_adc.o(i.ADC_Init) for ADC_Init
-    main.o(i.main) refers to mdr32f9qx_adc.o(i.ADCx_StructInit) for ADCx_StructInit
-    main.o(i.main) refers to mdr32f9qx_adc.o(i.ADC2_Init) for ADC2_Init
+    main.o(i.main) refers to main.o(i.ADC1_Config) for ADC1_Config
+    main.o(i.main) refers to main.o(i.ADC2_Config) for ADC2_Config
+    main.o(i.main) refers to mdr32f9qx_adc.o(i.ADC1_Cmd) for ADC1_Cmd
     main.o(i.main) refers to mdr32f9qx_adc.o(i.ADC2_Cmd) for ADC2_Cmd
     main.o(i.main) refers to main.o(i.NVIC_EnableIRQ) for NVIC_EnableIRQ
     main.o(i.main) refers to main.o(i.UartTest) for UartTest
-    main.o(i.main) refers to main.o(.bss) for sADC
+    mdr32f9qx_it.o(i.ADC_IRQHandler) refers to mdr32f9qx_adc.o(i.ADC1_GetFlagStatus) for ADC1_GetFlagStatus
+    mdr32f9qx_it.o(i.ADC_IRQHandler) refers to mdr32f9qx_it.o(.data) for tmpADC
+    mdr32f9qx_it.o(i.EXT_INT1_IRQHandler) refers to mdr32f9qx_port.o(i.PORT_ReadInputData) for PORT_ReadInputData
+    mdr32f9qx_it.o(i.EXT_INT1_IRQHandler) refers to mdr32f9qx_adc.o(i.ADC1_Start) for ADC1_Start
+    mdr32f9qx_it.o(i.EXT_INT1_IRQHandler) refers to mdr32f9qx_adc.o(i.ADC2_Start) for ADC2_Start
     mdr32f9qx_it.o(i.EXT_INT1_IRQHandler) refers to main.o(.data) for ext_IT_flag
+    mdr32f9qx_it.o(i.EXT_INT1_IRQHandler) refers to mdr32f9qx_it.o(.data) for tmpPORT
+    mdr32f9qx_it.o(i.Timer1_IRQHandler) refers to mdr32f9qx_timer.o(i.TIMER_GetITStatus) for TIMER_GetITStatus
     mdr32f9qx_it.o(i.UART1_IRQHandler) refers to mdr32f9qx_uart.o(i.UART_GetITStatusMasked) for UART_GetITStatusMasked
     mdr32f9qx_it.o(i.UART1_IRQHandler) refers to mdr32f9qx_uart.o(i.UART_ClearITPendingBit) for UART_ClearITPendingBit
     mdr32f9qx_it.o(i.UART1_IRQHandler) refers to main.o(.data) for uart1_IT_TX_flag

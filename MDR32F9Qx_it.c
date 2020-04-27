@@ -17,10 +17,20 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2011 Milandr</center></h2>
+	D:\Cortex\lib\MDR32F9_1986BE4_2015\Example_Projects\MDR1986VE91_Eval\src
   */
 
 /* Includes ------------------------------------------------------------------*/
 #include "MDR32F9Qx_it.h"
+
+#include "MDR32F9Qx_config.h"
+#include <MDR32F9Qx_uart.h>
+#include <MDR32F9Qx_adc.h>
+//#include <MDR32F9Qx_bkp.h>
+#include <MDR32F9Qx_port.h>
+#include <MDR32F9Qx_it.h>
+//#include <MDR32F9Qx_dma.h>
+#include <MDR32F9Qx_timer.h>
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -31,6 +41,15 @@ extern uint32_t uart2_IT_RX_flag;
 extern uint32_t ext_IT_flag;
 
 extern uint32_t timer_tmp;
+
+extern __IO uint32_t H_Level;
+
+int tmpADC ;
+int tmpADC2;
+int tmpPORT ;
+
+
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -260,6 +279,17 @@ void WWDG_IRQHandler(void)
 *******************************************************************************/
 void Timer1_IRQHandler(void)
 {
+	 if (TIMER_GetITStatus(MDR_TIMER1, TIMER_STATUS_CNT_ARR) == SET)
+		{		
+		//TIMER_ClearITPendingBit(MDR_TIMER1, TIMER_STATUS_CNT_ARR);
+			  MDR_TIMER1->STATUS &= ~TIMER_STATUS_CNT_ARR;
+			
+			/*while (UART_GetFlagStatus (MDR_UART2, UART_FLAG_TXFE)!= SET)
+			{
+			}
+			UART_SendData (MDR_UART2,0x35);*/
+		}
+
 }
 /*******************************************************************************
 * Function Name  : Timer2_IRQHandler
@@ -296,6 +326,38 @@ void Timer3_IRQHandler(void)
 *******************************************************************************/
 void ADC_IRQHandler(void)
 {
+	 if(ADC1_GetFlagStatus(ADCx_IT_OUT_OF_RANGE) == SET)
+  {
+    /* Turns LED1 On */
+    //PORT_SetBits(MDR_PORTD, PORT_Pin_10);
+  }
+  else
+  {
+    /* Turns LED1 Off */
+    //PORT_ResetBits(MDR_PORTD, PORT_Pin_10);
+  }
+  tmpADC = MDR_ADC->ADC1_RESULT & 0x0FFF;
+	
+	
+	tmpADC2 = MDR_ADC->ADC2_RESULT & 0x0FFF;
+
+	
+  if(tmpADC > H_Level)
+  {
+    /* Turns LED2 On */
+    //PORT_SetBits(MDR_PORTD, PORT_Pin_11);
+  }
+  else
+  {
+    /* Turns LED2 Off */
+    //PORT_ResetBits(MDR_PORTD, PORT_Pin_11);
+  }
+  /* Clear ADC1 OUT_OF_RANGE interrupt bit */
+  MDR_ADC->ADC1_STATUS = (ADCx_IT_END_OF_CONVERSION | ADCx_IT_OUT_OF_RANGE)<<2;
+	
+	MDR_ADC->ADC2_STATUS = (ADCx_IT_END_OF_CONVERSION | ADCx_IT_OUT_OF_RANGE)<<2;
+
+
 }
 /*******************************************************************************
 * Function Name  : COMPARATOR_IRQHandler
@@ -343,7 +405,24 @@ void EXT_INT1_IRQHandler(void)
 //  }
 	ext_IT_flag++;
 	
+	tmpPORT = PORT_ReadInputData(MDR_PORTE);
+	
 	NVIC_DisableIRQ(EXT_INT1_IRQn);
+	
+			ADC1_Start();
+			ADC2_Start();
+	
+	switch(tmpPORT)
+	{
+		case 0x0FFF:
+			break;
+		case 0x0FFE:
+			break;
+		case 0x0FFA:
+			break;
+		default:
+			break;
+	}
 }
 /*******************************************************************************
 * Function Name  : EXT_INT2_IRQHandler

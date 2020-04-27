@@ -241,7 +241,106 @@ void MltPinCfg (void)
 	PORT_Init(MDR_PORTF, &PortInit);
 }
 
+/*******************************************************************************
+* Function Name  : ADC_Temp_Sensor_Config
+* Description    : Configure the ADC1 for temperature sensor reading.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+/*******************************************************************************
+* Function Name  : ADC_Config
+* Description    : Configure the ADC1 for TRIM using.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void ADC1_Config(uint32_t acd_ch)
+{
+  /* ADC Configuration */
+  /* Reset all ADC settings */
+  ADC_DeInit();
+  ADC_StructInit(&sADC);
+  ADC_Init (&sADC);
 
+  ADCx_StructInit (&sADCx);
+  sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
+  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;//ADC_SAMPLING_MODE_CICLIC_CONV
+  sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
+  sADCx.ADC_ChannelNumber    = acd_ch;//ADC_CH_ADC2;
+  sADCx.ADC_Channels         = 0;
+  sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;//ADC_LEVEL_CONTROL_Enable
+  sADCx.ADC_LowLevel         = 0x800;//L_Level
+  sADCx.ADC_HighLevel        = 0x900;//H_Level
+  sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
+  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
+  sADCx.ADC_Prescaler        = ADC_CLK_div_8;//ADC_CLK_div_32768;
+  sADCx.ADC_DelayGo          = 0xF;
+  ADC2_Init (&sADCx);
+	
+	//uint32_t tmpreg_CFG = MDR_ADC->ADC2_CFG;
+
+  /* Enable ADC2 EOCIF and AWOIFEN interrupts */
+  ADC1_ITConfig((ADCx_IT_END_OF_CONVERSION  | ADCx_IT_OUT_OF_RANGE), ENABLE);
+
+}
+
+void ADC2_Config(uint32_t acd_ch)
+{
+  	
+	/* ADC Configuration */
+  /* Reset all ADC settings */
+  ADC_DeInit();
+  ADC_StructInit(&sADC);
+  ADC_Init (&sADC);
+
+  ADCx_StructInit (&sADCx);
+  sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
+  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;//ADC_SAMPLING_MODE_CICLIC_CONV
+  sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
+  sADCx.ADC_ChannelNumber    = acd_ch;//ADC_CH_ADC3;
+  sADCx.ADC_Channels         = 0;
+  sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;//ADC_LEVEL_CONTROL_Enable
+  sADCx.ADC_LowLevel         = 0x800;//L_Level
+  sADCx.ADC_HighLevel        = 0x900;//H_Level
+  sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
+  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
+  sADCx.ADC_Prescaler        = ADC_CLK_div_8;//ADC_CLK_div_32768;
+  sADCx.ADC_DelayGo          = 0xF;
+  ADC2_Init (&sADCx);
+	
+	//uint32_t tmpreg_CFG = MDR_ADC->ADC2_CFG;
+
+  /* Enable ADC2 EOCIF and AWOIFEN interrupts */
+  ADC2_ITConfig((ADCx_IT_END_OF_CONVERSION  | ADCx_IT_OUT_OF_RANGE), ENABLE);
+
+}
+
+
+void ADC_Temp_Sensor_Config(void)
+{
+  /* Enable the RTCHSE clock on ADC1 */
+  RST_CLK_PCLKcmd((RST_CLK_PCLK_ADC), ENABLE);
+
+  /* ADC Configuration */
+  /* Reset all ADC settings */
+  ADC_DeInit();
+
+  ADC_StructInit(&sADC);
+  sADC.ADC_TempSensor           = ADC_TEMP_SENSOR_Enable;
+  sADC.ADC_TempSensorAmplifier  = ADC_TEMP_SENSOR_AMPLIFIER_Enable;
+  sADC.ADC_TempSensorConversion = ADC_TEMP_SENSOR_CONVERSION_Enable;
+  ADC_Init (&sADC);
+	
+  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_CICLIC_CONV;
+  sADCx.ADC_ChannelNumber    = ADC_CH_TEMP_SENSOR;
+  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_EXACT;
+  sADCx.ADC_Prescaler        = ADC_CLK_div_8;//ADC_CLK_div_32768;
+  sADCx.ADC_DelayGo          = 0x7;
+  ADC1_Init (&sADCx);
+	
+	
+}
 
 
 /**
@@ -277,34 +376,12 @@ int main (void)
 	
 	MltPinCfg ();
 	
+	ADC1_Config(ADC_CH_ADC2);//pd2
+	ADC2_Config(ADC_CH_ADC3);//pd3
 	
-	/* ADC Configuration */
-  /* Reset all ADC settings */
-  ADC_DeInit();
-  ADC_StructInit(&sADC);
-  ADC_Init (&sADC);
-
-  ADCx_StructInit (&sADCx);
-  sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
-  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;//ADC_SAMPLING_MODE_CICLIC_CONV
-  sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
-  sADCx.ADC_ChannelNumber    = ADC_CH_ADC2;
-  sADCx.ADC_Channels         = 0;
-  sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;//ADC_LEVEL_CONTROL_Enable
-  sADCx.ADC_LowLevel         = 0x800;//L_Level
-  sADCx.ADC_HighLevel        = 0x900;//H_Level
-  sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
-  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
-  sADCx.ADC_Prescaler        = ADC_CLK_div_32768;
-  sADCx.ADC_DelayGo          = 0xF;
-  ADC2_Init (&sADCx);
-	
-	//uint32_t tmpreg_CFG = MDR_ADC->ADC2_CFG;
-
-  /* Enable ADC2 EOCIF and AWOIFEN interrupts */
-  //ADC2_ITConfig((ADCx_IT_END_OF_CONVERSION  | ADCx_IT_OUT_OF_RANGE), ENABLE);
-
   /* ADC2 enable */
+	ADC1_Cmd (ENABLE);	
+
   ADC2_Cmd (ENABLE);	
 		
 	NVIC_EnableIRQ(EXT_INT1_IRQn);	
