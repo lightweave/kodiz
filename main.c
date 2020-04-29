@@ -207,38 +207,46 @@ exit: return 0;
 
 void MltPinCfg (void)
 {
+	/* PORTA ext interrupt PA0*/
 	/* Fill PortInit structure*/
     PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
     PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_ON;
     PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
-    PortInit.PORT_PD = PORT_PD_DRIVER;
-    PortInit.PORT_GFEN = PORT_GFEN_OFF;
+    PortInit.PORT_PD = PORT_PD_OPEN; // here we make this port open for tri state, so we can connect more than one inputs to each pin
+    PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
 	/* Configure PORTA pins 0..7 for mlt inout data  */
-	PortInit.PORT_Pin   = (PORT_Pin_0 | PORT_Pin_1 | PORT_Pin_2 | PORT_Pin_3 | PORT_Pin_4 | PORT_Pin_5 | PORT_Pin_6 | PORT_Pin_7);
+	PortInit.PORT_Pin   = PORT_Pin_0;
 	PortInit.PORT_OE    = PORT_OE_IN;
 	PortInit.PORT_FUNC  = PORT_FUNC_ALTER;
 	PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
-	PortInit.PORT_SPEED = PORT_SPEED_SLOW;
+	PortInit.PORT_SPEED = PORT_SPEED_SLOW; //what it means? maybe power connected to port?
 
 	PORT_Init(MDR_PORTA, &PortInit);
-
-	/* Configure PORTD pins 3 for mlt output  */
-//	PortInit.PORT_Pin   = (PORT_Pin_3);
-//	PortInit.PORT_OE    = PORT_OE_OUT;
-
-//	PORT_Init(MDR_PORTD, &PortInit);
 	
-	/* Configure ADC pin: ADC2 */
+	/* PORTB UART pins*/
+	Uart1PinCfg();
+
+	/* PORTE input of all counters*/
+		/* Fill PortInit structure*/
+    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
+    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
+    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
+    PortInit.PORT_PD = PORT_PD_DRIVER;
+    PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
+	/* Configure PORTD pins 3 for mlt output  */
+	PortInit.PORT_Pin   = (PORT_Pin_3);
+	PortInit.PORT_OE    = PORT_OE_OUT;
+
+	PORT_Init(MDR_PORTE, &PortInit);
+
+	
+	/* Configure ADC1 and ADC2 pin: PD2 PD3 */
   /* Configure PORTD pin 2 */
-  PortInit.PORT_Pin   = PORT_Pin_2;
-  PortInit.PORT_OE    = PORT_OE_IN;
-  PortInit.PORT_MODE  = PORT_MODE_ANALOG;
+		PortInit.PORT_Pin   = (PORT_Pin_2 | PORT_Pin_3);
+		PortInit.PORT_OE    = PORT_OE_IN;
+		PortInit.PORT_MODE  = PORT_MODE_ANALOG;
   PORT_Init(MDR_PORTD, &PortInit);
 
-	/* Configure PORTF pins 0..4 for mlt output */
-	PortInit.PORT_Pin   = (PORT_Pin_0 | PORT_Pin_1 | PORT_Pin_2 | PORT_Pin_3 | PORT_Pin_4);
-
-	PORT_Init(MDR_PORTF, &PortInit);
 }
 
 /*******************************************************************************
@@ -350,7 +358,8 @@ void ADC_Temp_Sensor_Config(void)
   */
 int main (void)
 {
-		RST_CLK_HSEconfig(RST_CLK_HSE_ON);
+	/* Enables the High Speed External clock */
+	RST_CLK_HSEconfig(RST_CLK_HSE_ON);
     while (RST_CLK_HSEstatus() != SUCCESS);
     
 	/* Enables the clock on PORTA */
@@ -365,9 +374,9 @@ int main (void)
 	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTE, ENABLE);
 	/* Enables the HSI clock on PORTF */
     RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTF, ENABLE);
-	/* Enables the HSI clock on ExtBus */
-    RST_CLK_PCLKcmd(RST_CLK_PCLK_EBC, ENABLE);
 	
+	/* Enables the HSI clock on ExtBus */
+    RST_CLK_PCLKcmd(RST_CLK_PCLK_EBC, ENABLE);	
 	/* Enables the ADC clock on ExtBus */
 	RST_CLK_PCLKcmd(RST_CLK_PCLK_ADC, ENABLE);
 	
