@@ -329,10 +329,11 @@ a\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR3
 ARM Macro Assembler    Page 6 
 
 
-2F9Qx\inc -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefin
-e="__UVISION_VERSION SETA 528" --predefine="_RTE_ SETA 1" --predefine="USE_MDR3
-2F9Q1_Rev1 SETA 1" --list=.\listings\startup_mdr32f9qx.lst RTE\Device\MDR1986BE
-91\startup_MDR32F9Qx.s
+2F9Qx\inc -IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Librar
+ies\MDR32F9Qx_StdPeriph_Driver\inc -IC:\Keil_v5\ARM\CMSIS\Include --predefine="
+__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 528" --predefine="_RTE_ SETA
+ 1" --predefine="USE_MDR32F9Q1_Rev1 SETA 1" --list=.\listings\startup_mdr32f9qx
+.lst RTE\Device\MDR1986BE91\startup_MDR32F9Qx.s
 
 
 

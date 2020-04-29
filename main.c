@@ -58,6 +58,9 @@ ADC_InitTypeDef sADC;
 ADCx_InitTypeDef sADCx;
 uint32_t tmp ;
 
+uint32_t timer_tmp;
+
+__IO uint32_t H_Level;
 
 //TIMER_CntInitTypeDef sTIM_CntInit;
 //TIMER_ChnInitTypeDef sTIM_ChnInit;
@@ -219,7 +222,7 @@ void MltPinCfg (void)
 	PortInit.PORT_OE    = PORT_OE_IN;
 	PortInit.PORT_FUNC  = PORT_FUNC_ALTER;
 	PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
-	PortInit.PORT_SPEED = PORT_SPEED_SLOW; //what it means? maybe power connected to port?
+	PortInit.PORT_SPEED = PORT_SPEED_SLOW; //what does it means? maybe power connected to port?
 
 	PORT_Init(MDR_PORTA, &PortInit);
 	
@@ -278,7 +281,7 @@ void ADC1_Config(uint32_t acd_ch)
   sADCx.ADC_ChannelNumber    = acd_ch;//ADC_CH_ADC2;
   sADCx.ADC_Channels         = 0;
   sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;//ADC_LEVEL_CONTROL_Enable
-  sADCx.ADC_LowLevel         = 0x800;//L_Level
+  sADCx.ADC_LowLevel         = 0x100;//L_Level noise level
   sADCx.ADC_HighLevel        = 0x900;//H_Level
   sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
   sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
@@ -389,7 +392,7 @@ int main (void)
 	ADC2_Config(ADC_CH_ADC3);//pd3
 	
   /* ADC2 enable */
-	ADC1_Cmd (ENABLE);	
+	ADC1_Cmd (ENABLE);
 
   ADC2_Cmd (ENABLE);	
 		

@@ -39,15 +39,16 @@
 
 /* #define USE_MDR32F9Q3_Rev0 */
 
- #define USE_MDR32F9Q3_Rev1 
+            /*#define USE_MDR32F9Q3_Rev1 */ //for debug board
 
 /* #define USE_MDR1986VE1T  */
 
 /* #define USE_MDR1986VE3  */
 
-/* #define USE_MDR1986VE9x  */
+#define USE_MDR1986VE9x /* #define USE_MDR1986VE9x  */
 
 /* #define USE_MDR1986VE94 */
+
 
 #endif
 
