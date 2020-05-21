@@ -8,7 +8,7 @@ graphics.off()          # close all graphic windows
 ### establish a serial connection
 
 con <- serialConnection(name = "get_temps",
-                        port = "COM5",
+                        port = "COM6",
                         mode = "115200,n,8,1",
                         buffering = "none",
                         newline = 1,
