@@ -46,7 +46,51 @@
   */
 
 /* Private typedef -----------------------------------------------------------*/
+/* Measurements Data  */
+// ==================================================================================================
+struct {// Structure for Doase and Fluxes data collecting
+  uint8_t Metka1; 
+  uint8_t metka2;
+  uint32_t day[4];		//  month, day, hour, minute
+  uint32_t Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Neut_1, Neut_2;
+  uint32_t Dose_1, Dose_2, Dose_Comp_1;
+  uint8_t DF[480];	//
+} DOSE_AND_FLUX;
+//===================================================================================================
+
+struct { // Structure for Dose and Fluxes data current values
+  uint16_t Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Neut_1, Neut_2;
+  uint32_t Dose_1, Dose_2, Dose_Comp_1;
+} D_AND_F;
+
+
+// ===========================================================================
+
+struct {
+  uint16_t Metka1; 
+  uint16_t metka2;
+  uint32_t Time;
+  uint32_t interr_reg;
+  uint32_t FLUGS;
+  uint32_t ADC_code, P1_Counter;
+  uint32_t Pr1, Pr2;
+  uint32_t Dt1, Dt2;
+  uint32_t N1, N2;
+} Temporal_buff;
+
+// ===========================================================================
+
+#define Spectr_size   64  
+#define Spectr_number 4
+
+//Other variant
+//For forming of spectrums
+
+unsigned short Spectra[Spectr_number][Spectr_size]; // Array for accumulation of energy deposition spectrums in detectors.
+
 /* Private define ------------------------------------------------------------*/
+#define METKA1  			0xf0ff// start 61695
+#define METKA2  			0xf0ff// start 61695
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static PORT_InitTypeDef PortInit;
