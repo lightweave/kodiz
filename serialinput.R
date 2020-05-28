@@ -1,8 +1,9 @@
 library(serial)
-
+library(tcl)
 rm(list = ls())         # clear environment
 graphics.off()          # close all graphic windows
 
+listPorts()
 
 
 ### establish a serial connection
