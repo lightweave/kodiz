@@ -48,7 +48,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Measurements Data  */
 // ==================================================================================================
-struct {// Structure for Doase and Fluxes data collecting
+struct {// Structure for Doase and Fluxes data collecting every minute
   uint8_t Metka1; 
   uint8_t metka2;
   uint32_t day[4];		//  month, day, hour, minute
@@ -71,7 +71,7 @@ struct {
   uint16_t metka2;
   uint32_t Time;
   uint32_t interr_reg;
-  uint32_t FLUGS;
+  uint32_t FLAGS;
   uint32_t ADC_code, P1_Counter;
   uint32_t Pr1, Pr2;
   uint32_t Dt1, Dt2;
