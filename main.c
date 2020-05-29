@@ -46,6 +46,35 @@
   */
 
 /* Private typedef -----------------------------------------------------------*/
+
+// ===========================================================================
+  // Table assigning symbol, that identifies array and array content
+  // Symbol	array content
+  // F		Collected dose and fluses values, dose dinamics for each second
+  // S		Energy deposition spectra
+  // T		Test information
+  // H 		High Amplitude Data
+  // N		Neutron burst data
+// ===========================================================================
+
+// Constants and variables for data transmission through CAN-port
+#define Buffer_Size 512     // Length, in bytes, of one buffer for data transmission
+#define Buffer_Number 32		// Number of buffers = 8  -- need to increase!!!!
+
+struct Results_Buffer {// Type of structure of output buffer
+  char ready;	// Flag. When information is ready - a value of parameter >0
+  char buffer[Buffer_Size]; // Array of bytes, containing the information to the transmission
+};
+// ==== Global variables, managers by a data transmission through CAN-port =====
+struct Results_Buffer Data_Buffer[Buffer_Number]; // Array of output buffers.
+
+int Buff_Write_Index=0;                 //  Index of buffer, to which written down in progress
+int Buff_Send__Index = Buffer_Number-1; //  Index of buffer, from which data transmission in progress
+int Flug_Buff = -3;                     //  Flag of information transmission from a buffer
+                                        // -3 means that all of buffers are empty
+                                        // -2 means that all of buffers are already transmitted
+                                        // -1 means that it is a buffer prepared to the transmission,
+                                        // Flug_Buff >= 0 - error
 /* Measurements Data  */
 // ==================================================================================================
 struct {// Structure for Doase and Fluxes data collecting every minute
@@ -88,9 +117,27 @@ struct {
 
 unsigned short Spectra[Spectr_number][Spectr_size]; // Array for accumulation of energy deposition spectrums in detectors.
 
+// ===========================================================================
+
+//For neutron berst registration
+#define Neutron_MAX 10
+struct {
+  unsigned short Metka1; 
+  union Char_Short metka2;
+  unsigned long neutron_t[127];	
+} Neutron_Bunch;
+int Old_Tick_2, Old_Sec, N_ind=Neutron_MAX, i_n_t=0;
+int  D_tick_2=32;  //  ???????? ??????? ?????? ???????? ?????????, ??? ???? ???? ???????, ????/6
+float Pronon_Fon=0, Proton_Level=2.5;	// ??????? ??? ?????? ???????? ? ???????, ???? ???????? ?????????? ???????? ?? ???????.
+float Beta=0.9, Alfa= 0.1 ; 		// ????????? ????????????????? ??????????? ??? ??????? ???? ????????
+
 /* Private define ------------------------------------------------------------*/
 #define METKA1  			0xf0ff// start 61695
 #define METKA2  			0xf0ff// start 61695
+
+
+
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static PORT_InitTypeDef PortInit;
@@ -113,6 +160,33 @@ __IO uint32_t H_Level;
 uint32_t ext_IT_flag;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+
+// ==================================================================================================
+// This function must be used for initialisation of all values that need 
+void Detectors_Init(void)
+{
+//  Clear_Registers_Bits();  
+// ===========================
+  //ConfigureTimer();  
+  Counters_Reset();
+  Data_Buffer_Reset();
+  FLUX_Reset();
+  Reset_Spectra_and_Counters ();  
+  // ===========================
+  Set_Registers_Bits();
+  
+  
+#ifdef DEBUGTIMER
+
+  memset(debug_buf, 12, Buffer_Size);
+  *(unsigned int *) debug_buf = METKA1 ;
+  debug_buf[2]='T';
+  debug_duf_index =4;
+  
+#endif
+  
+  
+}  
 
 void Uart1PinCfg(void)
 {
