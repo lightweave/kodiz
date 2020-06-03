@@ -12,4 +12,5 @@
 .\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_adc.h
 .\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_rst_clk.h
 .\objects\main.o: MDR32F9Qx_it.h
+.\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\float.h
 .\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_timer.h
