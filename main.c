@@ -86,8 +86,8 @@ int Flug_Buff = -3;                     //  Flag of information transmission fro
 /* Measurements Data  */
 // ==================================================================================================
 struct {// Structure for Doase and Fluxes data collecting every minute
-  uint8_t Metka1; 
-  uint8_t metka2;
+  uint16_t Metka1; 
+  uint16_t metka2;
   uint32_t day[4];		//  month, day, hour, minute
   uint32_t Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Neut_1, Neut_2;
   uint32_t Dose_1, Dose_2, Dose_Comp_1;
@@ -124,16 +124,39 @@ struct {
 	
 	uint8_t memory[480];
 } Memory_buff;
+// ==================================================================================================
+
+#ifdef DEBUGBUFFER
+
+unsigned char debug_buf[512];
+unsigned int debug_duf_index = 0;
+
+#endif
+
+
+//usage:
+//#define DEBUGBUFFER
+
+#ifdef DEBUGBUFFER
+
+  memset(debug_buf, 12, Buffer_Size);
+  *(unsigned int *) debug_buf = METKA1 ;
+  debug_buf[2]='T';
+  debug_duf_index =4;
+  
+#endif
+
+
 
 // ===========================================================================
 
-#define Spectr_size   64  
-#define Spectr_number 4
+#define Spectrum_size   64  
+#define Spectrum_number 4
 
 //Other variant
-//For forming of spectrums
+//For forming of spectra
 
-unsigned short Spectra[Spectr_number][Spectr_size]; // Array for accumulation of energy deposition spectrums in detectors.
+unsigned short Spectra[Spectrum_number][Spectrum_size]; // Array for accumulation of energy deposition spectrums in detectors.
 
 // ===========================================================================
 
@@ -147,12 +170,19 @@ struct {
 uint32_t Old_Tick_2, Old_Sec, N_ind=Neutron_MAX, i_n_t=0;
 
 uint32_t  D_tick_2=32;  //  интервал времени меньше которого считается, что идет один всплеск, мсек/6
-float Pronon_Fon=0, Proton_Level=2.5;	// Текущий фон потока протонов и уровень, выше которого нейтронные всплески не регистр.
+float Proton_Fon=0, Proton_Level=2.5;	// Текущий фон потока протонов и уровень, выше которого нейтронные всплески не регистр.
 float Beta=0.9, Alfa= 0.1 ; 		// Константа экспоненциального сглаживания для расчета фона протонов
 
 /* Private define ------------------------------------------------------------*/
 #define METKA1  			0xf0ff// start 61695
 #define METKA2  			0xf0ff// start 61695
+
+// all main counters declared here
+uint32_t  Dose_1, Dose_2, Dose_Comp_1, Dose_Comp_2, Prot_1_Interrupt, Prot_2_Interrupt;
+uint32_t  Detectors_Flugs = 0;
+uint32_t  Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Prot_Comp_2 ,Neutron_1, Neutron_2, Neut_1, Neut_2;
+uint32_t  tick_1, tick_2, Buff_No=0, Spec_No=0, Command_No=0;
+
 
 
 
@@ -181,6 +211,56 @@ uint32_t ext_IT_flag;
 /* Private functions ---------------------------------------------------------*/
 
 // ==================================================================================================
+
+
+// ==================================================================================================
+void Counters_Reset(void)
+{
+  Counter_of_Detector_1=0;  
+  Neutron_1=0;  Neutron_2=0;
+  Neut_1=0;     Neut_2=0;
+  Prot_1=0;     Prot_2=0;  
+  Prot_1_Interrupt=0;      Prot_2_Interrupt=0;     
+}
+// ==================================================================================================
+void FLUX_Reset(void)
+{
+//memset((char *) & D_AND_F, 0, sizeof(D_AND_F));
+//memset((char *) & DOSE_AND_FLUX, 0, sizeof(DOSE_AND_FLUX));
+DOSE_AND_FLUX.Metka1= METKA1;
+DOSE_AND_FLUX.metka2 = 0x4600; //DOSE_AND_FLUX.metka2='F';//DOSE_AND_FLUX.metka2='\0';
+}
+
+// ==================================================================================================
+void Reset_Spectra_and_Counters (void)
+{
+ int i,j;
+
+   for(j=0; j<Spectrum_number; j++)
+   for( i=0; i < Spectrum_size; i++)   // *Spectr_size
+     Spectra[j][i] =0;
+
+ Counter_of_Detector_1=0;
+ Prot_1=0; Prot_2=0; Prot_Comp_1=0;  Prot_Comp_2=0;
+ Neutron_1=0;  Neutron_2=0;
+ Dose_1=0;  Dose_2=0;  Dose_Comp_1=0;  Dose_Comp_2=0;
+ Prot_1_Interrupt=0; Prot_2_Interrupt=0;
+ // To whip off the vehicle meter of channel of P1
+ Neut_1=0; Neut_2=0;
+}
+// ==================================================================================================
+// Setting to null circle buffer for sending by CAN
+void Data_Buffer_Reset(void)
+{
+     int i; 
+     Buff_Send__Index = Buffer_Number -1;
+     Buff_Write_Index=0;
+     Flug_Buff = -3;
+     for (i=0; i < Buffer_Number; i++) {
+//       memset(Data_Buffer[i].buffer, 0, Buffer_Size);
+       Data_Buffer[i].ready=0;//
+     }
+}
 // This function must be used for initialisation of all values that need 
 void Detectors_Init(void)
 {
@@ -191,32 +271,13 @@ void Detectors_Init(void)
   Data_Buffer_Reset();
   FLUX_Reset();
   Reset_Spectra_and_Counters ();  
-  // ===========================
-  Set_Registers_Bits();
+ 
   
-  
-#ifdef DEBUGTIMER
-
-  memset(debug_buf, 12, Buffer_Size);
-  *(unsigned int *) debug_buf = METKA1 ;
-  debug_buf[2]='T';
-  debug_duf_index =4;
-  
-#endif
   
   
 }  
 
-
 // ==================================================================================================
-void FLUX_Reset(void)
-{
-//memset((char *) & D_AND_F, 0, sizeof(D_AND_F));
-//memset((char *) & DOSE_AND_FLUX, 0, sizeof(DOSE_AND_FLUX));
-DOSE_AND_FLUX.Metka1= METKA1;
-DOSE_AND_FLUX.metka2.st[0]='F';
-DOSE_AND_FLUX.metka2.st[1]='\0';
-}
 
 void Uart1PinCfg(void)
 {
@@ -235,10 +296,41 @@ void Uart1PinCfg(void)
     PORT_Init(MDR_PORTB, &PortInit);
     /* Configure PORTB pins 5 (UART1_TX) as output */
     PortInit.PORT_OE = PORT_OE_OUT;
-    PortInit.PORT_Pin = PORT_Pin_5;
-    PORT_Init(MDR_PORTB, &PortInit);	
+    PortInit.PORT_Pin = PORT_Pin_5;//(PORT_Pin_5 | PORT_Pin_7);/* Configure PORTB pins 7 (DE pin tranceiver) as output */ 
+    PORT_Init(MDR_PORTB, &PortInit);
+	
+    /* DELETED - mulfunction of controller !!! Configure PORTB pins 6 DE pin tranceiver as output for kodiz board----------- */
+//    PortInit.PORT_OE = PORT_OE_OUT;
+//    PortInit.PORT_Pin = PORT_Pin_6;
+//    PORT_Init(MDR_PORTB, &PortInit);
+
+
 }
 
+// ==================================================================================================
+
+void Uart2PinCfg(void)
+{
+	/* Fill PortInit structure*/
+    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
+    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
+    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
+    PortInit.PORT_PD = PORT_PD_DRIVER;
+    PortInit.PORT_GFEN = PORT_GFEN_OFF;
+    PortInit.PORT_FUNC = PORT_FUNC_ALTER;
+    PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
+    PortInit.PORT_MODE = PORT_MODE_DIGITAL;
+	
+    /* Configure PORTB pins 0 (UART2_RX) as input */
+    PortInit.PORT_OE = PORT_OE_IN;
+    PortInit.PORT_Pin = PORT_Pin_0;
+    PORT_Init(MDR_PORTD, &PortInit);
+    /* Configure PORTB pins 1 (UART2_TX) as output */
+    PortInit.PORT_OE = PORT_OE_OUT;
+    PortInit.PORT_Pin = PORT_Pin_1;
+    PORT_Init(MDR_PORTD, &PortInit);	
+	
+}
 
 void Uart1Setup(void)
 {
@@ -261,7 +353,27 @@ void Uart1Setup(void)
     /* Enables UART1 peripheral */
     UART_Cmd(MDR_UART1,ENABLE);
 }
+void Uart2Setup(void)
+{
+	/* Select HSI/2 as CPU_CLK source*/
+    RST_CLK_CPU_PLLconfig (RST_CLK_CPU_PLLsrcHSIdiv2,0);
+    /* Enables the CPU_CLK clock on UART2 */
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_UART2, ENABLE);
+    /* Set the HCLK division factor = 1 for UART2*/
+	UART_BRGInit(MDR_UART2, UART_HCLKdiv1);
 
+    UART_InitStructure.UART_BaudRate                = 12000; // not applied! - Why??? 
+    UART_InitStructure.UART_WordLength              = UART_WordLength8b;
+    UART_InitStructure.UART_StopBits                = UART_StopBits1;
+    UART_InitStructure.UART_Parity                  = UART_Parity_No;
+    UART_InitStructure.UART_FIFOMode                = UART_FIFO_OFF;
+    UART_InitStructure.UART_HardwareFlowControl     = UART_HardwareFlowControl_RXE | UART_HardwareFlowControl_TXE;
+
+	/* Configure UART2 parameters*/
+	UART_Init (MDR_UART2,&UART_InitStructure);
+    /* Enables UART2 peripheral */
+    UART_Cmd(MDR_UART2,ENABLE);
+}
 
 
 int UartTest (void)
@@ -272,7 +384,22 @@ uint8_t DataByte;
 
 	Uart1PinCfg();
 	Uart1Setup();
+	//Uart2PinCfg();
+	//Uart2Setup();
  	while(1)
+	{
+		while (UART_GetFlagStatus (MDR_UART1, UART_FLAG_TXFE)!= SET)
+				{
+				}
+				//PORT_SetBits(MDR_PORTB, PORT_Pin_7);
+			UART_SendData (MDR_UART1, (uint16_t)('g'));
+				//PORT_ResetBits(MDR_PORTB, PORT_Pin_7);
+			}
+	
+			
+			
+			
+			
 	{
 		/* Check RXFF flag*/
 		do
@@ -309,22 +436,22 @@ uint8_t DataByte;
 			
 			tmp = ext_IT_flag;
 			
-			while (UART_GetFlagStatus (MDR_UART1, UART_FLAG_TXFE)!= SET)
+			while (UART_GetFlagStatus (MDR_UART2, UART_FLAG_TXFE)!= SET)
 				{
 				}
-			UART_SendData (MDR_UART1, (uint16_t)(tmp));
-			while (UART_GetFlagStatus (MDR_UART1, UART_FLAG_TXFE)!= SET)
+			UART_SendData (MDR_UART2, (uint16_t)(tmp));
+			while (UART_GetFlagStatus (MDR_UART2, UART_FLAG_TXFE)!= SET)
 				{
 				}
-			UART_SendData (MDR_UART1, (uint16_t)(tmp>>8));
-			while (UART_GetFlagStatus (MDR_UART1, UART_FLAG_TXFE)!= SET)
+			UART_SendData (MDR_UART2, (uint16_t)(tmp>>8));
+			while (UART_GetFlagStatus (MDR_UART2, UART_FLAG_TXFE)!= SET)
 				{
 				}
-			UART_SendData (MDR_UART1, (uint16_t)(tmp>>16));
-			while (UART_GetFlagStatus (MDR_UART1, UART_FLAG_TXFE)!= SET)
+			UART_SendData (MDR_UART2, (uint16_t)(tmp>>16));
+			while (UART_GetFlagStatus (MDR_UART2, UART_FLAG_TXFE)!= SET)
 				{
 				}
-			UART_SendData (MDR_UART1, (uint16_t)(tmp>>24));
+			UART_SendData (MDR_UART2, (uint16_t)(tmp>>24));
 				
 				// Enable EXT INT !	
 				NVIC_EnableIRQ(EXT_INT1_IRQn);
@@ -346,10 +473,10 @@ uint8_t DataByte;
 				
 		}
 		/* Check TXFE flag*/
-		while (UART_GetFlagStatus (MDR_UART1, UART_FLAG_TXFE)!= SET);
+		while (UART_GetFlagStatus (MDR_UART2, UART_FLAG_TXFE)!= SET);
         /* Send Data */
 		
-        UART_SendData (MDR_UART1,DataByte);
+        UART_SendData (MDR_UART2,DataByte);
 
 	}
 exit: return 0;
@@ -375,7 +502,7 @@ void MltPinCfg (void)
 	PORT_Init(MDR_PORTA, &PortInit);
 	
 	/* PORTB UART pins*/
-	Uart1PinCfg();
+	// Uart1PinCfg();
 
 	/* PORTE input of all counters*/
 		/* Fill PortInit structure*/
@@ -555,6 +682,23 @@ int main (void)
 	
 }
 
+// ==================================================================================================
+uint8_t  Counter_Compression(uint32_t j) {
+  uint8_t k;
+  uint32_t mask;
+        if(j&0x0ffffff0){
+            mask=0x08000000;
+            for (k=24;k>0; k--){
+                if(j & mask){
+                   j>>=k; j=j& 0x0007;
+                   j |=((k+1)<<3); break;
+                } else mask >>= 1;
+            }
+        }
+ return (uint8_t) j;
+}
+
+
 /**
   * @brief  Reports the source file ID, the source line number
   *         and expression text (if USE_ASSERT_INFO == 2) where
@@ -575,6 +719,7 @@ void assert_failed(uint32_t file_id, uint32_t line)
   {
   }
 }
+=
 #elif (USE_ASSERT_INFO == 2)
 void assert_failed(uint32_t file_id, uint32_t line, const uint8_t* expr);
 {
