@@ -76,7 +76,7 @@
 /* Uncomment the line(s) below to define used JTAG port(s). Leave all commented
  * if there is no JTAG ports */
 #if (defined(USE_MDR1986VE9x) || defined (USE_MDR1901VC1T))
- #define USE_JTAG_A //for kodiz
+ //#define USE_JTAG_A //for kodiz
  //#define USE_JTAG_B //for eval board 
 #endif
 

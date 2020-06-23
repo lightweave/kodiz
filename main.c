@@ -211,8 +211,15 @@ uint32_t ext_IT_flag;
 /* Private functions ---------------------------------------------------------*/
 
 // ==================================================================================================
-
-
+void Delayms(__IO uint32_t nCount)
+{
+	nCount = 16000*nCount;// 16 MGz
+  for (; nCount != 0; nCount--);
+}
+void Delay(__IO uint32_t nCount)
+{
+  for (; nCount != 0; nCount--);
+}
 // ==================================================================================================
 void Counters_Reset(void)
 {
@@ -276,37 +283,6 @@ void Detectors_Init(void)
   
   
 }  
-
-// ==================================================================================================
-
-void Uart1PinCfg(void)
-{
-	/* Fill PortInit structure*/
-    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
-    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
-    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
-    PortInit.PORT_PD = PORT_PD_DRIVER;
-    PortInit.PORT_GFEN = PORT_GFEN_OFF;
-    PortInit.PORT_FUNC = PORT_FUNC_ALTER;
-    PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
-    PortInit.PORT_MODE = PORT_MODE_DIGITAL;
-    /* Configure PORTB pins 6 (UART1_RX) as input */
-    PortInit.PORT_OE = PORT_OE_IN;
-    PortInit.PORT_Pin = PORT_Pin_6;
-    PORT_Init(MDR_PORTB, &PortInit);
-    /* Configure PORTB pins 5 (UART1_TX) as output */
-    PortInit.PORT_OE = PORT_OE_OUT;
-    PortInit.PORT_Pin = PORT_Pin_5;//(PORT_Pin_5 | PORT_Pin_7);/* Configure PORTB pins 7 (DE pin tranceiver) as output */ 
-    PORT_Init(MDR_PORTB, &PortInit);
-	
-    /* DELETED - mulfunction of controller !!! Configure PORTB pins 6 DE pin tranceiver as output for kodiz board----------- */
-//    PortInit.PORT_OE = PORT_OE_OUT;
-//    PortInit.PORT_Pin = PORT_Pin_6;
-//    PORT_Init(MDR_PORTB, &PortInit);
-
-
-}
-
 // ==================================================================================================
 
 void Uart2PinCfg(void)
@@ -331,28 +307,6 @@ void Uart2PinCfg(void)
     PORT_Init(MDR_PORTD, &PortInit);	
 	
 }
-
-void Uart1Setup(void)
-{
-	/* Select HSI/2 as CPU_CLK source*/
-    RST_CLK_CPU_PLLconfig (RST_CLK_CPU_PLLsrcHSIdiv2,0);
-    /* Enables the CPU_CLK clock on UART1 */
-	RST_CLK_PCLKcmd(RST_CLK_PCLK_UART1, ENABLE);
-    /* Set the HCLK division factor = 1 for UART1*/
-	UART_BRGInit(MDR_UART1, UART_HCLKdiv1);
-
-    UART_InitStructure.UART_BaudRate                = 12000; // not applied! - Why??? 
-    UART_InitStructure.UART_WordLength              = UART_WordLength8b;
-    UART_InitStructure.UART_StopBits                = UART_StopBits1;
-    UART_InitStructure.UART_Parity                  = UART_Parity_No;
-    UART_InitStructure.UART_FIFOMode                = UART_FIFO_OFF;
-    UART_InitStructure.UART_HardwareFlowControl     = UART_HardwareFlowControl_RXE | UART_HardwareFlowControl_TXE;
-
-	/* Configure UART1 parameters*/
-	UART_Init (MDR_UART1,&UART_InitStructure);
-    /* Enables UART1 peripheral */
-    UART_Cmd(MDR_UART1,ENABLE);
-}
 void Uart2Setup(void)
 {
 	/* Select HSI/2 as CPU_CLK source*/
@@ -374,7 +328,74 @@ void Uart2Setup(void)
     /* Enables UART2 peripheral */
     UART_Cmd(MDR_UART2,ENABLE);
 }
+// ==================================================================================================
 
+void Uart1PinCfg(void)
+{
+	/* Fill PortInit structure*/
+    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
+    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
+    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
+    PortInit.PORT_PD = PORT_PD_DRIVER;
+    PortInit.PORT_GFEN = PORT_GFEN_OFF;
+    PortInit.PORT_FUNC = PORT_FUNC_ALTER;
+    PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
+    PortInit.PORT_MODE = PORT_MODE_DIGITAL;
+    /* Configure PORTB pins 6 (UART1_RX) as input */
+    PortInit.PORT_OE = PORT_OE_IN;
+    PortInit.PORT_Pin = PORT_Pin_6;
+    PORT_Init(MDR_PORTB, &PortInit);
+    /* Configure PORTB pins 5 (UART1_TX) as output */
+    PortInit.PORT_OE = PORT_OE_OUT;
+    PortInit.PORT_Pin = PORT_Pin_5;
+    PORT_Init(MDR_PORTB, &PortInit);
+	
+    /* DELETED - cause mulfunction of controller !!! Configure PORTB pins 6 DE pin tranceiver as output for KODIZ board----------- */
+
+    /* Configure PORTB pins 7 (DE pin tranceiver) as output */ 			
+    PortInit.PORT_Pin = (PORT_Pin_7);
+	  PortInit.PORT_OE    = PORT_OE_OUT;
+	  PortInit.PORT_FUNC  = PORT_FUNC_PORT;
+	  PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+	  PortInit.PORT_SPEED = PORT_SPEED_FAST;
+    PORT_Init(MDR_PORTB, &PortInit);
+
+}
+
+
+
+void Uart1Setup(void)
+{
+	  /* Select HSI/2 as CPU_CLK source*/
+  RST_CLK_CPU_PLLconfig (RST_CLK_CPU_PLLsrcHSIdiv2,0);
+    /* Enables the CPU_CLK clock on UART1 */
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_UART1, ENABLE);
+    /* Set the HCLK division factor = 1 for UART1*/
+	UART_BRGInit(MDR_UART1, UART_HCLKdiv1);
+
+    UART_InitStructure.UART_BaudRate                = 12000; // not applied! - Why??? 
+    UART_InitStructure.UART_WordLength              = UART_WordLength8b;
+    UART_InitStructure.UART_StopBits                = UART_StopBits1;
+    UART_InitStructure.UART_Parity                  = UART_Parity_No;
+    UART_InitStructure.UART_FIFOMode                = UART_FIFO_OFF;
+    UART_InitStructure.UART_HardwareFlowControl     = UART_HardwareFlowControl_RXE | UART_HardwareFlowControl_TXE;
+
+	  /* Configure UART1 parameters*/
+	UART_Init (MDR_UART1,&UART_InitStructure);
+    /* Enables UART1 peripheral */
+  UART_Cmd(MDR_UART1,ENABLE);
+}
+
+void Uart1SendByte(uint16_t Data) //void UART_SendData(MDR_UART_TypeDef* UARTx, uint16_t Data)
+{
+	
+				PORT_SetBits(MDR_PORTB, PORT_Pin_7);
+			  UART_SendData (MDR_UART1, Data);
+				while (UART_GetFlagStatus (MDR_UART1, UART_FLAG_TXFE)!= SET)
+				{
+				}
+				PORT_ResetBits(MDR_PORTB, PORT_Pin_7);
+}
 
 int UartTest (void)
 {
@@ -384,16 +405,18 @@ uint8_t DataByte;
 
 	Uart1PinCfg();
 	Uart1Setup();
+	
 	//Uart2PinCfg();
 	//Uart2Setup();
+	
  	while(1)
 	{
 		while (UART_GetFlagStatus (MDR_UART1, UART_FLAG_TXFE)!= SET)
 				{
 				}
-				//PORT_SetBits(MDR_PORTB, PORT_Pin_7);
-			UART_SendData (MDR_UART1, (uint16_t)('g'));
-				//PORT_ResetBits(MDR_PORTB, PORT_Pin_7);
+				Uart1SendByte('f');
+				
+				//Delayms(10);
 			}
 	
 			
@@ -519,7 +542,7 @@ void MltPinCfg (void)
 
 	
 	/* Configure ADC1 and ADC2 pin: PD2 PD3 */
-  /* Configure PORTD pin 2 */
+  /* Configure PORTD pin 2 It ac brake JTAG B*/
 		PortInit.PORT_Pin   = (PORT_Pin_2 | PORT_Pin_3);
 		PortInit.PORT_OE    = PORT_OE_IN;
 		PortInit.PORT_MODE  = PORT_MODE_ANALOG;
@@ -629,13 +652,21 @@ void ADC_Temp_Sensor_Config(void)
 }
 
 
+
+
+
+
 /**
   * @brief  Main program.
   * @param  None
   * @retval None
   */
+
+
 int main (void)
 {
+	// it delay helps to start debugging - pragram cannot block jtag. But need to delete in production!!!	it works ~ 5 s in debug mode
+	Delayms(200);
 	/* Enables the High Speed External clock */
 	RST_CLK_HSEconfig(RST_CLK_HSE_ON);
     while (RST_CLK_HSEstatus() != SUCCESS);
