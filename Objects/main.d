@@ -9,6 +9,7 @@
 .\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_uart.h
 .\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_lib.h
 .\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_port.h
+.\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_bkp.h
 .\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_adc.h
 .\objects\main.o: .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_rst_clk.h
 .\objects\main.o: MDR32F9Qx_it.h

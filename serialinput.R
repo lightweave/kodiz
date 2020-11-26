@@ -9,7 +9,7 @@ listPorts()
 ### establish a serial connection
 
 con <- serialConnection(name = "get_temps",
-                        port = "COM6",
+                        port = "COM14",
                         mode = "115200,n,8,1",
                         buffering = "none",
                         newline = 1,

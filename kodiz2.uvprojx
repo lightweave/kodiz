@@ -437,6 +437,12 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
+      <component Cclass="Drivers" Cgroup="BKP" Cvendor="Keil" Cversion="1.5" condition="CON_MDR1986BXX">
+        <package name="MDR1986BExx" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="Keil" version="1.5.3"/>
+        <targetInfos>
+          <targetInfo name="Target 1"/>
+        </targetInfos>
+      </component>
       <component Cclass="Drivers" Cgroup="PORT" Cvendor="Keil" Cversion="1.5" condition="CON_MDR1986BXX">
         <package name="MDR1986BExx" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="Keil" version="1.5.3"/>
         <targetInfos>

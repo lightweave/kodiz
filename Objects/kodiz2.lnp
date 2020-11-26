@@ -4,6 +4,7 @@
 ".\objects\startup_mdr32f9qx.o"
 ".\objects\system_mdr32f9qx.o"
 ".\objects\mdr32f9qx_adc.o"
+".\objects\mdr32f9qx_bkp.o"
 ".\objects\mdr32f9qx_port.o"
 ".\objects\mdr32f9qx_rst_clk.o"
 ".\objects\mdr32f9qx_timer.o"

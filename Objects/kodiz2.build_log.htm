@@ -22,27 +22,25 @@ Dialog DLL:      TCM.DLL V1.36.2.0
  
 <h2>Project:</h2>
 D:\Cortex\KODIZ\kodiz\kodiz2.uvprojx
-Project File Date:  06/18/2020
+Project File Date:  08/21/2020
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Rebuild target 'Target 1'
 assembling startup_MDR32F9Qx.s...
 compiling system_MDR32F9Qx.c...
-compiling main.c...
-main.c(428): warning:  #128-D: loop is not reachable
-  		do
-main.c: 1 warning, 0 errors
-compiling MDR32F9Qx_it.c...
 compiling MDR32F9Qx_port.c...
+compiling MDR32F9Qx_it.c...
+compiling MDR32F9Qx_bkp.c...
 compiling MDR32F9Qx_adc.c...
+compiling main.c...
 compiling MDR32F9Qx_rst_clk.c...
 compiling MDR32F9Qx_uart.c...
 compiling MDR32F9Qx_timer.c...
 linking...
-Program Size: Code=3832 RO-data=224 RW-data=172 ZI-data=20268  
+Program Size: Code=6872 RO-data=224 RW-data=232 ZI-data=4880  
 FromELF: creating hex file...
-".\Objects\kodiz2.axf" - 0 Error(s), 1 Warning(s).
+".\Objects\kodiz2.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -52,6 +50,7 @@ Package Vendor: Keil
                 Milandr MDR1986BExx Series Device Support, Drivers and Examples
    * Component: Startup Version: 1.5
    * Component: ADC Version: 1.5
+   * Component: BKP Version: 1.5
    * Component: PORT Version: 1.5
    * Component: RST_CLK Version: 1.5
    * Component: TIMER Version: 1.5
@@ -77,6 +76,10 @@ Package Vendor: Keil
       Include file:  Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_adc.h
       Source file:   Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_adc.c
 
+   * Component: Keil::Drivers:BKP:1.5
+      Include file:  Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_bkp.h
+      Source file:   Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_bkp.c
+
    * Component: Keil::Drivers:PORT:1.5
       Include file:  Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_port.h
       Source file:   Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_port.c
@@ -92,7 +95,7 @@ Package Vendor: Keil
    * Component: Keil::Drivers:UART:1.5
       Include file:  Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_uart.h
       Source file:   Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_uart.c
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>
