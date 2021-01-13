@@ -1,0 +1,92 @@
+Dependencies for Project 'kodiz', Target 'Target 1': (DO NOT MODIFY !)
+F (.\main.c)(0x5E2AE47E)(--c99 --gnu -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .\Config -I .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc -I .\Libraries\CMSIS\CM3\CoreSupport -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm -I ..\KODIZ-I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="528" -D_RTE_ -DUSE_MDR32F9Q1_Rev1-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (.\Config\MDR32F9Qx_config.h)(0x5E20745F)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_lib.h)(0x542BDAA2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEBC032)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc\MDR32Fx.h)(0x542BDAA2)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmInstr.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmFunc.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm\system_MDR32F9Qx.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_uart.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_port.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_rst_clk.h)(0x542BDAA2)
+I (MDR32F9Qx_it.h)(0x542BCE7A)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_adc.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_timer.h)(0x542BDAA2)
+F (.\MDR32F9Qx_it.c)(0x5E2AE21E)(--c99 --gnu -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .\Config -I .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc -I .\Libraries\CMSIS\CM3\CoreSupport -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm -I ..\KODIZ-I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="528" -D_RTE_ -DUSE_MDR32F9Q1_Rev1-o .\objects\mdr32f9qx_it.o --omf_browse .\objects\mdr32f9qx_it.crf --depend .\objects\mdr32f9qx_it.d)
+I (MDR32F9Qx_it.h)(0x542BCE7A)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc\MDR32Fx.h)(0x542BDAA2)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x542BCE6E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEBC032)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmInstr.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmFunc.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm\system_MDR32F9Qx.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_uart.h)(0x542BDAA2)
+I (.\Config\MDR32F9Qx_config.h)(0x5E20745F)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_lib.h)(0x542BDAA2)
+F (.\MDR32F9Qx_it.h)(0x542BCE7A)()
+F (.\Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_port.c)(0x542BDAA2)(--c99 --gnu -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .\Config -I .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc -I .\Libraries\CMSIS\CM3\CoreSupport -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm -I ..\KODIZ-I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="528" -D_RTE_ -DUSE_MDR32F9Q1_Rev1-o .\objects\mdr32f9qx_port.o --omf_browse .\objects\mdr32f9qx_port.crf --depend .\objects\mdr32f9qx_port.d)
+I (.\Config\MDR32F9Qx_config.h)(0x5E20745F)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_lib.h)(0x542BDAA2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEBC032)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc\MDR32Fx.h)(0x542BDAA2)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmInstr.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmFunc.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm\system_MDR32F9Qx.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_port.h)(0x542BDAA2)
+F (.\Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_rst_clk.c)(0x542BDAA2)(--c99 --gnu -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .\Config -I .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc -I .\Libraries\CMSIS\CM3\CoreSupport -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm -I ..\KODIZ-I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="528" -D_RTE_ -DUSE_MDR32F9Q1_Rev1-o .\objects\mdr32f9qx_rst_clk.o --omf_browse .\objects\mdr32f9qx_rst_clk.crf --depend .\objects\mdr32f9qx_rst_clk.d)
+I (.\Config\MDR32F9Qx_config.h)(0x5E20745F)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_lib.h)(0x542BDAA2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEBC032)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc\MDR32Fx.h)(0x542BDAA2)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmInstr.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmFunc.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm\system_MDR32F9Qx.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_rst_clk.h)(0x542BDAA2)
+F (.\Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_uart.c)(0x542BDAA2)(--c99 --gnu -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .\Config -I .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc -I .\Libraries\CMSIS\CM3\CoreSupport -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm -I ..\KODIZ-I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="528" -D_RTE_ -DUSE_MDR32F9Q1_Rev1-o .\objects\mdr32f9qx_uart.o --omf_browse .\objects\mdr32f9qx_uart.crf --depend .\objects\mdr32f9qx_uart.d)
+I (.\Config\MDR32F9Qx_config.h)(0x5E20745F)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_lib.h)(0x542BDAA2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEBC032)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc\MDR32Fx.h)(0x542BDAA2)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmInstr.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmFunc.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm\system_MDR32F9Qx.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_uart.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_rst_clk.h)(0x542BDAA2)
+F (.\Config\MDR32F9Qx_config.h)(0x5E20745F)()
+F (.\MDR32F9Qx_board.h)(0x542BCE7A)()
+F (.\Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_adc.c)(0x5E293C82)(--c99 --gnu -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .\Config -I .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc -I .\Libraries\CMSIS\CM3\CoreSupport -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm -I ..\KODIZ-I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="528" -D_RTE_ -DUSE_MDR32F9Q1_Rev1-o .\objects\mdr32f9qx_adc.o --omf_browse .\objects\mdr32f9qx_adc.crf --depend .\objects\mdr32f9qx_adc.d)
+I (.\Config\MDR32F9Qx_config.h)(0x5E20745F)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_lib.h)(0x542BDAA2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEBC032)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc\MDR32Fx.h)(0x542BDAA2)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmInstr.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmFunc.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm\system_MDR32F9Qx.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_adc.h)(0x542BDAA2)
+F (.\Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_timer.c)(0x542BDAA2)(--c99 --gnu -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .\Config -I .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc -I .\Libraries\CMSIS\CM3\CoreSupport -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm -I ..\KODIZ-I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="528" -D_RTE_ -DUSE_MDR32F9Q1_Rev1-o .\objects\mdr32f9qx_timer.o --omf_browse .\objects\mdr32f9qx_timer.crf --depend .\objects\mdr32f9qx_timer.d)
+I (.\Config\MDR32F9Qx_config.h)(0x5E20745F)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_lib.h)(0x542BDAA2)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEBC032)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc\MDR32Fx.h)(0x542BDAA2)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmInstr.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmFunc.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm\system_MDR32F9Qx.h)(0x542BDAA2)
+I (.\Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_timer.h)(0x542BDAA2)
+F (RTE\Device\MDR1986BE91\MDR32F9Qx_config.h)(0x5C540D10)()
+F (RTE\Device\MDR1986BE91\startup_MDR32F9Qx.s)(0x5B0677DA)(--cpu Cortex-M3 --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 528" --pd "_RTE_ SETA 1" --pd "USE_MDR32F9Q1_Rev1 SETA 1"--list .\listings\startup_mdr32f9qx.lst --xref -o .\objects\startup_mdr32f9qx.o --depend .\objects\startup_mdr32f9qx.d)
+F (RTE\Device\MDR1986BE91\system_MDR32F9Qx.c)(0x5B0677EA)(--c99 --gnu -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .\Config -I .\Libraries\MDR32F9Qx_StdPeriph_Driver\inc -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc -I .\Libraries\CMSIS\CM3\CoreSupport -I .\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm -I ..\KODIZ-I.\RTE\Device\MDR1986BE91-I.\RTE\_Target_1-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\CoreSupport-IC:\Users\User\AppData\Local\Arm\Packs\Keil\MDR1986BExx\1.5.3\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="528" -D_RTE_ -DUSE_MDR32F9Q1_Rev1-o .\objects\system_mdr32f9qx.o --omf_browse .\objects\system_mdr32f9qx.crf --depend .\objects\system_mdr32f9qx.d)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\inc\MDR32Fx.h)(0x542BDAA2)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cm3.h)(0x542BCE6E)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5CEBC032)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmInstr.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\CoreSupport\core_cmFunc.h)(0x542BCE6E)
+I (.\Libraries\CMSIS\CM3\DeviceSupport\MDR32F9Qx\startup\arm\system_MDR32F9Qx.h)(0x542BDAA2)
+I (RTE\Device\MDR1986BE91\MDR32F9Qx_config.h)(0x5C540D10)
+F (RTE\Device\MDR1986BE91\system_MDR32F9Qx.h)(0x5B0677F6)()

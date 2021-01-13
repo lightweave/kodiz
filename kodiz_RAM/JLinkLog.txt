@@ -1,0 +1,32 @@
+T1890 91819:470 SEGGER J-Link V6.46 Log File (0000ms, 28623ms total)
+T1890 91819:470 DLL Compiled: May 23 2019 17:49:56 (0000ms, 28623ms total)
+T1890 91819:470 Logging started @ 2020-06-18 15:54 (0000ms, 28623ms total)
+T1890 91819:470 JLINK_SetWarnOutHandler(...) (0000ms, 28623ms total)
+T1890 91819:470 JLINK_OpenEx(...)
+Firmware: J-Link ARM V8 compiled Aug 26 2015 15:08:21
+Hardware: V8.00
+S/N: 28005581
+OEM: SAM-ICE
+Feature(s): RDI
+TELNET listener socket opened on port 19021Device "ARM7" selected.WEBSRV 
+Starting webserver (0056ms, 28679ms total)
+T1890 91819:470 WEBSRV Webserver running on local port 19080 (0056ms, 28679ms total)
+T1890 91819:470   returns O.K. (0056ms, 28679ms total)
+T1890 91819:528 JLINK_GetEmuCaps()  returns 0xB9FF7BBF (0000ms, 28679ms total)
+T1890 91819:528 JLINK_TIF_GetAvailable(...) (0001ms, 28680ms total)
+T1890 91819:529 JLINK_SetErrorOutHandler(...) (0000ms, 28680ms total)
+T1890 91819:529 JLINK_ExecCommand("ProjectFile = "D:\Cortex\KODIZ\kodiz\JLinkSettings.ini"", ...). Device "ARM7" selected.  returns 0x00 (0008ms, 28688ms total)
+T1890 91819:543 JLINK_ExecCommand("Device = MDR1986BE91", ...). Device "ARM7" selected.  returns 0x00 (0008ms, 28696ms total)
+T1890 91819:551 JLINK_ExecCommand("DisableConnectionTimeout", ...).   returns 0x01 (0000ms, 28696ms total)
+T1890 91819:551 JLINK_GetHardwareVersion()  returns 0x13880 (0000ms, 28696ms total)
+T1890 91819:551 JLINK_GetDLLVersion()  returns 64600 (0000ms, 28696ms total)
+T1890 91819:565 JLINK_GetDLLVersion()  returns 64600 (0000ms, 28696ms total)
+T1890 91819:565 JLINK_GetCompileDateTime() (0000ms, 28696ms total)
+T1890 91819:569 JLINK_GetFirmwareString(...) (0000ms, 28696ms total)
+T1890 91819:573 JLINK_GetHardwareVersion()  returns 0x13880 (0000ms, 28696ms total)
+T1890 91819:589 JLINK_TIF_Select(JLINKARM_TIF_JTAG)  returns 0x00 (0006ms, 28702ms total)
+T1890 91819:595 JLINK_SetSpeed(5000) (0001ms, 28703ms total)
+T1890 91819:596 JLINK_GetIdData(...) (0001ms, 28704ms total)
+T1890 91821:011 JLINK_Close() (0012ms, 28716ms total)
+T1890 91821:011  (0012ms, 28716ms total)
+T1890 91821:011 Closed (0012ms, 28716ms total)

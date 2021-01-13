@@ -1,0 +1,15 @@
+--cpu Cortex-M3
+".\objects\main.o"
+".\objects\mdr32f9qx_it.o"
+".\objects\startup_mdr32f9qx.o"
+".\objects\system_mdr32f9qx.o"
+".\objects\mdr32f9qx_adc.o"
+".\objects\mdr32f9qx_bkp.o"
+".\objects\mdr32f9qx_port.o"
+".\objects\mdr32f9qx_rst_clk.o"
+".\objects\mdr32f9qx_timer.o"
+".\objects\mdr32f9qx_uart.o"
+--strict --scatter ".\Objects\kodiz2.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\kodiz2.map" -o .\Objects\kodiz2.axf
