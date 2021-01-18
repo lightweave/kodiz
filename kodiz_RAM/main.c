@@ -77,7 +77,7 @@
  uint8_t  Hello_text[20];
  const char * Hello_text1 = "Hello string";
  char Hello_text2[20];
- char Hello_text3[32];
+ char Hello_text3[128];
  uint32_t Digital_test[Buffer_Size_Si];
  uint8_t *P_current,*P_Last;
  uint16_t Delay_timer = 100;
@@ -656,7 +656,7 @@ void Next_Uart_sending(void){
  void Command_Handler(uint8_t DataByte){
   switch (DataByte) {
         case 't':   
-					Srart_Uart_sending((uint8_t *)Hello_text3,33);
+					Srart_Uart_sending((uint8_t *)Hello_text3,129);
         	break;
 				case 'I':   
 					NVIC_EnableIRQ(EXT_INT4_IRQn);
@@ -1781,37 +1781,44 @@ void SetupExternalOscillator()
 	 
 	 //создадим и заполним тестовый struct Tcounts
 	 struct Tcounts tcounts;
-	 tcounts.Cher1 = 1;
-	 tcounts.Cher2 = 2;
-	 tcounts.Cher_coins_SiPM = 3;
-	 tcounts.Delta_t = 4;
-	 tcounts.el29 = 5;
-	 tcounts.Interupt_Cher = 6;
-	 tcounts.Interupt_n = 7;
-	 tcounts.Interupt_Ph = 8;
-	 tcounts.Interupt_Si = 9;
+	 
 //	 tcounts.M = 0;
-	 tcounts.n11 = 1;
+
+	 tcounts.si11 = 500;
+	 tcounts.si12 = 200;
+	 tcounts.si21 = 3;
+	 tcounts.si22 = 4;
+	 tcounts.si_coins = 7;
+
+	 tcounts.Cher1 = 128;
+	 tcounts.Cher2 = 2;
+	 tcounts.SiPM1 = 5;
+	 tcounts.SiPM2 = 6;
+	 tcounts.Cher_coins_SiPM = 3;
+	 
+	 tcounts.n11 = 128;
 	 tcounts.n12 = 2;
 	 tcounts.n21 = 3;
 	 tcounts.n22 = 4;
 	 tcounts.ncoins = 5;
+	 
 	 tcounts.Ph11 = 6;
 	 tcounts.Ph12 = 7;
 	 tcounts.Ph21 = 8;
 	 tcounts.Ph22 = 9;
 	 tcounts.Phcois = 0;
-	 tcounts.si11 = 1;
-	 tcounts.si12 = 2;
-	 tcounts.si21 = 3;
-	 tcounts.si22 = 4;
-	 tcounts.SiPM1 = 5;
-	 tcounts.SiPM2 = 6;
-	 tcounts.si_coins = 7;
+	 
 	 tcounts.Sum1 = 8;
-	 tcounts.Sum1coins = 9;
 	 tcounts.Sum2 = 0;
-	 tcounts.Sum2coins = 1;
+	 tcounts.Sum1coins = 9;
+	 tcounts.Sum2coins = 128;
+	 
+	 tcounts.Interupt_Si = 9;
+	 tcounts.Interupt_Cher = 6;
+	 tcounts.Interupt_n = 7;
+	 tcounts.Interupt_Ph = 8;
+	 tcounts.el29 = 5;
+	 tcounts.Delta_t = 4;
 	 
 	 
 //   Put_index=0; Get_index=0;
@@ -1823,7 +1830,7 @@ void SetupExternalOscillator()
 	 //tmp = sizeof(tcounts);
 	 //strcpy( Hello_text3 , tcounts.si22);
 	 //itoa(tcounts.Cher_coins_SiPM, Hello_text2, 16);
-	  memcpy(Hello_text3, &tcounts, 16);
+	  memcpy(Hello_text3, &tcounts, 128);
 	 //strcpy( Hello_text3 , (char*)&tcounts.Cher_coins_SiPM + 3);
 
 
