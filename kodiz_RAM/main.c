@@ -77,7 +77,7 @@
  uint8_t  Hello_text[20];
  const char * Hello_text1 = "Hello string";
  char Hello_text2[20];
- char Hello_text3[128];
+ char Hello_text3[130];
  uint32_t Digital_test[Buffer_Size_Si];
  uint8_t *P_current,*P_Last;
  uint16_t Delay_timer = 100;
@@ -648,7 +648,7 @@ void Next_Uart_sending(void){
         Delay_timer=0;
    } else {
     //    if( Delay_timer< Sending_Delay ) return;
-				PORT_ResetBits(MDR_PORTB, PORT_Pin_7); // Переключить канал на передачу 
+				PORT_ResetBits(MDR_PORTB, PORT_Pin_7); // Переключить канал на прием 
         Program_flags &= ~Sending_ON;
    }
 }
@@ -1315,359 +1315,6 @@ void SetupExternalOscillator()
 //  * @param  None
 //  * @retval None
 //  */
-//int main (void)
-//{
-//	// it delay helps to start debugging - pragram cannot block jtag. But need to delete in production!!!	it works ~ 5 s in debug mode
-//   Delayms(400);
-//	
-//	// источник для CPU_C1=HSE, С2=PLL, C3=C2, HCLK = C3;
-//	// MDR_RST_CLK->CPU_CLOCK=0x00000106;
-//	
-//	/* Enables the High Speed External clock */
-////	 RST_CLK_HSEconfig(RST_CLK_HSE_ON);
-////    while (RST_CLK_HSEstatus() != SUCCESS);
-//  
-//   SetupExternalOscillator();  
-//	
-//	/* Enables the clock on PORTA */
-//	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTA, ENABLE);
-//	/* Enables the clock on PORTB */
-//	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTB, ENABLE);	
-//  /* Enables the clock on PORTC */
-//	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTC, ENABLE);
-//	/* Enables the clock on PORTD */
-//	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTD, ENABLE);
-//	/* Enables the clock on PORTE */
-//	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTE, ENABLE);
-//	/* Enables the HSI clock on PORTF */
-//  RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTF, ENABLE);
-//	
-//	/* Enables the HSI clock on ExtBus */
-//  RST_CLK_PCLKcmd(RST_CLK_PCLK_EBC, ENABLE);	
-//	/* Enables the ADC clock on ExtBus */
-//	RST_CLK_PCLKcmd(RST_CLK_PCLK_ADC, ENABLE);
-//	
-//	//RST_CLK_PCLKcmd(RST_CLK_PCLK_TIMER2, ENABLE);
-
-//	
-//	MltPinCfg ();
-//	
-//	//Timer_init();
-//	
-//	// RTC_Configuration();
-//	
-//	
-//	/* Enable ADC interrupt  */
-//  NVIC->ISER[0] = (1<<ADC_IRQn);
-//	
-//	ADC_DeInit();
-//	
-//	ADC1_Config(ADC_CH_ADC2);//pd2 detector 1
-//	ADC2_Config(ADC_CH_ADC3);//pd3 detector 2
-//	
-//  /* ADC2 enable */
-//	ADC1_Cmd (ENABLE);
-//  ADC2_Cmd (ENABLE);	
-//	
-
-
-//// PLL config test
-////  while(1){		
-////		PORT_SetBits(MDR_PORTB, PORT_Pin_15);
-////		PORT_ResetBits(MDR_PORTB, PORT_Pin_15);	
-////	}
-
-
-//	//NVIC_EnableIRQ(EXT_INT1_IRQn);	
-//	NVIC_EnableIRQ(EXT_INT2_IRQn);	// pc12 detector 2
-//	//NVIC_EnableIRQ(EXT_INT3_IRQn);	
-//	NVIC_EnableIRQ(EXT_INT4_IRQn);  // pc13 detector 1
-//	
-//  // NVIC_SetPriority (EXT_INT1_IRQn, 1); // установил приоритет
-//	DelayConfig();
-//	
-//	Data_Buffer_Reset();
-//	
-//	UartStart(); //основные моменты с инициализацией Uart
-//	
-//	
-//	
-// 	while(1)
-//	{
-//		SendUARTBuffer();
-//		//tmp = MDR_UART1->FR;
-//		// не блокирующе пропалываем бит окончания передачи
-//		if( !(MDR_UART1->FR & UART_FR_BUSY) ){					
-//			PORT_ResetBits(MDR_PORTB, PORT_Pin_7);
-//			PORT_ResetBits(MDR_PORTB, PORT_Pin_15);
-//		}
-//		
-//		
-//									
-//		// detector 1 
-//		if(ext_IT2_flag != ext_IT2_flag_previous)//why iterrupt pending when program starts?
-//			{	
-//				//tmp  = 0;
-//				//tmp2 = 0;
-//		
-//				// while (!ADC_GetFlagStatus(ADC1_FLAG_END_OF_CONVERSION)); //always make troubles
-//				//tmp = ADC1_GetResult(); //adc1 -> pd2
-
-
-//				// while (!ADC_GetFlagStatus(ADC2_FLAG_END_OF_CONVERSION));//eternal cicle program
-//				// tmp2 =  ADC2_GetFlagStatus(ADCx_FLAG_END_OF_CONVERSION);			
-//				//tmp2 = ADC2_GetResult(); //adc1 -> pd2
-//				
-//				
-//				PORT_ResetBits(MDR_PORTB, PORT_Pin_14); // Опускание ножки PB14 после считывания результата с АЦП				
-//				
-//				ext_IT2_flag_previous = ext_IT2_flag;
-//				
-//				PORT_SetBits(MDR_PORTB, PORT_Pin_7);
-//				PORT_SetBits(MDR_PORTB, PORT_Pin_15);
-//				UART_SendData (MDR_UART1, 'I');
-//				UART_SendData (MDR_UART1, '2');
-//				UART_SendData (MDR_UART1, ext_IT2_flag);
-//				UART_SendData (MDR_UART1, tmpADC>>8);
-//				UART_SendData (MDR_UART1, tmpADC);
-//				UART_SendData (MDR_UART1, tmpADC2>>8);
-//				UART_SendData (MDR_UART1, tmpADC2);
-//				UART_SendData (MDR_UART1, 0);
-//					
-//				NVIC_EnableIRQ(EXT_INT2_IRQn);				
-//				NVIC_EnableIRQ(EXT_INT4_IRQn);	
-
-//			}
-
-//		// detector 2
-//		if(ext_IT4_flag != ext_IT4_flag_previous)//why iterrupt pending when program starts?
-//			{	
-//						
-//				// tmp  = 0;
-//				// tmp2 = 0;
-//				// while (!ADC_GetFlagStatus(ADC1_FLAG_END_OF_CONVERSION));//always make troubles
-//				// tmp = ADC1_GetResult(); //adc1 -> pd2
-
-
-//				// while (!ADC_GetFlagStatus(ADC2_FLAG_END_OF_CONVERSION));//eternal cicle program
-//				// tmp2 =  ADC2_GetFlagStatus(ADCx_FLAG_END_OF_CONVERSION);			
-//				// tmp2 = ADC2_GetResult(); //adc1 -> pd2
-//				
-//				
-//				PORT_ResetBits(MDR_PORTB, PORT_Pin_14); // Опускание ножки PB14 после считывания результата с АЦП
-//				
-//				ext_IT4_flag_previous = ext_IT4_flag;
-//				
-
-//				PORT_SetBits(MDR_PORTB, PORT_Pin_7);
-//				PORT_SetBits(MDR_PORTB, PORT_Pin_15);
-//				UART_SendData (MDR_UART1, 'I');
-//				UART_SendData (MDR_UART1, '4');
-//				UART_SendData (MDR_UART1, ext_IT4_flag);
-//				UART_SendData (MDR_UART1, tmpADC>>8);
-//				UART_SendData (MDR_UART1, tmpADC);
-//				UART_SendData (MDR_UART1, tmpADC2>>8);
-//				UART_SendData (MDR_UART1, tmpADC2);
-//				UART_SendData (MDR_UART1, 0);
-//				
-//				NVIC_EnableIRQ(EXT_INT2_IRQn);				
-//				NVIC_EnableIRQ(EXT_INT4_IRQn);
-//			
-//		}
-//		
-//		
-//		if( !(MDR_UART1->FR & UART_FR_RXFE) ){
-//			uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-//			uart1_IT_RX_flag = SET;
-////			if (uart1_IT_RX_byte){
-////				PORT_SetBits(MDR_PORTB, PORT_Pin_7);
-////				PORT_SetBits(MDR_PORTB, PORT_Pin_15);
-////				UART_SendData (MDR_UART1, 'u');		
-////			}
-//		}
-//		
-//		
-//				 
-
-//								 
-//				if(uart1_IT_RX_flag == SET)
-//				{
-//					uart1_IT_RX_flag = RESET;
-//					
-//					/* Recive data*/
-//				  //uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1); // no need - handle in interrupt
-//					
-//				  /* Send back*/
-//				    PORT_SetBits(MDR_PORTB, PORT_Pin_7);
-//					UART_SendData (MDR_UART1, uart1_IT_RX_byte);// coupon
-
-//					
-//					
-//					switch (uart1_IT_RX_byte)
-//					{
-//						case '2':
-//							ADC2_SetChannel(ADC_CH_ADC2);
-//							/* ADC2 enable */
-//							ADC2_Cmd (ENABLE);
-//							ADC2_Start();
-//							while (!ADC_GetFlagStatus(ADC2_FLAG_END_OF_CONVERSION));
-//							tmp = ADC2_GetResult(); // ADC_GetStatus();
-//							/* Send Data from UART1 */
-//							UART_SendData (MDR_UART1, 0);
-//						  UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData(MDR_UART1, tmp>>24);	
-//							UART_SendData(MDR_UART1, tmp>>16);
-//							UART_SendData(MDR_UART1, tmp>>8);
-//							UART_SendData(MDR_UART1, tmp);
-//							break;
-//						
-//						case '3':
-//							ADC1_SetChannel(ADC_CH_ADC3);
-//							/* ADC1 enable */
-//							ADC1_Cmd (ENABLE);
-//							ADC1_Start();
-//							while (!ADC_GetFlagStatus(ADC1_FLAG_END_OF_CONVERSION));
-//							tmp = ADC1_GetResult(); // ADC_GetStatus();
-//							/* Send Data from UART1 */			
-//							UART_SendData (MDR_UART1, 0);
-//						  UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData(MDR_UART1, tmp>>24);	
-//							UART_SendData(MDR_UART1, tmp>>16);
-//							UART_SendData(MDR_UART1, tmp>>8);
-//							UART_SendData(MDR_UART1, tmp);
-//							break;
-//						
-//						case '4':
-//							ADC2_SetChannel(ADC_CH_ADC4);
-//							/* ADC2 enable */
-//							ADC2_Cmd (ENABLE);
-//							ADC2_Start();
-//							while (!ADC_GetFlagStatus(ADC2_FLAG_END_OF_CONVERSION));
-//							tmp = ADC2_GetResult(); // ADC_GetStatus();
-//							/* Send Data from UART1 */			
-//							UART_SendData (MDR_UART1, 0);
-//						  UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData(MDR_UART1, tmp>>24);	
-//							UART_SendData(MDR_UART1, tmp>>16);
-//							UART_SendData(MDR_UART1, tmp>>8);
-//							UART_SendData(MDR_UART1, tmp);
-//							break;
-//						
-//						case '5':
-//							ADC1_SetChannel(ADC_CH_ADC5);
-//							/* ADC1 enable */
-//							ADC1_Cmd (ENABLE);
-//							ADC1_Start();
-//							while (!ADC_GetFlagStatus(ADC1_FLAG_END_OF_CONVERSION));
-//							tmp = ADC1_GetResult(); // ADC_GetStatus();
-//							/* Send Data from UART1 */			
-//							UART_SendData (MDR_UART1, 0);
-//						  UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData(MDR_UART1, tmp>>24);	
-//							UART_SendData(MDR_UART1, tmp>>16);
-//							UART_SendData(MDR_UART1, tmp>>8);
-//							UART_SendData(MDR_UART1, tmp);
-//							break;
-//						
-//						
-//						case '8':
-//							PORT_SetBits(MDR_PORTB, PORT_Pin_15);
-//						  UART_SendData (MDR_UART1, 0);
-//						  UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//						  UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//						//PORT_Write(MDR_PORTB, 0xFFFFFFFF);
-//							break;
-//						
-//						
-//						
-//						case '9':
-//							PORT_ResetBits(MDR_PORTB, PORT_Pin_15);
-//						//	PORT_Write(MDR_PORTB, 0x00000000);
-//							break;
-//						
-//						
-//						
-//						case 't':
-//							tmp = ADC1_GetResult(); // ADC_GetStatus(); 0x12345678;//
-//							/* Send Data from UART1 */			
-//							UART_SendData (MDR_UART1, 0);
-//						  UART_SendData (MDR_UART1, 0);
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData(MDR_UART1, tmp>>24);	
-//							UART_SendData(MDR_UART1, tmp>>16);
-//							UART_SendData(MDR_UART1, tmp>>8);
-//							UART_SendData(MDR_UART1, tmp);
-//							break;
-//						
-//						
-//						case 'u':
-//							Data_Buffer[Buff_Send__Index].ready=1;
-//							break;
-//							
-//						case '+':
-//							adcDelay = adcDelay+1;   
-//							/* Send Data from UART1 */				
-//							UART_SendData(MDR_UART1, 'D');			
-//							UART_SendData(MDR_UART1, '+');					
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData(MDR_UART1, adcDelay>>24);
-//							UART_SendData(MDR_UART1, adcDelay>>16);
-//							UART_SendData(MDR_UART1, adcDelay>>8);
-//							UART_SendData(MDR_UART1, adcDelay);	
-//							break;	
-//						case '-':
-//							if(adcDelay>0) 
-//								adcDelay = adcDelay-1;  
-//							/* Send Data from UART1 */			
-//							UART_SendData(MDR_UART1, 'D');			
-//							UART_SendData(MDR_UART1, '-');				
-//							UART_SendData (MDR_UART1, 0);							
-//							UART_SendData(MDR_UART1, adcDelay>>24);
-//							UART_SendData(MDR_UART1, adcDelay>>16);
-//							UART_SendData(MDR_UART1, adcDelay>>8);
-//							UART_SendData(MDR_UART1, adcDelay);	
-//							break;				
-//						
-//						
-//						
-//						default:
-//							sendbyte = 'r';				
-//							UART_SendData (MDR_UART1, 0);				
-//							UART_SendData (MDR_UART1, 0);				
-//							UART_SendData (MDR_UART1, 0);
-//							UART_SendData(MDR_UART1, tmp>>24);
-//							UART_SendData(MDR_UART1, tmp>>16);
-//							UART_SendData(MDR_UART1, tmp>>8);
-//							UART_SendData(MDR_UART1, tmp);
-//							break;
-//					}
-//					
-
-//				  
-//				}
-//				
-//				
-//				// Delayms(1); //this CRASH transmission and JTAGA but WHY?????
-//		}
-//	
-//			
-//			
-//			
-//		
-//	
-//	
-//	
-//}
-
-
 // ===================================================================
  int main (void)
 {
@@ -1745,7 +1392,6 @@ void SetupExternalOscillator()
   // NVIC_SetPriority (EXT_INT1_IRQn, 1); // установил приоритет
 	DelayConfig();
 	
-	Data_Buffer_Reset();
 	
 	UartStart(); //основные моменты с инициализацией Uart
 	
@@ -1757,41 +1403,36 @@ void SetupExternalOscillator()
    uint32_t tmp ;
    Put_index=0; Get_index=0;
    for(int i=0; i<Buffer_Size_Si; i++) {Si_Buffer[i]=0; Digital_test[i]=i;}
-   Hello_text[0]=' ';
-   Hello_text[1]='H';
-   Hello_text[2]='e';
-   Hello_text[3]='l';
-   Hello_text[4]='l';
-   Hello_text[5]='o';
-   Hello_text[6]=' ';
-   Hello_text[7]='I';
-   Hello_text[8]='t';
-   Hello_text[9]=' ';
-   Hello_text[10]='i';
-   Hello_text[11]='s';
-   Hello_text[12]=' ';
-   Hello_text[13]='t';
-   Hello_text[14]='e';
-   Hello_text[15]='s';
-   Hello_text[16]='t';
-   Hello_text[17]=0;
 	 
 	 
-	 strcpy( Hello_text2 , "Hello srt test");
+	 //strcpy( Hello_text2 , "Hello srt test");
 	 
+
+
+
+	// =============================================================================
+	// Фрагмент main()
+
+
+	UKEY.met1=0xCC; 
+	UKEY.met2=0x55; 
+	UKEY.tip=0; 
+	UKEY.mode=1;
+
+
 	 //создадим и заполним тестовый struct Tcounts
 	 struct Tcounts tcounts;
 	 
 //	 tcounts.M = 0;
 
-	 tcounts.si11 = 500;
-	 tcounts.si12 = 200;
+	 tcounts.si11 = 1;
+	 tcounts.si12 = 2;
 	 tcounts.si21 = 3;
 	 tcounts.si22 = 4;
-	 tcounts.si_coins = 7;
+	 tcounts.si_coins = 5;
 
-	 tcounts.Cher1 = 128;
-	 tcounts.Cher2 = 2;
+	 tcounts.Cher1 = 6;
+	 tcounts.Cher2 = 7;
 	 tcounts.SiPM1 = 5;
 	 tcounts.SiPM2 = 6;
 	 tcounts.Cher_coins_SiPM = 3;
@@ -1819,32 +1460,24 @@ void SetupExternalOscillator()
 	 tcounts.Interupt_Ph = 8;
 	 tcounts.el29 = 5;
 	 tcounts.Delta_t = 4;
-	 
-	 
-//   Put_index=0; Get_index=0;
-//	 uint32_t *x = (uint32_t *)tcounts;
-//    memcpy((*outFoo)->data, inBar->GetData(), inBar->GetLength());
-//   for(int i=0; i<Buffer_Size_Si; i++) {Si_Buffer[i]=0; Digital_test[i]=tcounts;}
+
 	 
 	 //получим длину tcounts
 	 //tmp = sizeof(tcounts);
-	 //strcpy( Hello_text3 , tcounts.si22);
-	 //itoa(tcounts.Cher_coins_SiPM, Hello_text2, 16);
-	  memcpy(Hello_text3, &tcounts, 128);
-	 //strcpy( Hello_text3 , (char*)&tcounts.Cher_coins_SiPM + 3);
-
-
-	// =============================================================================
-	// Фрагмент main()
-
-
-	UKEY.met1=0xCC; 
-	UKEY.met2=0x55; 
-	UKEY.tip=0; 
-	UKEY.mode=1;
-
-	Flux.key.code= UKEY.code; 
-	Flux.time=0;
+	 memcpy(Hello_text3, &UKEY, 4);
+		
+		uint32_t time = 23;
+		
+	 memcpy(Hello_text3 + 4, 23, 4);
+	 
+	 memcpy(Hello_text3 + 8, &tcounts, 120);
+		
+	 Srart_Uart_sending((uint8_t *)Hello_text3, 129);
+		
+		
+		
+	 Flux.key.code= UKEY.code; 
+	 Flux.time=0;
 
 //	for(int I=0; I<30; I++) 
 //		Flux. N.M[I]=0;
