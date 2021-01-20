@@ -172,7 +172,7 @@ uint16_t Result_1, Result_2;
 // ===========================================================================
 
 // Constants and variables for data transmission through CAN-port
-#define Buffer_Size 512     // Length, in bytes, of one buffer for data transmission
+#define Buffer_Size 128     // Length, in bytes, of one buffer for data transmission
 #define Buffer_Number 2		// Number of buffers = 8  -- need to increase!!!!
 
 struct Results_Buffer {// Type of structure of output buffer
@@ -1507,6 +1507,15 @@ void SetupExternalOscillator()
  
  
 
+
+
+	 
+	 
+	 
+	 
+     while (1)
+     {
+			 
 	for(int INTERUPT_J=1; INTERUPT_J<5;INTERUPT_J++){
 	  if(INTERUPT_J != INTERUPT_MODE){ //это часть работает тогда, когда к этому прерыванию не подключено АЦП
 			if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){  // Добавить контроль того, 
@@ -1570,14 +1579,7 @@ void SetupExternalOscillator()
 // =============================================================================
 
 
-
-
-	 
-	 
-	 
-	 
-     while (1)
-     {
+			 
         // ========== Обработка данных полупроводниковых детекторов ==========
         if(Program_flags & ADC1_ON){
           if(ADC_GetFlagStatus(ADC1_FLAG_END_OF_CONVERSION)){

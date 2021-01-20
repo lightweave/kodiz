@@ -1229,7 +1229,7 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-      3754        382         13        280       4860     140024   main.o
+      3754        382         13        280       4860     140028   main.o
        536         84          0          0          0      10579   mdr32f9qx_adc.o
        454         60          0         12          0      10445   mdr32f9qx_it.o
        528         18          0          0          0       3732   mdr32f9qx_port.o
@@ -1240,7 +1240,7 @@ Image component sizes
        212         28          0          4          0       1327   system_mdr32f9qx.o
 
     ----------------------------------------------------------------------
-      7100        704        240        296       6396     188872   Object Totals
+      7100        704        240        296       6396     188876   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         16          0          3          0          0          0   (incl. Padding)
 
@@ -1290,8 +1290,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      7480        720        240        296       6496     184644   Grand Totals
-      7480        720        240        296       6496     184644   ELF Image Totals
+      7480        720        240        296       6496     184648   Grand Totals
+      7480        720        240        296       6496     184648   ELF Image Totals
       7480        720        240        296          0          0   ROM Totals
 
 ==============================================================================
