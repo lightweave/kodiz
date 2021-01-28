@@ -610,6 +610,23 @@ void BACKUP_IRQHandler(void)
 //    }
 //    BKP_RTC_ITConfig(BKP_RTC_IT_SECF, ENABLE);
 //  }
+
+if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
+  {
+    if (PORT_ReadInputDataBit(MDR_PORTF,PORT_Pin_0)==0)
+    {
+      PORT_SetBits(MDR_PORTF,PORT_Pin_0);
+    }
+	else
+    {
+      PORT_ResetBits(MDR_PORTF,PORT_Pin_0);
+    }
+  }
+  if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_ALRF)==SET)
+  {
+    PORT_SetBits(MDR_PORTF,PORT_Pin_1);
+  }
+  MDR_BKP -> RTC_CS |= 0x06;
 }
 /*******************************************************************************
 * Function Name  : EXT_INT1_IRQHandler

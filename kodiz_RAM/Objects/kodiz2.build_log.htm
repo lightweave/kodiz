@@ -28,31 +28,31 @@ Project File Date:  08/21/2020
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Rebuild target 'Target 1'
 assembling startup_MDR32F9Qx.s...
-compiling system_MDR32F9Qx.c...
-compiling MDR32F9Qx_port.c...
 compiling MDR32F9Qx_it.c...
-MDR32F9Qx_it.c(688): warning:  #9-D: nested comment is not allowed
+MDR32F9Qx_it.c(705): warning:  #9-D: nested comment is not allowed
   }/*
-MDR32F9Qx_it.c(689): warning:  #9-D: nested comment is not allowed
+MDR32F9Qx_it.c(706): warning:  #9-D: nested comment is not allowed
   /*******************************************************************************
 MDR32F9Qx_it.c: 2 warnings, 0 errors
-compiling MDR32F9Qx_adc.c...
 compiling MDR32F9Qx_bkp.c...
+compiling MDR32F9Qx_port.c...
+compiling system_MDR32F9Qx.c...
+compiling MDR32F9Qx_adc.c...
 compiling main.c...
-main.c(1471): warning:  #167-D: argument of type "int" is incompatible with parameter of type "const void *__restrict__"
+main.c(1579): warning:  #167-D: argument of type "int" is incompatible with parameter of type "const void *__restrict__"
   	 memcpy(Hello_text3 + 4, 23, 4);
-main.c(1471): warning:  #152-D: conversion of nonzero integer to pointer
+main.c(1579): warning:  #152-D: conversion of nonzero integer to pointer
   	 memcpy(Hello_text3 + 4, 23, 4);
-main.c(1469): warning:  #177-D: variable "time"  was declared but never referenced
+main.c(1577): warning:  #177-D: variable "time"  was declared but never referenced
   		uint32_t time = 23;
-main.c(1492): warning:  #177-D: variable "J_ADC"  was declared but never referenced
+main.c(1600): warning:  #177-D: variable "J_ADC"  was declared but never referenced
   	int J_ADC=0;  // индекс элемента массива, куда должно записываться очередное значение. Одновременно критерий заполнености и готовности массива к передаче.
 main.c: 4 warnings, 0 errors
 compiling MDR32F9Qx_rst_clk.c...
 compiling MDR32F9Qx_uart.c...
 compiling MDR32F9Qx_timer.c...
 linking...
-Program Size: Code=7480 RO-data=240 RW-data=296 ZI-data=6496  
+Program Size: Code=7584 RO-data=240 RW-data=296 ZI-data=5728  
 FromELF: creating hex file...
 ".\Objects\kodiz2.axf" - 0 Error(s), 6 Warning(s).
 
@@ -109,7 +109,7 @@ Package Vendor: Keil
    * Component: Keil::Drivers:UART:1.5
       Include file:  Libraries\MDR32F9Qx_StdPeriph_Driver\inc\MDR32F9Qx_uart.h
       Source file:   Libraries\MDR32F9Qx_StdPeriph_Driver\src\MDR32F9Qx_uart.c
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

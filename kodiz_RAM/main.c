@@ -297,7 +297,14 @@ uint32_t  Detectors_Flugs = 0;
 uint32_t  Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Prot_Comp_2 ,Neutron_1, Neutron_2, Neut_1, Neut_2;
 uint32_t  tick_1, tick_2, Buff_No=0, Spec_No=0, Command_No=0;
 
+// for RTC
+#define RTC_HSE_CLK
 
+#define COUNT_VALUE		0
+#define ALARM_VALUE		60
+#define PRESC_VALUE_HS	1000000
+#define PRESC_VALUE_LS	32000
+#define RTCHS_PRESC		RST_CLK_HSIclkDIV8
 
 
 
@@ -1039,54 +1046,54 @@ void MltPinCfg (void)
 	PORT_Init(MDR_PORTC, &PortInit);
 	
 	
-	/* PORTC ext interrupt PC13*/ // for kodiz board
-	/* Fill PortInit structure*/
+		/* PORTC ext interrupt PC13*/ // for kodiz board
+		/* Fill PortInit structure*/
     PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
     PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_ON;
     PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
     PortInit.PORT_PD = PORT_PD_OPEN; // here we make this port open for tri state, so we can connect more than one inputs to each pin
     PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
-	/* Configure PORTC pins 13 for mlt inout data  */
-	PortInit.PORT_Pin   = PORT_Pin_13;
-	PortInit.PORT_OE    = PORT_OE_IN;
-	PortInit.PORT_FUNC  = PORT_FUNC_ALTER;
-	PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
-	PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
+		/* Configure PORTC pins 13 for mlt inout data  */
+		PortInit.PORT_Pin   = PORT_Pin_13;
+		PortInit.PORT_OE    = PORT_OE_IN;
+		PortInit.PORT_FUNC  = PORT_FUNC_ALTER;
+		PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+		PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
 
-	PORT_Init(MDR_PORTC, &PortInit);
+		PORT_Init(MDR_PORTC, &PortInit);
 	
 	
 	
-	/* PORTB UART pins*/
-	// Uart1PinCfg();
+		/* PORTB UART pins*/
+		// Uart1PinCfg();
 
-	/* PORTE input of all counters*/
+		/* PORTE input of all counters*/
 		/* Fill PortInit structure*/
     PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
     PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
     PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
     PortInit.PORT_PD = PORT_PD_DRIVER;
     PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
-	/* Configure PORTD pins 3 for mlt output  */
-	PortInit.PORT_Pin   = (PORT_Pin_3);
-	PortInit.PORT_OE    = PORT_OE_OUT;
+		/* Configure PORTD pins 3 for mlt output  */
+		PortInit.PORT_Pin   = (PORT_Pin_3);
+		PortInit.PORT_OE    = PORT_OE_OUT;
 
-	PORT_Init(MDR_PORTE, &PortInit);
+		PORT_Init(MDR_PORTE, &PortInit);
 
 	
-	/* Configure ADC1 and ADC2 pin: PD2 PD3 */
-  /* Configure PORTD pin 2 It ac brake JTAG B*/
+		/* Configure ADC1 and ADC2 pin: PD2 PD3 */
+		/* Configure PORTD pin 2 It ac brake JTAG B*/
 		PortInit.PORT_Pin   = (PORT_Pin_2 | PORT_Pin_3 | PORT_Pin_4 | PORT_Pin_5);
 		PortInit.PORT_OE    = PORT_OE_IN;
 		PortInit.PORT_MODE  = PORT_MODE_ANALOG;
-  PORT_Init(MDR_PORTD, &PortInit);
+		PORT_Init(MDR_PORTD, &PortInit);
 
 
-// Инициализация ножек PB14 и PB15 на выход
-	// Ножка PB15 поднимается в начале функции EXT_INT2_IRQHandler, в этой же функции после запускается АЦП1
-	// Ножка PB14 поднимается в начале функции EXT_INT4_IRQHandler, в этой же функции после запускается АЦП2
+		// Инициализация ножек PB14 и PB15 на выход
+		// Ножка PB15 поднимается в начале функции EXT_INT2_IRQHandler, в этой же функции после запускается АЦП1
+		// Ножка PB14 поднимается в начале функции EXT_INT4_IRQHandler, в этой же функции после запускается АЦП2
 	
-			/* Fill PortInit structure*/
+	  /* Fill PortInit structure*/
     PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
     PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
     PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
@@ -1096,7 +1103,7 @@ void MltPinCfg (void)
     PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
     PortInit.PORT_MODE = PORT_MODE_DIGITAL;
 	
-	/* Configure PORTB pins 13 ( pins for ADC and uart timing debug) as output */ 			
+	  /* Configure PORTB pins 13 ( pins for ADC and uart timing debug) as output */ 			
     PortInit.PORT_Pin = (PORT_Pin_13|PORT_Pin_14|PORT_Pin_15);
 	  PortInit.PORT_OE    = PORT_OE_OUT;
 	  PortInit.PORT_FUNC  = PORT_FUNC_PORT;
@@ -1104,7 +1111,23 @@ void MltPinCfg (void)
 	  PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
     PORT_Init(MDR_PORTB, &PortInit);
 
-		
+
+
+
+//		/* Configure all unused PORTF pins to low power consumption */
+//		PORT_StructInit(&PortInit);
+//		PortInit.PORT_Pin = (PORT_Pin_All & ~(PORT_Pin_0 | PORT_Pin_1));
+//		PORT_Init(MDR_PORTF, &PortInit);
+
+
+//		/* Configure PORTF pins 0..1 for output to switch LEDs on/off */
+//		PortInit.PORT_Pin   = (PORT_Pin_0 | PORT_Pin_1);
+//		PortInit.PORT_OE    = PORT_OE_OUT;
+//		PortInit.PORT_FUNC  = PORT_FUNC_PORT;
+//		PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+//		PortInit.PORT_SPEED = PORT_SPEED_SLOW;
+
+//		PORT_Init(MDR_PORTF, &PortInit);
 }
 
 /*******************************************************************************
@@ -1277,6 +1300,91 @@ void SendUARTBuffer(void)
 			}
 		}
 	}
+}
+
+/*******************************************************************************
+* Function Name  : SetupRTC
+* Description    : Configure the RTC for .
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void SetupRTC(void)
+{
+	/* Enables the HSI clock on PORTF */
+  RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTF, ENABLE);
+
+  /* Configure all unused PORT pins to low power consumption */
+//  PORT_StructInit(&PORT_InitStructure);
+//  PORT_InitStructure.PORT_Pin = (PORT_Pin_All & ~(PORT_Pin_0 | PORT_Pin_1));
+//  PORT_Init(MDR_PORTF, &PORT_InitStructure);
+
+
+  /* Configure PORTF pins 0..1 for output to switch LEDs on/off */
+//  PORT_InitStructure.PORT_Pin   = (PORT_Pin_0 | PORT_Pin_1);
+//  PORT_InitStructure.PORT_OE    = PORT_OE_OUT;
+//  PORT_InitStructure.PORT_FUNC  = PORT_FUNC_PORT;
+//  PORT_InitStructure.PORT_MODE  = PORT_MODE_DIGITAL;
+//  PORT_InitStructure.PORT_SPEED = PORT_SPEED_SLOW;
+
+//  PORT_Init(MDR_PORTF, &PORT_InitStructure);
+
+  /* Enables the HSI clock for BKP control */
+  RST_CLK_PCLKcmd(RST_CLK_PCLK_BKP,ENABLE);
+
+  /* RTC reset */
+  BKP_RTC_Reset(ENABLE);
+  BKP_RTC_Reset(DISABLE);
+
+#ifdef RTC_HSI_CLK
+  /* Configure RTCHSI as RTC clock source */
+  RST_CLK_HSIadjust(25);
+  RST_CLK_RTC_HSIclkEnable(ENABLE);
+  RST_CLK_HSIclkPrescaler(RTCHS_PRESC);
+  BKP_RTCclkSource(BKP_RTC_HSIclk);
+#endif
+#ifdef RTC_HSE_CLK
+  /* Configure RTCHSE as RTC clock source */
+  RST_CLK_HSEconfig(RST_CLK_HSE_ON);
+  while (RST_CLK_HSEstatus()!=SUCCESS);
+  RST_CLK_RTC_HSEclkEnable(ENABLE);
+  RST_CLK_HSEclkPrescaler(RTCHS_PRESC);
+  BKP_RTCclkSource(BKP_RTC_HSEclk);
+#endif
+#ifdef RTC_LSI_CLK
+  /* Configure LSI as RTC clock source */
+  RST_CLK_LSIadjust(12);
+  BKP_RTCclkSource(BKP_RTC_LSIclk);
+  while (RST_CLK_LSIstatus()!=SUCCESS);
+#endif
+
+  /* Enable all RTC interrupts */
+  BKP_RTC_ITConfig(BKP_RTC_IT_ALRF | BKP_RTC_IT_SECF | BKP_RTC_IT_OWF,ENABLE);
+  NVIC_EnableIRQ(BACKUP_IRQn);
+
+  /* Set the RTC counter value */
+  BKP_RTC_WaitForUpdate();
+  BKP_RTC_SetCounter(COUNT_VALUE);
+
+  /* Set the RTC prescaler value */
+  BKP_RTC_WaitForUpdate();
+#ifdef RTC_HSI_CLK
+  BKP_RTC_SetPrescaler(PRESC_VALUE_HS);
+#endif
+#ifdef RTC_HSE_CLK
+  BKP_RTC_SetPrescaler(PRESC_VALUE_HS);
+#endif
+#ifdef RTC_LSI_CLK
+  BKP_RTC_SetPrescaler(PRESC_VALUE_LS);
+#endif
+
+  /* Set the RTC alarm value */
+  BKP_RTC_WaitForUpdate();
+  BKP_RTC_SetAlarm(ALARM_VALUE);
+
+  /* RTC enable */
+  BKP_RTC_WaitForUpdate();
+  BKP_RTC_Enable(ENABLE);
 }
 
 /**@brief Setup 16MHz oscillator and PLL */

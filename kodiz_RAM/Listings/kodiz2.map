@@ -89,6 +89,20 @@ Section Cross References
     main.o(i.SetupExternalOscillator) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLstatus) for RST_CLK_CPU_PLLstatus
     main.o(i.SetupExternalOscillator) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLuse) for RST_CLK_CPU_PLLuse
     main.o(i.SetupExternalOscillator) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_CPUclkSelection) for RST_CLK_CPUclkSelection
+    main.o(i.SetupRTC) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_PCLKcmd) for RST_CLK_PCLKcmd
+    main.o(i.SetupRTC) refers to mdr32f9qx_bkp.o(i.BKP_RTC_Reset) for BKP_RTC_Reset
+    main.o(i.SetupRTC) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_HSEconfig) for RST_CLK_HSEconfig
+    main.o(i.SetupRTC) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_HSEstatus) for RST_CLK_HSEstatus
+    main.o(i.SetupRTC) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_RTC_HSEclkEnable) for RST_CLK_RTC_HSEclkEnable
+    main.o(i.SetupRTC) refers to mdr32f9qx_rst_clk.o(i.RST_CLK_HSEclkPrescaler) for RST_CLK_HSEclkPrescaler
+    main.o(i.SetupRTC) refers to mdr32f9qx_bkp.o(i.BKP_RTCclkSource) for BKP_RTCclkSource
+    main.o(i.SetupRTC) refers to mdr32f9qx_bkp.o(i.BKP_RTC_ITConfig) for BKP_RTC_ITConfig
+    main.o(i.SetupRTC) refers to main.o(i.NVIC_EnableIRQ) for NVIC_EnableIRQ
+    main.o(i.SetupRTC) refers to mdr32f9qx_bkp.o(i.BKP_RTC_WaitForUpdate) for BKP_RTC_WaitForUpdate
+    main.o(i.SetupRTC) refers to mdr32f9qx_bkp.o(i.BKP_RTC_SetCounter) for BKP_RTC_SetCounter
+    main.o(i.SetupRTC) refers to mdr32f9qx_bkp.o(i.BKP_RTC_SetPrescaler) for BKP_RTC_SetPrescaler
+    main.o(i.SetupRTC) refers to mdr32f9qx_bkp.o(i.BKP_RTC_SetAlarm) for BKP_RTC_SetAlarm
+    main.o(i.SetupRTC) refers to mdr32f9qx_bkp.o(i.BKP_RTC_Enable) for BKP_RTC_Enable
     main.o(i.Srart_Uart_sending) refers to mdr32f9qx_port.o(i.PORT_SetBits) for PORT_SetBits
     main.o(i.Srart_Uart_sending) refers to mdr32f9qx_uart.o(i.UART_SendData) for UART_SendData
     main.o(i.Srart_Uart_sending) refers to main.o(.data) for P_current
@@ -146,6 +160,10 @@ Section Cross References
     mdr32f9qx_it.o(i.ADC_IRQHandler) refers to mdr32f9qx_port.o(i.PORT_ResetBits) for PORT_ResetBits
     mdr32f9qx_it.o(i.ADC_IRQHandler) refers to main.o(.data) for tmpADC
     mdr32f9qx_it.o(i.ADC_IRQHandler) refers to main.o(.bss) for raw_ADC
+    mdr32f9qx_it.o(i.BACKUP_IRQHandler) refers to mdr32f9qx_bkp.o(i.BKP_RTC_GetFlagStatus) for BKP_RTC_GetFlagStatus
+    mdr32f9qx_it.o(i.BACKUP_IRQHandler) refers to mdr32f9qx_port.o(i.PORT_ReadInputDataBit) for PORT_ReadInputDataBit
+    mdr32f9qx_it.o(i.BACKUP_IRQHandler) refers to mdr32f9qx_port.o(i.PORT_SetBits) for PORT_SetBits
+    mdr32f9qx_it.o(i.BACKUP_IRQHandler) refers to mdr32f9qx_port.o(i.PORT_ResetBits) for PORT_ResetBits
     mdr32f9qx_it.o(i.Timer1_IRQHandler) refers to mdr32f9qx_timer.o(i.TIMER_GetITStatus) for TIMER_GetITStatus
     mdr32f9qx_it.o(i.Timer2_IRQHandler) refers to main.o(.data) for timer_tmp
     mdr32f9qx_it.o(i.UART1_IRQHandler) refers to mdr32f9qx_uart.o(i.UART_GetITStatusMasked) for UART_GetITStatusMasked
@@ -322,13 +340,14 @@ Removing Unused input sections from the image.
     Removing main.o(i.ADC_Temp_Sensor_Config), (80 bytes).
     Removing main.o(i.Counter_Compression), (56 bytes).
     Removing main.o(i.Counters_Reset), (76 bytes).
-    Removing main.o(i.Data_Buffer_Reset), (84 bytes).
+    Removing main.o(i.Data_Buffer_Reset), (80 bytes).
     Removing main.o(i.Delay), (18 bytes).
     Removing main.o(i.Detectors_Init), (20 bytes).
     Removing main.o(i.FLUX_Reset), (20 bytes).
     Removing main.o(i.RTC_Configuration), (72 bytes).
     Removing main.o(i.Reset_Spectra_and_Counters), (160 bytes).
-    Removing main.o(i.SendUARTBuffer), (144 bytes).
+    Removing main.o(i.SendUARTBuffer), (140 bytes).
+    Removing main.o(i.SetupRTC), (124 bytes).
     Removing main.o(i.Sleep), (28 bytes).
     Removing main.o(i.Timer_init), (76 bytes).
     Removing main.o(i.Uart2PinCfg), (68 bytes).
@@ -377,7 +396,6 @@ Removing Unused input sections from the image.
     Removing mdr32f9qx_bkp.o(i.BKP_RTC_Enable), (12 bytes).
     Removing mdr32f9qx_bkp.o(i.BKP_RTC_GetCounter), (12 bytes).
     Removing mdr32f9qx_bkp.o(i.BKP_RTC_GetDivider), (12 bytes).
-    Removing mdr32f9qx_bkp.o(i.BKP_RTC_GetFlagStatus), (24 bytes).
     Removing mdr32f9qx_bkp.o(i.BKP_RTC_ITConfig), (32 bytes).
     Removing mdr32f9qx_bkp.o(i.BKP_RTC_Reset), (12 bytes).
     Removing mdr32f9qx_bkp.o(i.BKP_RTC_SetAlarm), (12 bytes).
@@ -482,7 +500,7 @@ Removing Unused input sections from the image.
     Removing mdr32f9qx_uart.o(i.UART_IrDAConfig), (40 bytes).
     Removing mdr32f9qx_uart.o(i.UART_StructInit), (24 bytes).
 
-164 unused section(s) (total 4184 bytes) removed from the image.
+164 unused section(s) (total 4276 bytes) removed from the image.
 
 ==============================================================================
 
@@ -635,101 +653,102 @@ Image Symbol Table
     i.ADC_Init                               0x20000540   Section        0  mdr32f9qx_adc.o(i.ADC_Init)
     i.ADC_StructInit                         0x20000580   Section        0  mdr32f9qx_adc.o(i.ADC_StructInit)
     i.ADCx_StructInit                        0x20000592   Section        0  mdr32f9qx_adc.o(i.ADCx_StructInit)
-    i.BACKUP_IRQHandler                      0x200005ae   Section        0  mdr32f9qx_it.o(i.BACKUP_IRQHandler)
-    i.BusFault_Handler                       0x200005b0   Section        0  mdr32f9qx_it.o(i.BusFault_Handler)
-    i.CAN1_IRQHandler                        0x200005b4   Section        0  mdr32f9qx_it.o(i.CAN1_IRQHandler)
-    i.CAN2_IRQHandler                        0x200005b6   Section        0  mdr32f9qx_it.o(i.CAN2_IRQHandler)
-    i.COMPARATOR_IRQHandler                  0x200005b8   Section        0  mdr32f9qx_it.o(i.COMPARATOR_IRQHandler)
-    i.Command_Handler                        0x200005bc   Section        0  main.o(i.Command_Handler)
-    i.DMA_IRQHandler                         0x20000608   Section        0  mdr32f9qx_it.o(i.DMA_IRQHandler)
-    i.DebugMon_Handler                       0x2000060a   Section        0  mdr32f9qx_it.o(i.DebugMon_Handler)
-    i.DelayConfig                            0x2000060c   Section        0  main.o(i.DelayConfig)
-    i.Delayms                                0x20000634   Section        0  main.o(i.Delayms)
-    i.EXT_INT1_IRQHandler                    0x20000650   Section        0  main.o(i.EXT_INT1_IRQHandler)
-    i.EXT_INT2_IRQHandler                    0x2000074c   Section        0  main.o(i.EXT_INT2_IRQHandler)
-    i.EXT_INT3_IRQHandler                    0x20000848   Section        0  main.o(i.EXT_INT3_IRQHandler)
-    i.EXT_INT4_IRQHandler                    0x20000944   Section        0  main.o(i.EXT_INT4_IRQHandler)
-    i.EmableINTERUPT                         0x20000a40   Section        0  main.o(i.EmableINTERUPT)
-    i.HardFault_Handler                      0x20000a7a   Section        0  mdr32f9qx_it.o(i.HardFault_Handler)
-    i.I2C_IRQHandler                         0x20000a7e   Section        0  mdr32f9qx_it.o(i.I2C_IRQHandler)
-    i.MemManage_Handler                      0x20000a80   Section        0  mdr32f9qx_it.o(i.MemManage_Handler)
-    i.MltPinCfg                              0x20000a84   Section        0  main.o(i.MltPinCfg)
-    i.NMI_Handler                            0x20000b94   Section        0  mdr32f9qx_it.o(i.NMI_Handler)
-    i.NVIC_DisableIRQ                        0x20000b98   Section        0  main.o(i.NVIC_DisableIRQ)
-    NVIC_DisableIRQ                          0x20000b99   Thumb Code    18  main.o(i.NVIC_DisableIRQ)
-    i.NVIC_EnableIRQ                         0x20000bb0   Section        0  main.o(i.NVIC_EnableIRQ)
-    NVIC_EnableIRQ                           0x20000bb1   Thumb Code    22  main.o(i.NVIC_EnableIRQ)
-    i.Next_Uart_sending                      0x20000bc8   Section        0  main.o(i.Next_Uart_sending)
-    i.PORT_Init                              0x20000c34   Section        0  mdr32f9qx_port.o(i.PORT_Init)
-    i.PORT_ReadInputDataBit                  0x20000dfc   Section        0  mdr32f9qx_port.o(i.PORT_ReadInputDataBit)
-    i.PORT_ResetBits                         0x20000e0c   Section        0  mdr32f9qx_port.o(i.PORT_ResetBits)
-    i.PORT_SetBits                           0x20000e28   Section        0  mdr32f9qx_port.o(i.PORT_SetBits)
-    i.POWER_IRQHandler                       0x20000e44   Section        0  mdr32f9qx_it.o(i.POWER_IRQHandler)
-    i.PendSV_Handler                         0x20000e46   Section        0  mdr32f9qx_it.o(i.PendSV_Handler)
-    i.Put_to_CODE                            0x20000e48   Section        0  main.o(i.Put_to_CODE)
-    i.Put_to_CODE_2                          0x20000eb0   Section        0  main.o(i.Put_to_CODE_2)
-    i.Put_to_circular_Buffer                 0x20000eec   Section        0  main.o(i.Put_to_circular_Buffer)
-    i.RST_CLK_CPU_PLLcmd                     0x20000f14   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLcmd)
-    i.RST_CLK_CPU_PLLconfig                  0x20000f20   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLconfig)
-    i.RST_CLK_CPU_PLLstatus                  0x20000f60   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLstatus)
-    i.RST_CLK_CPU_PLLuse                     0x20000f94   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLuse)
-    i.RST_CLK_CPUclkSelection                0x20000fa0   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPUclkSelection)
-    i.RST_CLK_DeInit                         0x20000fb4   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_DeInit)
-    i.RST_CLK_GetClocksFreq                  0x20000fe0   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_GetClocksFreq)
-    i.RST_CLK_GetFlagStatus                  0x20001258   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_GetFlagStatus)
-    i.RST_CLK_HSEconfig                      0x2000128c   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_HSEconfig)
-    i.RST_CLK_HSEstatus                      0x200012c8   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_HSEstatus)
-    i.RST_CLK_HSIcmd                         0x200012fc   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_HSIcmd)
-    i.RST_CLK_HSIstatus                      0x20001308   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_HSIstatus)
-    i.RST_CLK_PCLKcmd                        0x2000133c   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_PCLKcmd)
-    i.RST_CLK_WarmDeInit                     0x2000135c   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_WarmDeInit)
-    i.SSP1_IRQHandler                        0x200013b0   Section        0  mdr32f9qx_it.o(i.SSP1_IRQHandler)
-    i.SSP2_IRQHandler                        0x200013b2   Section        0  mdr32f9qx_it.o(i.SSP2_IRQHandler)
-    i.SVC_Handler                            0x200013b4   Section        0  mdr32f9qx_it.o(i.SVC_Handler)
-    i.SetupExternalOscillator                0x200013b6   Section        0  main.o(i.SetupExternalOscillator)
-    i.Srart_Uart_sending                     0x200013f8   Section        0  main.o(i.Srart_Uart_sending)
-    i.SysTick_Handler                        0x2000144c   Section        0  mdr32f9qx_it.o(i.SysTick_Handler)
-    i.SystemCoreClockUpdate                  0x20001450   Section        0  system_mdr32f9qx.o(i.SystemCoreClockUpdate)
-    i.SystemInit                             0x200014e4   Section        0  system_mdr32f9qx.o(i.SystemInit)
-    i.TIMER_GetITStatus                      0x20001524   Section        0  mdr32f9qx_timer.o(i.TIMER_GetITStatus)
-    i.Timer1_IRQHandler                      0x2000153c   Section        0  mdr32f9qx_it.o(i.Timer1_IRQHandler)
-    i.Timer2_IRQHandler                      0x2000155c   Section        0  mdr32f9qx_it.o(i.Timer2_IRQHandler)
-    i.Timer3_IRQHandler                      0x2000157c   Section        0  mdr32f9qx_it.o(i.Timer3_IRQHandler)
-    i.UART1_IRQHandler                       0x20001580   Section        0  mdr32f9qx_it.o(i.UART1_IRQHandler)
-    i.UART2_IRQHandler                       0x2000164c   Section        0  mdr32f9qx_it.o(i.UART2_IRQHandler)
-    i.UART_BRGInit                           0x20001674   Section        0  mdr32f9qx_uart.o(i.UART_BRGInit)
-    i.UART_ClearITPendingBit                 0x200016b0   Section        0  mdr32f9qx_uart.o(i.UART_ClearITPendingBit)
-    i.UART_Cmd                               0x200016b8   Section        0  mdr32f9qx_uart.o(i.UART_Cmd)
-    i.UART_GetFlagStatus                     0x200016d0   Section        0  mdr32f9qx_uart.o(i.UART_GetFlagStatus)
-    i.UART_GetITStatusMasked                 0x200016e0   Section        0  mdr32f9qx_uart.o(i.UART_GetITStatusMasked)
-    i.UART_ITConfig                          0x200016f0   Section        0  mdr32f9qx_uart.o(i.UART_ITConfig)
-    i.UART_Init                              0x20001704   Section        0  mdr32f9qx_uart.o(i.UART_Init)
-    i.UART_ReceiveData                       0x200017b4   Section        0  mdr32f9qx_uart.o(i.UART_ReceiveData)
-    i.UART_SendData                          0x200017bc   Section        0  mdr32f9qx_uart.o(i.UART_SendData)
-    i.USB_IRQHandler                         0x200017c2   Section        0  mdr32f9qx_it.o(i.USB_IRQHandler)
-    i.Uart1PinCfg                            0x200017c4   Section        0  main.o(i.Uart1PinCfg)
-    i.Uart1Setup                             0x20001844   Section        0  main.o(i.Uart1Setup)
-    i.UartStart                              0x2000189c   Section        0  main.o(i.UartStart)
-    i.UsageFault_Handler                     0x200018b8   Section        0  mdr32f9qx_it.o(i.UsageFault_Handler)
-    i.WWDG_IRQHandler                        0x200018bc   Section        0  mdr32f9qx_it.o(i.WWDG_IRQHandler)
-    i.convers                                0x200018be   Section        0  main.o(i.convers)
-    i.main                                   0x20001918   Section        0  main.o(i.main)
-    .conststring                             0x20001df8   Section       13  main.o(.conststring)
+    i.BACKUP_IRQHandler                      0x200005b0   Section        0  mdr32f9qx_it.o(i.BACKUP_IRQHandler)
+    i.BKP_RTC_GetFlagStatus                  0x20000600   Section        0  mdr32f9qx_bkp.o(i.BKP_RTC_GetFlagStatus)
+    i.BusFault_Handler                       0x20000618   Section        0  mdr32f9qx_it.o(i.BusFault_Handler)
+    i.CAN1_IRQHandler                        0x2000061c   Section        0  mdr32f9qx_it.o(i.CAN1_IRQHandler)
+    i.CAN2_IRQHandler                        0x2000061e   Section        0  mdr32f9qx_it.o(i.CAN2_IRQHandler)
+    i.COMPARATOR_IRQHandler                  0x20000620   Section        0  mdr32f9qx_it.o(i.COMPARATOR_IRQHandler)
+    i.Command_Handler                        0x20000624   Section        0  main.o(i.Command_Handler)
+    i.DMA_IRQHandler                         0x20000670   Section        0  mdr32f9qx_it.o(i.DMA_IRQHandler)
+    i.DebugMon_Handler                       0x20000672   Section        0  mdr32f9qx_it.o(i.DebugMon_Handler)
+    i.DelayConfig                            0x20000674   Section        0  main.o(i.DelayConfig)
+    i.Delayms                                0x2000069c   Section        0  main.o(i.Delayms)
+    i.EXT_INT1_IRQHandler                    0x200006b8   Section        0  main.o(i.EXT_INT1_IRQHandler)
+    i.EXT_INT2_IRQHandler                    0x200007b4   Section        0  main.o(i.EXT_INT2_IRQHandler)
+    i.EXT_INT3_IRQHandler                    0x200008b0   Section        0  main.o(i.EXT_INT3_IRQHandler)
+    i.EXT_INT4_IRQHandler                    0x200009ac   Section        0  main.o(i.EXT_INT4_IRQHandler)
+    i.EmableINTERUPT                         0x20000aa8   Section        0  main.o(i.EmableINTERUPT)
+    i.HardFault_Handler                      0x20000ae2   Section        0  mdr32f9qx_it.o(i.HardFault_Handler)
+    i.I2C_IRQHandler                         0x20000ae6   Section        0  mdr32f9qx_it.o(i.I2C_IRQHandler)
+    i.MemManage_Handler                      0x20000ae8   Section        0  mdr32f9qx_it.o(i.MemManage_Handler)
+    i.MltPinCfg                              0x20000aec   Section        0  main.o(i.MltPinCfg)
+    i.NMI_Handler                            0x20000bfc   Section        0  mdr32f9qx_it.o(i.NMI_Handler)
+    i.NVIC_DisableIRQ                        0x20000c00   Section        0  main.o(i.NVIC_DisableIRQ)
+    NVIC_DisableIRQ                          0x20000c01   Thumb Code    18  main.o(i.NVIC_DisableIRQ)
+    i.NVIC_EnableIRQ                         0x20000c18   Section        0  main.o(i.NVIC_EnableIRQ)
+    NVIC_EnableIRQ                           0x20000c19   Thumb Code    22  main.o(i.NVIC_EnableIRQ)
+    i.Next_Uart_sending                      0x20000c30   Section        0  main.o(i.Next_Uart_sending)
+    i.PORT_Init                              0x20000c9c   Section        0  mdr32f9qx_port.o(i.PORT_Init)
+    i.PORT_ReadInputDataBit                  0x20000e64   Section        0  mdr32f9qx_port.o(i.PORT_ReadInputDataBit)
+    i.PORT_ResetBits                         0x20000e74   Section        0  mdr32f9qx_port.o(i.PORT_ResetBits)
+    i.PORT_SetBits                           0x20000e90   Section        0  mdr32f9qx_port.o(i.PORT_SetBits)
+    i.POWER_IRQHandler                       0x20000eac   Section        0  mdr32f9qx_it.o(i.POWER_IRQHandler)
+    i.PendSV_Handler                         0x20000eae   Section        0  mdr32f9qx_it.o(i.PendSV_Handler)
+    i.Put_to_CODE                            0x20000eb0   Section        0  main.o(i.Put_to_CODE)
+    i.Put_to_CODE_2                          0x20000f18   Section        0  main.o(i.Put_to_CODE_2)
+    i.Put_to_circular_Buffer                 0x20000f54   Section        0  main.o(i.Put_to_circular_Buffer)
+    i.RST_CLK_CPU_PLLcmd                     0x20000f7c   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLcmd)
+    i.RST_CLK_CPU_PLLconfig                  0x20000f88   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLconfig)
+    i.RST_CLK_CPU_PLLstatus                  0x20000fc8   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLstatus)
+    i.RST_CLK_CPU_PLLuse                     0x20000ffc   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLuse)
+    i.RST_CLK_CPUclkSelection                0x20001008   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_CPUclkSelection)
+    i.RST_CLK_DeInit                         0x2000101c   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_DeInit)
+    i.RST_CLK_GetClocksFreq                  0x20001048   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_GetClocksFreq)
+    i.RST_CLK_GetFlagStatus                  0x200012c0   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_GetFlagStatus)
+    i.RST_CLK_HSEconfig                      0x200012f4   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_HSEconfig)
+    i.RST_CLK_HSEstatus                      0x20001330   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_HSEstatus)
+    i.RST_CLK_HSIcmd                         0x20001364   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_HSIcmd)
+    i.RST_CLK_HSIstatus                      0x20001370   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_HSIstatus)
+    i.RST_CLK_PCLKcmd                        0x200013a4   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_PCLKcmd)
+    i.RST_CLK_WarmDeInit                     0x200013c4   Section        0  mdr32f9qx_rst_clk.o(i.RST_CLK_WarmDeInit)
+    i.SSP1_IRQHandler                        0x20001418   Section        0  mdr32f9qx_it.o(i.SSP1_IRQHandler)
+    i.SSP2_IRQHandler                        0x2000141a   Section        0  mdr32f9qx_it.o(i.SSP2_IRQHandler)
+    i.SVC_Handler                            0x2000141c   Section        0  mdr32f9qx_it.o(i.SVC_Handler)
+    i.SetupExternalOscillator                0x2000141e   Section        0  main.o(i.SetupExternalOscillator)
+    i.Srart_Uart_sending                     0x20001460   Section        0  main.o(i.Srart_Uart_sending)
+    i.SysTick_Handler                        0x200014b4   Section        0  mdr32f9qx_it.o(i.SysTick_Handler)
+    i.SystemCoreClockUpdate                  0x200014b8   Section        0  system_mdr32f9qx.o(i.SystemCoreClockUpdate)
+    i.SystemInit                             0x2000154c   Section        0  system_mdr32f9qx.o(i.SystemInit)
+    i.TIMER_GetITStatus                      0x2000158c   Section        0  mdr32f9qx_timer.o(i.TIMER_GetITStatus)
+    i.Timer1_IRQHandler                      0x200015a4   Section        0  mdr32f9qx_it.o(i.Timer1_IRQHandler)
+    i.Timer2_IRQHandler                      0x200015c4   Section        0  mdr32f9qx_it.o(i.Timer2_IRQHandler)
+    i.Timer3_IRQHandler                      0x200015e4   Section        0  mdr32f9qx_it.o(i.Timer3_IRQHandler)
+    i.UART1_IRQHandler                       0x200015e8   Section        0  mdr32f9qx_it.o(i.UART1_IRQHandler)
+    i.UART2_IRQHandler                       0x200016b4   Section        0  mdr32f9qx_it.o(i.UART2_IRQHandler)
+    i.UART_BRGInit                           0x200016dc   Section        0  mdr32f9qx_uart.o(i.UART_BRGInit)
+    i.UART_ClearITPendingBit                 0x20001718   Section        0  mdr32f9qx_uart.o(i.UART_ClearITPendingBit)
+    i.UART_Cmd                               0x20001720   Section        0  mdr32f9qx_uart.o(i.UART_Cmd)
+    i.UART_GetFlagStatus                     0x20001738   Section        0  mdr32f9qx_uart.o(i.UART_GetFlagStatus)
+    i.UART_GetITStatusMasked                 0x20001748   Section        0  mdr32f9qx_uart.o(i.UART_GetITStatusMasked)
+    i.UART_ITConfig                          0x20001758   Section        0  mdr32f9qx_uart.o(i.UART_ITConfig)
+    i.UART_Init                              0x2000176c   Section        0  mdr32f9qx_uart.o(i.UART_Init)
+    i.UART_ReceiveData                       0x2000181c   Section        0  mdr32f9qx_uart.o(i.UART_ReceiveData)
+    i.UART_SendData                          0x20001824   Section        0  mdr32f9qx_uart.o(i.UART_SendData)
+    i.USB_IRQHandler                         0x2000182a   Section        0  mdr32f9qx_it.o(i.USB_IRQHandler)
+    i.Uart1PinCfg                            0x2000182c   Section        0  main.o(i.Uart1PinCfg)
+    i.Uart1Setup                             0x200018ac   Section        0  main.o(i.Uart1Setup)
+    i.UartStart                              0x20001904   Section        0  main.o(i.UartStart)
+    i.UsageFault_Handler                     0x20001920   Section        0  mdr32f9qx_it.o(i.UsageFault_Handler)
+    i.WWDG_IRQHandler                        0x20001924   Section        0  mdr32f9qx_it.o(i.WWDG_IRQHandler)
+    i.convers                                0x20001926   Section        0  main.o(i.convers)
+    i.main                                   0x20001980   Section        0  main.o(i.main)
+    .conststring                             0x20001e60   Section       13  main.o(.conststring)
     .data                                    0x20004000   Section      280  main.o(.data)
     Program_flags                            0x20004000   Data           2  main.o(.data)
     State_of_PortC                           0x20004002   Data           2  main.o(.data)
     .data                                    0x20004118   Section       12  mdr32f9qx_it.o(.data)
     .data                                    0x20004124   Section        4  system_mdr32f9qx.o(.data)
-    .bss                                     0x20004128   Section     4860  main.o(.bss)
+    .bss                                     0x20004128   Section     4092  main.o(.bss)
     INTERUPT_J_ON                            0x2000456c   Data          10  main.o(.bss)
-    PortInit                                 0x200053c0   Data          12  main.o(.bss)
-    UART_InitStructure                       0x200053cc   Data          16  main.o(.bss)
-    .bss                                     0x20005424   Section       96  libspace.o(.bss)
-    HEAP                                     0x20005488   Section      512  startup_mdr32f9qx.o(HEAP)
-    Heap_Mem                                 0x20005488   Data         512  startup_mdr32f9qx.o(HEAP)
-    STACK                                    0x20005688   Section     1024  startup_mdr32f9qx.o(STACK)
-    Stack_Mem                                0x20005688   Data        1024  startup_mdr32f9qx.o(STACK)
-    __initial_sp                             0x20005a88   Data           0  startup_mdr32f9qx.o(STACK)
+    PortInit                                 0x200050c0   Data          12  main.o(.bss)
+    UART_InitStructure                       0x200050cc   Data          16  main.o(.bss)
+    .bss                                     0x20005124   Section       96  libspace.o(.bss)
+    HEAP                                     0x20005188   Section      512  startup_mdr32f9qx.o(HEAP)
+    Heap_Mem                                 0x20005188   Data         512  startup_mdr32f9qx.o(HEAP)
+    STACK                                    0x20005388   Section     1024  startup_mdr32f9qx.o(STACK)
+    Stack_Mem                                0x20005388   Data        1024  startup_mdr32f9qx.o(STACK)
+    __initial_sp                             0x20005788   Data           0  startup_mdr32f9qx.o(STACK)
 
     Global Symbols
 
@@ -853,83 +872,84 @@ Image Symbol Table
     ADC_Init                                 0x20000541   Thumb Code    52  mdr32f9qx_adc.o(i.ADC_Init)
     ADC_StructInit                           0x20000581   Thumb Code    18  mdr32f9qx_adc.o(i.ADC_StructInit)
     ADCx_StructInit                          0x20000593   Thumb Code    28  mdr32f9qx_adc.o(i.ADCx_StructInit)
-    BACKUP_IRQHandler                        0x200005af   Thumb Code     2  mdr32f9qx_it.o(i.BACKUP_IRQHandler)
-    BusFault_Handler                         0x200005b1   Thumb Code     4  mdr32f9qx_it.o(i.BusFault_Handler)
-    CAN1_IRQHandler                          0x200005b5   Thumb Code     2  mdr32f9qx_it.o(i.CAN1_IRQHandler)
-    CAN2_IRQHandler                          0x200005b7   Thumb Code     2  mdr32f9qx_it.o(i.CAN2_IRQHandler)
-    COMPARATOR_IRQHandler                    0x200005b9   Thumb Code     2  mdr32f9qx_it.o(i.COMPARATOR_IRQHandler)
-    Command_Handler                          0x200005bd   Thumb Code    64  main.o(i.Command_Handler)
-    DMA_IRQHandler                           0x20000609   Thumb Code     2  mdr32f9qx_it.o(i.DMA_IRQHandler)
-    DebugMon_Handler                         0x2000060b   Thumb Code     2  mdr32f9qx_it.o(i.DebugMon_Handler)
-    DelayConfig                              0x2000060d   Thumb Code    30  main.o(i.DelayConfig)
-    Delayms                                  0x20000635   Thumb Code    28  main.o(i.Delayms)
-    EXT_INT1_IRQHandler                      0x20000651   Thumb Code   224  main.o(i.EXT_INT1_IRQHandler)
-    EXT_INT2_IRQHandler                      0x2000074d   Thumb Code   224  main.o(i.EXT_INT2_IRQHandler)
-    EXT_INT3_IRQHandler                      0x20000849   Thumb Code   224  main.o(i.EXT_INT3_IRQHandler)
-    EXT_INT4_IRQHandler                      0x20000945   Thumb Code   224  main.o(i.EXT_INT4_IRQHandler)
-    EmableINTERUPT                           0x20000a41   Thumb Code    58  main.o(i.EmableINTERUPT)
-    HardFault_Handler                        0x20000a7b   Thumb Code     4  mdr32f9qx_it.o(i.HardFault_Handler)
-    I2C_IRQHandler                           0x20000a7f   Thumb Code     2  mdr32f9qx_it.o(i.I2C_IRQHandler)
-    MemManage_Handler                        0x20000a81   Thumb Code     4  mdr32f9qx_it.o(i.MemManage_Handler)
-    MltPinCfg                                0x20000a85   Thumb Code   252  main.o(i.MltPinCfg)
-    NMI_Handler                              0x20000b95   Thumb Code     2  mdr32f9qx_it.o(i.NMI_Handler)
-    Next_Uart_sending                        0x20000bc9   Thumb Code    82  main.o(i.Next_Uart_sending)
-    PORT_Init                                0x20000c35   Thumb Code   450  mdr32f9qx_port.o(i.PORT_Init)
-    PORT_ReadInputDataBit                    0x20000dfd   Thumb Code    16  mdr32f9qx_port.o(i.PORT_ReadInputDataBit)
-    PORT_ResetBits                           0x20000e0d   Thumb Code    22  mdr32f9qx_port.o(i.PORT_ResetBits)
-    PORT_SetBits                             0x20000e29   Thumb Code    22  mdr32f9qx_port.o(i.PORT_SetBits)
-    POWER_IRQHandler                         0x20000e45   Thumb Code     2  mdr32f9qx_it.o(i.POWER_IRQHandler)
-    PendSV_Handler                           0x20000e47   Thumb Code     2  mdr32f9qx_it.o(i.PendSV_Handler)
-    Put_to_CODE                              0x20000e49   Thumb Code    90  main.o(i.Put_to_CODE)
-    Put_to_CODE_2                            0x20000eb1   Thumb Code    50  main.o(i.Put_to_CODE_2)
-    Put_to_circular_Buffer                   0x20000eed   Thumb Code    32  main.o(i.Put_to_circular_Buffer)
-    RST_CLK_CPU_PLLcmd                       0x20000f15   Thumb Code     6  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLcmd)
-    RST_CLK_CPU_PLLconfig                    0x20000f21   Thumb Code    54  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLconfig)
-    RST_CLK_CPU_PLLstatus                    0x20000f61   Thumb Code    52  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLstatus)
-    RST_CLK_CPU_PLLuse                       0x20000f95   Thumb Code     6  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLuse)
-    RST_CLK_CPUclkSelection                  0x20000fa1   Thumb Code    16  mdr32f9qx_rst_clk.o(i.RST_CLK_CPUclkSelection)
-    RST_CLK_DeInit                           0x20000fb5   Thumb Code    38  mdr32f9qx_rst_clk.o(i.RST_CLK_DeInit)
-    RST_CLK_GetClocksFreq                    0x20000fe1   Thumb Code   620  mdr32f9qx_rst_clk.o(i.RST_CLK_GetClocksFreq)
-    RST_CLK_GetFlagStatus                    0x20001259   Thumb Code    42  mdr32f9qx_rst_clk.o(i.RST_CLK_GetFlagStatus)
-    RST_CLK_HSEconfig                        0x2000128d   Thumb Code    56  mdr32f9qx_rst_clk.o(i.RST_CLK_HSEconfig)
-    RST_CLK_HSEstatus                        0x200012c9   Thumb Code    52  mdr32f9qx_rst_clk.o(i.RST_CLK_HSEstatus)
-    RST_CLK_HSIcmd                           0x200012fd   Thumb Code     6  mdr32f9qx_rst_clk.o(i.RST_CLK_HSIcmd)
-    RST_CLK_HSIstatus                        0x20001309   Thumb Code    52  mdr32f9qx_rst_clk.o(i.RST_CLK_HSIstatus)
-    RST_CLK_PCLKcmd                          0x2000133d   Thumb Code    26  mdr32f9qx_rst_clk.o(i.RST_CLK_PCLKcmd)
-    RST_CLK_WarmDeInit                       0x2000135d   Thumb Code    74  mdr32f9qx_rst_clk.o(i.RST_CLK_WarmDeInit)
-    SSP1_IRQHandler                          0x200013b1   Thumb Code     2  mdr32f9qx_it.o(i.SSP1_IRQHandler)
-    SSP2_IRQHandler                          0x200013b3   Thumb Code     2  mdr32f9qx_it.o(i.SSP2_IRQHandler)
-    SVC_Handler                              0x200013b5   Thumb Code     2  mdr32f9qx_it.o(i.SVC_Handler)
-    SetupExternalOscillator                  0x200013b7   Thumb Code    64  main.o(i.SetupExternalOscillator)
-    Srart_Uart_sending                       0x200013f9   Thumb Code    62  main.o(i.Srart_Uart_sending)
-    SysTick_Handler                          0x2000144d   Thumb Code     2  mdr32f9qx_it.o(i.SysTick_Handler)
-    SystemCoreClockUpdate                    0x20001451   Thumb Code   130  system_mdr32f9qx.o(i.SystemCoreClockUpdate)
-    SystemInit                               0x200014e5   Thumb Code    54  system_mdr32f9qx.o(i.SystemInit)
-    TIMER_GetITStatus                        0x20001525   Thumb Code    24  mdr32f9qx_timer.o(i.TIMER_GetITStatus)
-    Timer1_IRQHandler                        0x2000153d   Thumb Code    28  mdr32f9qx_it.o(i.Timer1_IRQHandler)
-    Timer2_IRQHandler                        0x2000155d   Thumb Code    22  mdr32f9qx_it.o(i.Timer2_IRQHandler)
-    Timer3_IRQHandler                        0x2000157d   Thumb Code     2  mdr32f9qx_it.o(i.Timer3_IRQHandler)
-    UART1_IRQHandler                         0x20001581   Thumb Code   188  mdr32f9qx_it.o(i.UART1_IRQHandler)
-    UART2_IRQHandler                         0x2000164d   Thumb Code    30  mdr32f9qx_it.o(i.UART2_IRQHandler)
-    UART_BRGInit                             0x20001675   Thumb Code    48  mdr32f9qx_uart.o(i.UART_BRGInit)
-    UART_ClearITPendingBit                   0x200016b1   Thumb Code     8  mdr32f9qx_uart.o(i.UART_ClearITPendingBit)
-    UART_Cmd                                 0x200016b9   Thumb Code    24  mdr32f9qx_uart.o(i.UART_Cmd)
-    UART_GetFlagStatus                       0x200016d1   Thumb Code    16  mdr32f9qx_uart.o(i.UART_GetFlagStatus)
-    UART_GetITStatusMasked                   0x200016e1   Thumb Code    16  mdr32f9qx_uart.o(i.UART_GetITStatusMasked)
-    UART_ITConfig                            0x200016f1   Thumb Code    18  mdr32f9qx_uart.o(i.UART_ITConfig)
-    UART_Init                                0x20001705   Thumb Code   162  mdr32f9qx_uart.o(i.UART_Init)
-    UART_ReceiveData                         0x200017b5   Thumb Code     8  mdr32f9qx_uart.o(i.UART_ReceiveData)
-    UART_SendData                            0x200017bd   Thumb Code     6  mdr32f9qx_uart.o(i.UART_SendData)
-    USB_IRQHandler                           0x200017c3   Thumb Code     2  mdr32f9qx_it.o(i.USB_IRQHandler)
-    Uart1PinCfg                              0x200017c5   Thumb Code   118  main.o(i.Uart1PinCfg)
-    Uart1Setup                               0x20001845   Thumb Code    78  main.o(i.Uart1Setup)
-    UartStart                                0x2000189d   Thumb Code    22  main.o(i.UartStart)
-    UsageFault_Handler                       0x200018b9   Thumb Code     4  mdr32f9qx_it.o(i.UsageFault_Handler)
-    WWDG_IRQHandler                          0x200018bd   Thumb Code     2  mdr32f9qx_it.o(i.WWDG_IRQHandler)
-    convers                                  0x200018bf   Thumb Code    90  main.o(i.convers)
-    main                                     0x20001919   Thumb Code  1236  main.o(i.main)
-    Region$$Table$$Base                      0x20001e08   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x20001e28   Number         0  anon$$obj.o(Region$$Table)
+    BACKUP_IRQHandler                        0x200005b1   Thumb Code    72  mdr32f9qx_it.o(i.BACKUP_IRQHandler)
+    BKP_RTC_GetFlagStatus                    0x20000601   Thumb Code    18  mdr32f9qx_bkp.o(i.BKP_RTC_GetFlagStatus)
+    BusFault_Handler                         0x20000619   Thumb Code     4  mdr32f9qx_it.o(i.BusFault_Handler)
+    CAN1_IRQHandler                          0x2000061d   Thumb Code     2  mdr32f9qx_it.o(i.CAN1_IRQHandler)
+    CAN2_IRQHandler                          0x2000061f   Thumb Code     2  mdr32f9qx_it.o(i.CAN2_IRQHandler)
+    COMPARATOR_IRQHandler                    0x20000621   Thumb Code     2  mdr32f9qx_it.o(i.COMPARATOR_IRQHandler)
+    Command_Handler                          0x20000625   Thumb Code    64  main.o(i.Command_Handler)
+    DMA_IRQHandler                           0x20000671   Thumb Code     2  mdr32f9qx_it.o(i.DMA_IRQHandler)
+    DebugMon_Handler                         0x20000673   Thumb Code     2  mdr32f9qx_it.o(i.DebugMon_Handler)
+    DelayConfig                              0x20000675   Thumb Code    30  main.o(i.DelayConfig)
+    Delayms                                  0x2000069d   Thumb Code    28  main.o(i.Delayms)
+    EXT_INT1_IRQHandler                      0x200006b9   Thumb Code   224  main.o(i.EXT_INT1_IRQHandler)
+    EXT_INT2_IRQHandler                      0x200007b5   Thumb Code   224  main.o(i.EXT_INT2_IRQHandler)
+    EXT_INT3_IRQHandler                      0x200008b1   Thumb Code   224  main.o(i.EXT_INT3_IRQHandler)
+    EXT_INT4_IRQHandler                      0x200009ad   Thumb Code   224  main.o(i.EXT_INT4_IRQHandler)
+    EmableINTERUPT                           0x20000aa9   Thumb Code    58  main.o(i.EmableINTERUPT)
+    HardFault_Handler                        0x20000ae3   Thumb Code     4  mdr32f9qx_it.o(i.HardFault_Handler)
+    I2C_IRQHandler                           0x20000ae7   Thumb Code     2  mdr32f9qx_it.o(i.I2C_IRQHandler)
+    MemManage_Handler                        0x20000ae9   Thumb Code     4  mdr32f9qx_it.o(i.MemManage_Handler)
+    MltPinCfg                                0x20000aed   Thumb Code   252  main.o(i.MltPinCfg)
+    NMI_Handler                              0x20000bfd   Thumb Code     2  mdr32f9qx_it.o(i.NMI_Handler)
+    Next_Uart_sending                        0x20000c31   Thumb Code    82  main.o(i.Next_Uart_sending)
+    PORT_Init                                0x20000c9d   Thumb Code   450  mdr32f9qx_port.o(i.PORT_Init)
+    PORT_ReadInputDataBit                    0x20000e65   Thumb Code    16  mdr32f9qx_port.o(i.PORT_ReadInputDataBit)
+    PORT_ResetBits                           0x20000e75   Thumb Code    22  mdr32f9qx_port.o(i.PORT_ResetBits)
+    PORT_SetBits                             0x20000e91   Thumb Code    22  mdr32f9qx_port.o(i.PORT_SetBits)
+    POWER_IRQHandler                         0x20000ead   Thumb Code     2  mdr32f9qx_it.o(i.POWER_IRQHandler)
+    PendSV_Handler                           0x20000eaf   Thumb Code     2  mdr32f9qx_it.o(i.PendSV_Handler)
+    Put_to_CODE                              0x20000eb1   Thumb Code    90  main.o(i.Put_to_CODE)
+    Put_to_CODE_2                            0x20000f19   Thumb Code    50  main.o(i.Put_to_CODE_2)
+    Put_to_circular_Buffer                   0x20000f55   Thumb Code    32  main.o(i.Put_to_circular_Buffer)
+    RST_CLK_CPU_PLLcmd                       0x20000f7d   Thumb Code     6  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLcmd)
+    RST_CLK_CPU_PLLconfig                    0x20000f89   Thumb Code    54  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLconfig)
+    RST_CLK_CPU_PLLstatus                    0x20000fc9   Thumb Code    52  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLstatus)
+    RST_CLK_CPU_PLLuse                       0x20000ffd   Thumb Code     6  mdr32f9qx_rst_clk.o(i.RST_CLK_CPU_PLLuse)
+    RST_CLK_CPUclkSelection                  0x20001009   Thumb Code    16  mdr32f9qx_rst_clk.o(i.RST_CLK_CPUclkSelection)
+    RST_CLK_DeInit                           0x2000101d   Thumb Code    38  mdr32f9qx_rst_clk.o(i.RST_CLK_DeInit)
+    RST_CLK_GetClocksFreq                    0x20001049   Thumb Code   620  mdr32f9qx_rst_clk.o(i.RST_CLK_GetClocksFreq)
+    RST_CLK_GetFlagStatus                    0x200012c1   Thumb Code    42  mdr32f9qx_rst_clk.o(i.RST_CLK_GetFlagStatus)
+    RST_CLK_HSEconfig                        0x200012f5   Thumb Code    56  mdr32f9qx_rst_clk.o(i.RST_CLK_HSEconfig)
+    RST_CLK_HSEstatus                        0x20001331   Thumb Code    52  mdr32f9qx_rst_clk.o(i.RST_CLK_HSEstatus)
+    RST_CLK_HSIcmd                           0x20001365   Thumb Code     6  mdr32f9qx_rst_clk.o(i.RST_CLK_HSIcmd)
+    RST_CLK_HSIstatus                        0x20001371   Thumb Code    52  mdr32f9qx_rst_clk.o(i.RST_CLK_HSIstatus)
+    RST_CLK_PCLKcmd                          0x200013a5   Thumb Code    26  mdr32f9qx_rst_clk.o(i.RST_CLK_PCLKcmd)
+    RST_CLK_WarmDeInit                       0x200013c5   Thumb Code    74  mdr32f9qx_rst_clk.o(i.RST_CLK_WarmDeInit)
+    SSP1_IRQHandler                          0x20001419   Thumb Code     2  mdr32f9qx_it.o(i.SSP1_IRQHandler)
+    SSP2_IRQHandler                          0x2000141b   Thumb Code     2  mdr32f9qx_it.o(i.SSP2_IRQHandler)
+    SVC_Handler                              0x2000141d   Thumb Code     2  mdr32f9qx_it.o(i.SVC_Handler)
+    SetupExternalOscillator                  0x2000141f   Thumb Code    64  main.o(i.SetupExternalOscillator)
+    Srart_Uart_sending                       0x20001461   Thumb Code    62  main.o(i.Srart_Uart_sending)
+    SysTick_Handler                          0x200014b5   Thumb Code     2  mdr32f9qx_it.o(i.SysTick_Handler)
+    SystemCoreClockUpdate                    0x200014b9   Thumb Code   130  system_mdr32f9qx.o(i.SystemCoreClockUpdate)
+    SystemInit                               0x2000154d   Thumb Code    54  system_mdr32f9qx.o(i.SystemInit)
+    TIMER_GetITStatus                        0x2000158d   Thumb Code    24  mdr32f9qx_timer.o(i.TIMER_GetITStatus)
+    Timer1_IRQHandler                        0x200015a5   Thumb Code    28  mdr32f9qx_it.o(i.Timer1_IRQHandler)
+    Timer2_IRQHandler                        0x200015c5   Thumb Code    22  mdr32f9qx_it.o(i.Timer2_IRQHandler)
+    Timer3_IRQHandler                        0x200015e5   Thumb Code     2  mdr32f9qx_it.o(i.Timer3_IRQHandler)
+    UART1_IRQHandler                         0x200015e9   Thumb Code   188  mdr32f9qx_it.o(i.UART1_IRQHandler)
+    UART2_IRQHandler                         0x200016b5   Thumb Code    30  mdr32f9qx_it.o(i.UART2_IRQHandler)
+    UART_BRGInit                             0x200016dd   Thumb Code    48  mdr32f9qx_uart.o(i.UART_BRGInit)
+    UART_ClearITPendingBit                   0x20001719   Thumb Code     8  mdr32f9qx_uart.o(i.UART_ClearITPendingBit)
+    UART_Cmd                                 0x20001721   Thumb Code    24  mdr32f9qx_uart.o(i.UART_Cmd)
+    UART_GetFlagStatus                       0x20001739   Thumb Code    16  mdr32f9qx_uart.o(i.UART_GetFlagStatus)
+    UART_GetITStatusMasked                   0x20001749   Thumb Code    16  mdr32f9qx_uart.o(i.UART_GetITStatusMasked)
+    UART_ITConfig                            0x20001759   Thumb Code    18  mdr32f9qx_uart.o(i.UART_ITConfig)
+    UART_Init                                0x2000176d   Thumb Code   162  mdr32f9qx_uart.o(i.UART_Init)
+    UART_ReceiveData                         0x2000181d   Thumb Code     8  mdr32f9qx_uart.o(i.UART_ReceiveData)
+    UART_SendData                            0x20001825   Thumb Code     6  mdr32f9qx_uart.o(i.UART_SendData)
+    USB_IRQHandler                           0x2000182b   Thumb Code     2  mdr32f9qx_it.o(i.USB_IRQHandler)
+    Uart1PinCfg                              0x2000182d   Thumb Code   118  main.o(i.Uart1PinCfg)
+    Uart1Setup                               0x200018ad   Thumb Code    78  main.o(i.Uart1Setup)
+    UartStart                                0x20001905   Thumb Code    22  main.o(i.UartStart)
+    UsageFault_Handler                       0x20001921   Thumb Code     4  mdr32f9qx_it.o(i.UsageFault_Handler)
+    WWDG_IRQHandler                          0x20001925   Thumb Code     2  mdr32f9qx_it.o(i.WWDG_IRQHandler)
+    convers                                  0x20001927   Thumb Code    90  main.o(i.convers)
+    main                                     0x20001981   Thumb Code  1236  main.o(i.main)
+    Region$$Table$$Base                      0x20001e70   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x20001e90   Number         0  anon$$obj.o(Region$$Table)
     Si_result                                0x20004004   Data           4  main.o(.data)
     Count_Si1                                0x20004008   Data           4  main.o(.data)
     Count_Si2                                0x2000400c   Data           4  main.o(.data)
@@ -1013,18 +1033,18 @@ Image Symbol Table
     Flux                                     0x20004254   Data         132  main.o(.bss)
     Spectr                                   0x200042d8   Data         528  main.o(.bss)
     ADC_codes                                0x200044e8   Data         132  main.o(.bss)
-    Data_Buffer                              0x20004576   Data        1026  main.o(.bss)
-    DOSE_AND_FLUX                            0x20004978   Data         536  main.o(.bss)
-    D_AND_F                                  0x20004b90   Data          24  main.o(.bss)
-    Temporal_buff                            0x20004ba8   Data          48  main.o(.bss)
-    Memory_buff                              0x20004bd8   Data         488  main.o(.bss)
-    raw_ADC                                  0x20004dc0   Data         512  main.o(.bss)
-    Spectra                                  0x20004fc0   Data         512  main.o(.bss)
-    Neutron_Bunch                            0x200051c0   Data         512  main.o(.bss)
-    sADC                                     0x200053dc   Data          28  main.o(.bss)
-    sADCx                                    0x200053f8   Data          44  main.o(.bss)
-    __libspace_start                         0x20005424   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x20005484   Data           0  libspace.o(.bss)
+    Data_Buffer                              0x20004576   Data         258  main.o(.bss)
+    DOSE_AND_FLUX                            0x20004678   Data         536  main.o(.bss)
+    D_AND_F                                  0x20004890   Data          24  main.o(.bss)
+    Temporal_buff                            0x200048a8   Data          48  main.o(.bss)
+    Memory_buff                              0x200048d8   Data         488  main.o(.bss)
+    raw_ADC                                  0x20004ac0   Data         512  main.o(.bss)
+    Spectra                                  0x20004cc0   Data         512  main.o(.bss)
+    Neutron_Bunch                            0x20004ec0   Data         512  main.o(.bss)
+    sADC                                     0x200050dc   Data          28  main.o(.bss)
+    sADCx                                    0x200050f8   Data          44  main.o(.bss)
+    __libspace_start                         0x20005124   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x20005184   Data           0  libspace.o(.bss)
 
 
 
@@ -1034,192 +1054,194 @@ Memory Map of the image
 
   Image Entry point : 0x200000c1
 
-  Load Region LR_IROM1 (Base: 0x20000000, Size: 0x00001f50, Max: 0x00004000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x20000000, Size: 0x00001fb8, Max: 0x00004000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x20000000, Load base: 0x20000000, Size: 0x00001e28, Max: 0x00004000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x20000000, Load base: 0x20000000, Size: 0x00001e90, Max: 0x00004000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x20000000   0x000000c0   Data   RO          485    RESET               startup_mdr32f9qx.o
-    0x200000c0   0x200000c0   0x00000008   Code   RO         1671  * !!!main             c_w.l(__main.o)
-    0x200000c8   0x200000c8   0x00000034   Code   RO         1828    !!!scatter          c_w.l(__scatter.o)
-    0x200000fc   0x200000fc   0x0000001a   Code   RO         1830    !!handler_copy      c_w.l(__scatter_copy.o)
+    0x20000000   0x20000000   0x000000c0   Data   RO          491    RESET               startup_mdr32f9qx.o
+    0x200000c0   0x200000c0   0x00000008   Code   RO         1677  * !!!main             c_w.l(__main.o)
+    0x200000c8   0x200000c8   0x00000034   Code   RO         1834    !!!scatter          c_w.l(__scatter.o)
+    0x200000fc   0x200000fc   0x0000001a   Code   RO         1836    !!handler_copy      c_w.l(__scatter_copy.o)
     0x20000116   0x20000116   0x00000002   PAD
-    0x20000118   0x20000118   0x0000001c   Code   RO         1832    !!handler_zi        c_w.l(__scatter_zi.o)
-    0x20000134   0x20000134   0x00000002   Code   RO         1698    .ARM.Collect$$libinit$$00000000  c_w.l(libinit.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1705    .ARM.Collect$$libinit$$00000002  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1707    .ARM.Collect$$libinit$$00000004  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1710    .ARM.Collect$$libinit$$0000000A  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1712    .ARM.Collect$$libinit$$0000000C  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1714    .ARM.Collect$$libinit$$0000000E  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1717    .ARM.Collect$$libinit$$00000011  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1719    .ARM.Collect$$libinit$$00000013  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1721    .ARM.Collect$$libinit$$00000015  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1723    .ARM.Collect$$libinit$$00000017  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1725    .ARM.Collect$$libinit$$00000019  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1727    .ARM.Collect$$libinit$$0000001B  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1729    .ARM.Collect$$libinit$$0000001D  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1731    .ARM.Collect$$libinit$$0000001F  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1733    .ARM.Collect$$libinit$$00000021  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1735    .ARM.Collect$$libinit$$00000023  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1737    .ARM.Collect$$libinit$$00000025  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1741    .ARM.Collect$$libinit$$0000002C  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1743    .ARM.Collect$$libinit$$0000002E  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1745    .ARM.Collect$$libinit$$00000030  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000000   Code   RO         1747    .ARM.Collect$$libinit$$00000032  c_w.l(libinit2.o)
-    0x20000136   0x20000136   0x00000002   Code   RO         1748    .ARM.Collect$$libinit$$00000033  c_w.l(libinit2.o)
-    0x20000138   0x20000138   0x00000002   Code   RO         1768    .ARM.Collect$$libshutdown$$00000000  c_w.l(libshutdown.o)
-    0x2000013a   0x2000013a   0x00000000   Code   RO         1781    .ARM.Collect$$libshutdown$$00000002  c_w.l(libshutdown2.o)
-    0x2000013a   0x2000013a   0x00000000   Code   RO         1783    .ARM.Collect$$libshutdown$$00000004  c_w.l(libshutdown2.o)
-    0x2000013a   0x2000013a   0x00000000   Code   RO         1786    .ARM.Collect$$libshutdown$$00000007  c_w.l(libshutdown2.o)
-    0x2000013a   0x2000013a   0x00000000   Code   RO         1789    .ARM.Collect$$libshutdown$$0000000A  c_w.l(libshutdown2.o)
-    0x2000013a   0x2000013a   0x00000000   Code   RO         1791    .ARM.Collect$$libshutdown$$0000000C  c_w.l(libshutdown2.o)
-    0x2000013a   0x2000013a   0x00000000   Code   RO         1794    .ARM.Collect$$libshutdown$$0000000F  c_w.l(libshutdown2.o)
-    0x2000013a   0x2000013a   0x00000002   Code   RO         1795    .ARM.Collect$$libshutdown$$00000010  c_w.l(libshutdown2.o)
-    0x2000013c   0x2000013c   0x00000000   Code   RO         1673    .ARM.Collect$$rtentry$$00000000  c_w.l(__rtentry.o)
-    0x2000013c   0x2000013c   0x00000000   Code   RO         1675    .ARM.Collect$$rtentry$$00000002  c_w.l(__rtentry2.o)
-    0x2000013c   0x2000013c   0x00000006   Code   RO         1687    .ARM.Collect$$rtentry$$00000004  c_w.l(__rtentry4.o)
-    0x20000142   0x20000142   0x00000000   Code   RO         1677    .ARM.Collect$$rtentry$$00000009  c_w.l(__rtentry2.o)
-    0x20000142   0x20000142   0x00000004   Code   RO         1678    .ARM.Collect$$rtentry$$0000000A  c_w.l(__rtentry2.o)
-    0x20000146   0x20000146   0x00000000   Code   RO         1680    .ARM.Collect$$rtentry$$0000000C  c_w.l(__rtentry2.o)
-    0x20000146   0x20000146   0x00000008   Code   RO         1681    .ARM.Collect$$rtentry$$0000000D  c_w.l(__rtentry2.o)
-    0x2000014e   0x2000014e   0x00000002   Code   RO         1702    .ARM.Collect$$rtexit$$00000000  c_w.l(rtexit.o)
-    0x20000150   0x20000150   0x00000000   Code   RO         1750    .ARM.Collect$$rtexit$$00000002  c_w.l(rtexit2.o)
-    0x20000150   0x20000150   0x00000004   Code   RO         1751    .ARM.Collect$$rtexit$$00000003  c_w.l(rtexit2.o)
-    0x20000154   0x20000154   0x00000006   Code   RO         1752    .ARM.Collect$$rtexit$$00000004  c_w.l(rtexit2.o)
+    0x20000118   0x20000118   0x0000001c   Code   RO         1838    !!handler_zi        c_w.l(__scatter_zi.o)
+    0x20000134   0x20000134   0x00000002   Code   RO         1704    .ARM.Collect$$libinit$$00000000  c_w.l(libinit.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1711    .ARM.Collect$$libinit$$00000002  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1713    .ARM.Collect$$libinit$$00000004  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1716    .ARM.Collect$$libinit$$0000000A  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1718    .ARM.Collect$$libinit$$0000000C  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1720    .ARM.Collect$$libinit$$0000000E  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1723    .ARM.Collect$$libinit$$00000011  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1725    .ARM.Collect$$libinit$$00000013  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1727    .ARM.Collect$$libinit$$00000015  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1729    .ARM.Collect$$libinit$$00000017  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1731    .ARM.Collect$$libinit$$00000019  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1733    .ARM.Collect$$libinit$$0000001B  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1735    .ARM.Collect$$libinit$$0000001D  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1737    .ARM.Collect$$libinit$$0000001F  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1739    .ARM.Collect$$libinit$$00000021  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1741    .ARM.Collect$$libinit$$00000023  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1743    .ARM.Collect$$libinit$$00000025  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1747    .ARM.Collect$$libinit$$0000002C  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1749    .ARM.Collect$$libinit$$0000002E  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1751    .ARM.Collect$$libinit$$00000030  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000000   Code   RO         1753    .ARM.Collect$$libinit$$00000032  c_w.l(libinit2.o)
+    0x20000136   0x20000136   0x00000002   Code   RO         1754    .ARM.Collect$$libinit$$00000033  c_w.l(libinit2.o)
+    0x20000138   0x20000138   0x00000002   Code   RO         1774    .ARM.Collect$$libshutdown$$00000000  c_w.l(libshutdown.o)
+    0x2000013a   0x2000013a   0x00000000   Code   RO         1787    .ARM.Collect$$libshutdown$$00000002  c_w.l(libshutdown2.o)
+    0x2000013a   0x2000013a   0x00000000   Code   RO         1789    .ARM.Collect$$libshutdown$$00000004  c_w.l(libshutdown2.o)
+    0x2000013a   0x2000013a   0x00000000   Code   RO         1792    .ARM.Collect$$libshutdown$$00000007  c_w.l(libshutdown2.o)
+    0x2000013a   0x2000013a   0x00000000   Code   RO         1795    .ARM.Collect$$libshutdown$$0000000A  c_w.l(libshutdown2.o)
+    0x2000013a   0x2000013a   0x00000000   Code   RO         1797    .ARM.Collect$$libshutdown$$0000000C  c_w.l(libshutdown2.o)
+    0x2000013a   0x2000013a   0x00000000   Code   RO         1800    .ARM.Collect$$libshutdown$$0000000F  c_w.l(libshutdown2.o)
+    0x2000013a   0x2000013a   0x00000002   Code   RO         1801    .ARM.Collect$$libshutdown$$00000010  c_w.l(libshutdown2.o)
+    0x2000013c   0x2000013c   0x00000000   Code   RO         1679    .ARM.Collect$$rtentry$$00000000  c_w.l(__rtentry.o)
+    0x2000013c   0x2000013c   0x00000000   Code   RO         1681    .ARM.Collect$$rtentry$$00000002  c_w.l(__rtentry2.o)
+    0x2000013c   0x2000013c   0x00000006   Code   RO         1693    .ARM.Collect$$rtentry$$00000004  c_w.l(__rtentry4.o)
+    0x20000142   0x20000142   0x00000000   Code   RO         1683    .ARM.Collect$$rtentry$$00000009  c_w.l(__rtentry2.o)
+    0x20000142   0x20000142   0x00000004   Code   RO         1684    .ARM.Collect$$rtentry$$0000000A  c_w.l(__rtentry2.o)
+    0x20000146   0x20000146   0x00000000   Code   RO         1686    .ARM.Collect$$rtentry$$0000000C  c_w.l(__rtentry2.o)
+    0x20000146   0x20000146   0x00000008   Code   RO         1687    .ARM.Collect$$rtentry$$0000000D  c_w.l(__rtentry2.o)
+    0x2000014e   0x2000014e   0x00000002   Code   RO         1708    .ARM.Collect$$rtexit$$00000000  c_w.l(rtexit.o)
+    0x20000150   0x20000150   0x00000000   Code   RO         1756    .ARM.Collect$$rtexit$$00000002  c_w.l(rtexit2.o)
+    0x20000150   0x20000150   0x00000004   Code   RO         1757    .ARM.Collect$$rtexit$$00000003  c_w.l(rtexit2.o)
+    0x20000154   0x20000154   0x00000006   Code   RO         1758    .ARM.Collect$$rtexit$$00000004  c_w.l(rtexit2.o)
     0x2000015a   0x2000015a   0x00000002   PAD
-    0x2000015c   0x2000015c   0x00000040   Code   RO          486    .text               startup_mdr32f9qx.o
-    0x2000019c   0x2000019c   0x00000064   Code   RO         1667    .text               c_w.l(rt_memcpy_w.o)
-    0x20000200   0x20000200   0x00000006   Code   RO         1669    .text               c_w.l(heapauxi.o)
-    0x20000206   0x20000206   0x0000004a   Code   RO         1689    .text               c_w.l(sys_stackheap_outer.o)
-    0x20000250   0x20000250   0x00000012   Code   RO         1691    .text               c_w.l(exit.o)
+    0x2000015c   0x2000015c   0x00000040   Code   RO          492    .text               startup_mdr32f9qx.o
+    0x2000019c   0x2000019c   0x00000064   Code   RO         1673    .text               c_w.l(rt_memcpy_w.o)
+    0x20000200   0x20000200   0x00000006   Code   RO         1675    .text               c_w.l(heapauxi.o)
+    0x20000206   0x20000206   0x0000004a   Code   RO         1695    .text               c_w.l(sys_stackheap_outer.o)
+    0x20000250   0x20000250   0x00000012   Code   RO         1697    .text               c_w.l(exit.o)
     0x20000262   0x20000262   0x00000002   PAD
-    0x20000264   0x20000264   0x00000008   Code   RO         1699    .text               c_w.l(libspace.o)
-    0x2000026c   0x2000026c   0x0000000c   Code   RO         1760    .text               c_w.l(sys_exit.o)
-    0x20000278   0x20000278   0x00000002   Code   RO         1771    .text               c_w.l(use_no_semi.o)
-    0x2000027a   0x2000027a   0x00000000   Code   RO         1773    .text               c_w.l(indicate_semi.o)
+    0x20000264   0x20000264   0x00000008   Code   RO         1705    .text               c_w.l(libspace.o)
+    0x2000026c   0x2000026c   0x0000000c   Code   RO         1766    .text               c_w.l(sys_exit.o)
+    0x20000278   0x20000278   0x00000002   Code   RO         1777    .text               c_w.l(use_no_semi.o)
+    0x2000027a   0x2000027a   0x00000000   Code   RO         1779    .text               c_w.l(indicate_semi.o)
     0x2000027a   0x2000027a   0x00000002   PAD
-    0x2000027c   0x2000027c   0x0000001c   Code   RO          530    i.ADC1_Cmd          mdr32f9qx_adc.o
+    0x2000027c   0x2000027c   0x0000001c   Code   RO          536    i.ADC1_Cmd          mdr32f9qx_adc.o
     0x20000298   0x20000298   0x0000005c   Code   RO            3    i.ADC1_Config       main.o
-    0x200002f4   0x200002f4   0x00000018   Code   RO          531    i.ADC1_GetFlagStatus  mdr32f9qx_adc.o
-    0x2000030c   0x2000030c   0x0000000c   Code   RO          533    i.ADC1_GetResult    mdr32f9qx_adc.o
-    0x20000318   0x20000318   0x0000005c   Code   RO          536    i.ADC1_Init         mdr32f9qx_adc.o
-    0x20000374   0x20000374   0x00000014   Code   RO          544    i.ADC1_Start        mdr32f9qx_adc.o
-    0x20000388   0x20000388   0x0000001c   Code   RO          548    i.ADC2_Cmd          mdr32f9qx_adc.o
+    0x200002f4   0x200002f4   0x00000018   Code   RO          537    i.ADC1_GetFlagStatus  mdr32f9qx_adc.o
+    0x2000030c   0x2000030c   0x0000000c   Code   RO          539    i.ADC1_GetResult    mdr32f9qx_adc.o
+    0x20000318   0x20000318   0x0000005c   Code   RO          542    i.ADC1_Init         mdr32f9qx_adc.o
+    0x20000374   0x20000374   0x00000014   Code   RO          550    i.ADC1_Start        mdr32f9qx_adc.o
+    0x20000388   0x20000388   0x0000001c   Code   RO          554    i.ADC2_Cmd          mdr32f9qx_adc.o
     0x200003a4   0x200003a4   0x0000005c   Code   RO            4    i.ADC2_Config       main.o
-    0x20000400   0x20000400   0x00000018   Code   RO          549    i.ADC2_GetFlagStatus  mdr32f9qx_adc.o
-    0x20000418   0x20000418   0x0000000c   Code   RO          551    i.ADC2_GetResult    mdr32f9qx_adc.o
-    0x20000424   0x20000424   0x00000050   Code   RO          554    i.ADC2_Init         mdr32f9qx_adc.o
-    0x20000474   0x20000474   0x00000014   Code   RO          562    i.ADC2_Start        mdr32f9qx_adc.o
-    0x20000488   0x20000488   0x0000002c   Code   RO          563    i.ADC_DeInit        mdr32f9qx_adc.o
-    0x200004b4   0x200004b4   0x00000016   Code   RO          564    i.ADC_GetFlagStatus  mdr32f9qx_adc.o
+    0x20000400   0x20000400   0x00000018   Code   RO          555    i.ADC2_GetFlagStatus  mdr32f9qx_adc.o
+    0x20000418   0x20000418   0x0000000c   Code   RO          557    i.ADC2_GetResult    mdr32f9qx_adc.o
+    0x20000424   0x20000424   0x00000050   Code   RO          560    i.ADC2_Init         mdr32f9qx_adc.o
+    0x20000474   0x20000474   0x00000014   Code   RO          568    i.ADC2_Start        mdr32f9qx_adc.o
+    0x20000488   0x20000488   0x0000002c   Code   RO          569    i.ADC_DeInit        mdr32f9qx_adc.o
+    0x200004b4   0x200004b4   0x00000016   Code   RO          570    i.ADC_GetFlagStatus  mdr32f9qx_adc.o
     0x200004ca   0x200004ca   0x00000002   PAD
-    0x200004cc   0x200004cc   0x00000014   Code   RO          566    i.ADC_GetStatus     mdr32f9qx_adc.o
-    0x200004e0   0x200004e0   0x00000060   Code   RO          307    i.ADC_IRQHandler    mdr32f9qx_it.o
-    0x20000540   0x20000540   0x00000040   Code   RO          568    i.ADC_Init          mdr32f9qx_adc.o
-    0x20000580   0x20000580   0x00000012   Code   RO          570    i.ADC_StructInit    mdr32f9qx_adc.o
-    0x20000592   0x20000592   0x0000001c   Code   RO          571    i.ADCx_StructInit   mdr32f9qx_adc.o
-    0x200005ae   0x200005ae   0x00000002   Code   RO          308    i.BACKUP_IRQHandler  mdr32f9qx_it.o
-    0x200005b0   0x200005b0   0x00000004   Code   RO          309    i.BusFault_Handler  mdr32f9qx_it.o
-    0x200005b4   0x200005b4   0x00000002   Code   RO          310    i.CAN1_IRQHandler   mdr32f9qx_it.o
-    0x200005b6   0x200005b6   0x00000002   Code   RO          311    i.CAN2_IRQHandler   mdr32f9qx_it.o
-    0x200005b8   0x200005b8   0x00000002   Code   RO          312    i.COMPARATOR_IRQHandler  mdr32f9qx_it.o
-    0x200005ba   0x200005ba   0x00000002   PAD
-    0x200005bc   0x200005bc   0x0000004c   Code   RO            6    i.Command_Handler   main.o
-    0x20000608   0x20000608   0x00000002   Code   RO          313    i.DMA_IRQHandler    mdr32f9qx_it.o
-    0x2000060a   0x2000060a   0x00000002   Code   RO          314    i.DebugMon_Handler  mdr32f9qx_it.o
-    0x2000060c   0x2000060c   0x00000028   Code   RO           11    i.DelayConfig       main.o
-    0x20000634   0x20000634   0x0000001c   Code   RO           12    i.Delayms           main.o
-    0x20000650   0x20000650   0x000000fc   Code   RO           14    i.EXT_INT1_IRQHandler  main.o
-    0x2000074c   0x2000074c   0x000000fc   Code   RO           15    i.EXT_INT2_IRQHandler  main.o
-    0x20000848   0x20000848   0x000000fc   Code   RO           16    i.EXT_INT3_IRQHandler  main.o
-    0x20000944   0x20000944   0x000000fc   Code   RO           17    i.EXT_INT4_IRQHandler  main.o
-    0x20000a40   0x20000a40   0x0000003a   Code   RO           18    i.EmableINTERUPT    main.o
-    0x20000a7a   0x20000a7a   0x00000004   Code   RO          315    i.HardFault_Handler  mdr32f9qx_it.o
-    0x20000a7e   0x20000a7e   0x00000002   Code   RO          316    i.I2C_IRQHandler    mdr32f9qx_it.o
-    0x20000a80   0x20000a80   0x00000004   Code   RO          317    i.MemManage_Handler  mdr32f9qx_it.o
-    0x20000a84   0x20000a84   0x00000110   Code   RO           20    i.MltPinCfg         main.o
-    0x20000b94   0x20000b94   0x00000002   Code   RO          318    i.NMI_Handler       mdr32f9qx_it.o
-    0x20000b96   0x20000b96   0x00000002   PAD
-    0x20000b98   0x20000b98   0x00000018   Code   RO           21    i.NVIC_DisableIRQ   main.o
-    0x20000bb0   0x20000bb0   0x00000016   Code   RO           22    i.NVIC_EnableIRQ    main.o
-    0x20000bc6   0x20000bc6   0x00000002   PAD
-    0x20000bc8   0x20000bc8   0x0000006c   Code   RO           23    i.Next_Uart_sending  main.o
-    0x20000c34   0x20000c34   0x000001c8   Code   RO          916    i.PORT_Init         mdr32f9qx_port.o
-    0x20000dfc   0x20000dfc   0x00000010   Code   RO          918    i.PORT_ReadInputDataBit  mdr32f9qx_port.o
-    0x20000e0c   0x20000e0c   0x0000001c   Code   RO          919    i.PORT_ResetBits    mdr32f9qx_port.o
-    0x20000e28   0x20000e28   0x0000001c   Code   RO          920    i.PORT_SetBits      mdr32f9qx_port.o
-    0x20000e44   0x20000e44   0x00000002   Code   RO          319    i.POWER_IRQHandler  mdr32f9qx_it.o
-    0x20000e46   0x20000e46   0x00000002   Code   RO          320    i.PendSV_Handler    mdr32f9qx_it.o
-    0x20000e48   0x20000e48   0x00000068   Code   RO           24    i.Put_to_CODE       main.o
-    0x20000eb0   0x20000eb0   0x0000003c   Code   RO           25    i.Put_to_CODE_2     main.o
-    0x20000eec   0x20000eec   0x00000028   Code   RO           26    i.Put_to_circular_Buffer  main.o
-    0x20000f14   0x20000f14   0x0000000c   Code   RO          986    i.RST_CLK_CPU_PLLcmd  mdr32f9qx_rst_clk.o
-    0x20000f20   0x20000f20   0x00000040   Code   RO          987    i.RST_CLK_CPU_PLLconfig  mdr32f9qx_rst_clk.o
-    0x20000f60   0x20000f60   0x00000034   Code   RO          988    i.RST_CLK_CPU_PLLstatus  mdr32f9qx_rst_clk.o
-    0x20000f94   0x20000f94   0x0000000c   Code   RO          989    i.RST_CLK_CPU_PLLuse  mdr32f9qx_rst_clk.o
-    0x20000fa0   0x20000fa0   0x00000014   Code   RO          991    i.RST_CLK_CPUclkSelection  mdr32f9qx_rst_clk.o
-    0x20000fb4   0x20000fb4   0x0000002c   Code   RO          992    i.RST_CLK_DeInit    mdr32f9qx_rst_clk.o
-    0x20000fe0   0x20000fe0   0x00000278   Code   RO          993    i.RST_CLK_GetClocksFreq  mdr32f9qx_rst_clk.o
-    0x20001258   0x20001258   0x00000034   Code   RO          994    i.RST_CLK_GetFlagStatus  mdr32f9qx_rst_clk.o
-    0x2000128c   0x2000128c   0x0000003c   Code   RO          996    i.RST_CLK_HSEconfig  mdr32f9qx_rst_clk.o
-    0x200012c8   0x200012c8   0x00000034   Code   RO          997    i.RST_CLK_HSEstatus  mdr32f9qx_rst_clk.o
-    0x200012fc   0x200012fc   0x0000000c   Code   RO         1000    i.RST_CLK_HSIcmd    mdr32f9qx_rst_clk.o
-    0x20001308   0x20001308   0x00000034   Code   RO         1001    i.RST_CLK_HSIstatus  mdr32f9qx_rst_clk.o
-    0x2000133c   0x2000133c   0x00000020   Code   RO         1007    i.RST_CLK_PCLKcmd   mdr32f9qx_rst_clk.o
-    0x2000135c   0x2000135c   0x00000054   Code   RO         1016    i.RST_CLK_WarmDeInit  mdr32f9qx_rst_clk.o
-    0x200013b0   0x200013b0   0x00000002   Code   RO          321    i.SSP1_IRQHandler   mdr32f9qx_it.o
-    0x200013b2   0x200013b2   0x00000002   Code   RO          322    i.SSP2_IRQHandler   mdr32f9qx_it.o
-    0x200013b4   0x200013b4   0x00000002   Code   RO          323    i.SVC_Handler       mdr32f9qx_it.o
-    0x200013b6   0x200013b6   0x00000040   Code   RO           30    i.SetupExternalOscillator  main.o
-    0x200013f6   0x200013f6   0x00000002   PAD
-    0x200013f8   0x200013f8   0x00000054   Code   RO           32    i.Srart_Uart_sending  main.o
-    0x2000144c   0x2000144c   0x00000002   Code   RO          324    i.SysTick_Handler   mdr32f9qx_it.o
-    0x2000144e   0x2000144e   0x00000002   PAD
-    0x20001450   0x20001450   0x00000094   Code   RO          492    i.SystemCoreClockUpdate  system_mdr32f9qx.o
-    0x200014e4   0x200014e4   0x00000040   Code   RO          493    i.SystemInit        system_mdr32f9qx.o
-    0x20001524   0x20001524   0x00000018   Code   RO         1248    i.TIMER_GetITStatus  mdr32f9qx_timer.o
-    0x2000153c   0x2000153c   0x00000020   Code   RO          325    i.Timer1_IRQHandler  mdr32f9qx_it.o
-    0x2000155c   0x2000155c   0x00000020   Code   RO          326    i.Timer2_IRQHandler  mdr32f9qx_it.o
-    0x2000157c   0x2000157c   0x00000002   Code   RO          327    i.Timer3_IRQHandler  mdr32f9qx_it.o
-    0x2000157e   0x2000157e   0x00000002   PAD
-    0x20001580   0x20001580   0x000000cc   Code   RO          328    i.UART1_IRQHandler  mdr32f9qx_it.o
-    0x2000164c   0x2000164c   0x00000028   Code   RO          329    i.UART2_IRQHandler  mdr32f9qx_it.o
-    0x20001674   0x20001674   0x0000003c   Code   RO         1551    i.UART_BRGInit      mdr32f9qx_uart.o
-    0x200016b0   0x200016b0   0x00000008   Code   RO         1553    i.UART_ClearITPendingBit  mdr32f9qx_uart.o
-    0x200016b8   0x200016b8   0x00000018   Code   RO         1554    i.UART_Cmd          mdr32f9qx_uart.o
-    0x200016d0   0x200016d0   0x00000010   Code   RO         1558    i.UART_GetFlagStatus  mdr32f9qx_uart.o
-    0x200016e0   0x200016e0   0x00000010   Code   RO         1560    i.UART_GetITStatusMasked  mdr32f9qx_uart.o
-    0x200016f0   0x200016f0   0x00000012   Code   RO         1561    i.UART_ITConfig     mdr32f9qx_uart.o
-    0x20001702   0x20001702   0x00000002   PAD
-    0x20001704   0x20001704   0x000000b0   Code   RO         1562    i.UART_Init         mdr32f9qx_uart.o
-    0x200017b4   0x200017b4   0x00000008   Code   RO         1565    i.UART_ReceiveData  mdr32f9qx_uart.o
-    0x200017bc   0x200017bc   0x00000006   Code   RO         1566    i.UART_SendData     mdr32f9qx_uart.o
-    0x200017c2   0x200017c2   0x00000002   Code   RO          330    i.USB_IRQHandler    mdr32f9qx_it.o
-    0x200017c4   0x200017c4   0x00000080   Code   RO           34    i.Uart1PinCfg       main.o
-    0x20001844   0x20001844   0x00000058   Code   RO           35    i.Uart1Setup        main.o
-    0x2000189c   0x2000189c   0x0000001c   Code   RO           38    i.UartStart         main.o
-    0x200018b8   0x200018b8   0x00000004   Code   RO          331    i.UsageFault_Handler  mdr32f9qx_it.o
-    0x200018bc   0x200018bc   0x00000002   Code   RO          332    i.WWDG_IRQHandler   mdr32f9qx_it.o
-    0x200018be   0x200018be   0x0000005a   Code   RO           39    i.convers           main.o
-    0x20001918   0x20001918   0x000004e0   Code   RO           40    i.main              main.o
-    0x20001df8   0x20001df8   0x0000000d   Data   RO           42    .conststring        main.o
-    0x20001e05   0x20001e05   0x00000003   PAD
-    0x20001e08   0x20001e08   0x00000020   Data   RO         1826    Region$$Table       anon$$obj.o
+    0x200004cc   0x200004cc   0x00000014   Code   RO          572    i.ADC_GetStatus     mdr32f9qx_adc.o
+    0x200004e0   0x200004e0   0x00000060   Code   RO          313    i.ADC_IRQHandler    mdr32f9qx_it.o
+    0x20000540   0x20000540   0x00000040   Code   RO          574    i.ADC_Init          mdr32f9qx_adc.o
+    0x20000580   0x20000580   0x00000012   Code   RO          576    i.ADC_StructInit    mdr32f9qx_adc.o
+    0x20000592   0x20000592   0x0000001c   Code   RO          577    i.ADCx_StructInit   mdr32f9qx_adc.o
+    0x200005ae   0x200005ae   0x00000002   PAD
+    0x200005b0   0x200005b0   0x00000050   Code   RO          314    i.BACKUP_IRQHandler  mdr32f9qx_it.o
+    0x20000600   0x20000600   0x00000018   Code   RO          824    i.BKP_RTC_GetFlagStatus  mdr32f9qx_bkp.o
+    0x20000618   0x20000618   0x00000004   Code   RO          315    i.BusFault_Handler  mdr32f9qx_it.o
+    0x2000061c   0x2000061c   0x00000002   Code   RO          316    i.CAN1_IRQHandler   mdr32f9qx_it.o
+    0x2000061e   0x2000061e   0x00000002   Code   RO          317    i.CAN2_IRQHandler   mdr32f9qx_it.o
+    0x20000620   0x20000620   0x00000002   Code   RO          318    i.COMPARATOR_IRQHandler  mdr32f9qx_it.o
+    0x20000622   0x20000622   0x00000002   PAD
+    0x20000624   0x20000624   0x0000004c   Code   RO            6    i.Command_Handler   main.o
+    0x20000670   0x20000670   0x00000002   Code   RO          319    i.DMA_IRQHandler    mdr32f9qx_it.o
+    0x20000672   0x20000672   0x00000002   Code   RO          320    i.DebugMon_Handler  mdr32f9qx_it.o
+    0x20000674   0x20000674   0x00000028   Code   RO           11    i.DelayConfig       main.o
+    0x2000069c   0x2000069c   0x0000001c   Code   RO           12    i.Delayms           main.o
+    0x200006b8   0x200006b8   0x000000fc   Code   RO           14    i.EXT_INT1_IRQHandler  main.o
+    0x200007b4   0x200007b4   0x000000fc   Code   RO           15    i.EXT_INT2_IRQHandler  main.o
+    0x200008b0   0x200008b0   0x000000fc   Code   RO           16    i.EXT_INT3_IRQHandler  main.o
+    0x200009ac   0x200009ac   0x000000fc   Code   RO           17    i.EXT_INT4_IRQHandler  main.o
+    0x20000aa8   0x20000aa8   0x0000003a   Code   RO           18    i.EmableINTERUPT    main.o
+    0x20000ae2   0x20000ae2   0x00000004   Code   RO          321    i.HardFault_Handler  mdr32f9qx_it.o
+    0x20000ae6   0x20000ae6   0x00000002   Code   RO          322    i.I2C_IRQHandler    mdr32f9qx_it.o
+    0x20000ae8   0x20000ae8   0x00000004   Code   RO          323    i.MemManage_Handler  mdr32f9qx_it.o
+    0x20000aec   0x20000aec   0x00000110   Code   RO           20    i.MltPinCfg         main.o
+    0x20000bfc   0x20000bfc   0x00000002   Code   RO          324    i.NMI_Handler       mdr32f9qx_it.o
+    0x20000bfe   0x20000bfe   0x00000002   PAD
+    0x20000c00   0x20000c00   0x00000018   Code   RO           21    i.NVIC_DisableIRQ   main.o
+    0x20000c18   0x20000c18   0x00000016   Code   RO           22    i.NVIC_EnableIRQ    main.o
+    0x20000c2e   0x20000c2e   0x00000002   PAD
+    0x20000c30   0x20000c30   0x0000006c   Code   RO           23    i.Next_Uart_sending  main.o
+    0x20000c9c   0x20000c9c   0x000001c8   Code   RO          922    i.PORT_Init         mdr32f9qx_port.o
+    0x20000e64   0x20000e64   0x00000010   Code   RO          924    i.PORT_ReadInputDataBit  mdr32f9qx_port.o
+    0x20000e74   0x20000e74   0x0000001c   Code   RO          925    i.PORT_ResetBits    mdr32f9qx_port.o
+    0x20000e90   0x20000e90   0x0000001c   Code   RO          926    i.PORT_SetBits      mdr32f9qx_port.o
+    0x20000eac   0x20000eac   0x00000002   Code   RO          325    i.POWER_IRQHandler  mdr32f9qx_it.o
+    0x20000eae   0x20000eae   0x00000002   Code   RO          326    i.PendSV_Handler    mdr32f9qx_it.o
+    0x20000eb0   0x20000eb0   0x00000068   Code   RO           24    i.Put_to_CODE       main.o
+    0x20000f18   0x20000f18   0x0000003c   Code   RO           25    i.Put_to_CODE_2     main.o
+    0x20000f54   0x20000f54   0x00000028   Code   RO           26    i.Put_to_circular_Buffer  main.o
+    0x20000f7c   0x20000f7c   0x0000000c   Code   RO          992    i.RST_CLK_CPU_PLLcmd  mdr32f9qx_rst_clk.o
+    0x20000f88   0x20000f88   0x00000040   Code   RO          993    i.RST_CLK_CPU_PLLconfig  mdr32f9qx_rst_clk.o
+    0x20000fc8   0x20000fc8   0x00000034   Code   RO          994    i.RST_CLK_CPU_PLLstatus  mdr32f9qx_rst_clk.o
+    0x20000ffc   0x20000ffc   0x0000000c   Code   RO          995    i.RST_CLK_CPU_PLLuse  mdr32f9qx_rst_clk.o
+    0x20001008   0x20001008   0x00000014   Code   RO          997    i.RST_CLK_CPUclkSelection  mdr32f9qx_rst_clk.o
+    0x2000101c   0x2000101c   0x0000002c   Code   RO          998    i.RST_CLK_DeInit    mdr32f9qx_rst_clk.o
+    0x20001048   0x20001048   0x00000278   Code   RO          999    i.RST_CLK_GetClocksFreq  mdr32f9qx_rst_clk.o
+    0x200012c0   0x200012c0   0x00000034   Code   RO         1000    i.RST_CLK_GetFlagStatus  mdr32f9qx_rst_clk.o
+    0x200012f4   0x200012f4   0x0000003c   Code   RO         1002    i.RST_CLK_HSEconfig  mdr32f9qx_rst_clk.o
+    0x20001330   0x20001330   0x00000034   Code   RO         1003    i.RST_CLK_HSEstatus  mdr32f9qx_rst_clk.o
+    0x20001364   0x20001364   0x0000000c   Code   RO         1006    i.RST_CLK_HSIcmd    mdr32f9qx_rst_clk.o
+    0x20001370   0x20001370   0x00000034   Code   RO         1007    i.RST_CLK_HSIstatus  mdr32f9qx_rst_clk.o
+    0x200013a4   0x200013a4   0x00000020   Code   RO         1013    i.RST_CLK_PCLKcmd   mdr32f9qx_rst_clk.o
+    0x200013c4   0x200013c4   0x00000054   Code   RO         1022    i.RST_CLK_WarmDeInit  mdr32f9qx_rst_clk.o
+    0x20001418   0x20001418   0x00000002   Code   RO          327    i.SSP1_IRQHandler   mdr32f9qx_it.o
+    0x2000141a   0x2000141a   0x00000002   Code   RO          328    i.SSP2_IRQHandler   mdr32f9qx_it.o
+    0x2000141c   0x2000141c   0x00000002   Code   RO          329    i.SVC_Handler       mdr32f9qx_it.o
+    0x2000141e   0x2000141e   0x00000040   Code   RO           30    i.SetupExternalOscillator  main.o
+    0x2000145e   0x2000145e   0x00000002   PAD
+    0x20001460   0x20001460   0x00000054   Code   RO           33    i.Srart_Uart_sending  main.o
+    0x200014b4   0x200014b4   0x00000002   Code   RO          330    i.SysTick_Handler   mdr32f9qx_it.o
+    0x200014b6   0x200014b6   0x00000002   PAD
+    0x200014b8   0x200014b8   0x00000094   Code   RO          498    i.SystemCoreClockUpdate  system_mdr32f9qx.o
+    0x2000154c   0x2000154c   0x00000040   Code   RO          499    i.SystemInit        system_mdr32f9qx.o
+    0x2000158c   0x2000158c   0x00000018   Code   RO         1254    i.TIMER_GetITStatus  mdr32f9qx_timer.o
+    0x200015a4   0x200015a4   0x00000020   Code   RO          331    i.Timer1_IRQHandler  mdr32f9qx_it.o
+    0x200015c4   0x200015c4   0x00000020   Code   RO          332    i.Timer2_IRQHandler  mdr32f9qx_it.o
+    0x200015e4   0x200015e4   0x00000002   Code   RO          333    i.Timer3_IRQHandler  mdr32f9qx_it.o
+    0x200015e6   0x200015e6   0x00000002   PAD
+    0x200015e8   0x200015e8   0x000000cc   Code   RO          334    i.UART1_IRQHandler  mdr32f9qx_it.o
+    0x200016b4   0x200016b4   0x00000028   Code   RO          335    i.UART2_IRQHandler  mdr32f9qx_it.o
+    0x200016dc   0x200016dc   0x0000003c   Code   RO         1557    i.UART_BRGInit      mdr32f9qx_uart.o
+    0x20001718   0x20001718   0x00000008   Code   RO         1559    i.UART_ClearITPendingBit  mdr32f9qx_uart.o
+    0x20001720   0x20001720   0x00000018   Code   RO         1560    i.UART_Cmd          mdr32f9qx_uart.o
+    0x20001738   0x20001738   0x00000010   Code   RO         1564    i.UART_GetFlagStatus  mdr32f9qx_uart.o
+    0x20001748   0x20001748   0x00000010   Code   RO         1566    i.UART_GetITStatusMasked  mdr32f9qx_uart.o
+    0x20001758   0x20001758   0x00000012   Code   RO         1567    i.UART_ITConfig     mdr32f9qx_uart.o
+    0x2000176a   0x2000176a   0x00000002   PAD
+    0x2000176c   0x2000176c   0x000000b0   Code   RO         1568    i.UART_Init         mdr32f9qx_uart.o
+    0x2000181c   0x2000181c   0x00000008   Code   RO         1571    i.UART_ReceiveData  mdr32f9qx_uart.o
+    0x20001824   0x20001824   0x00000006   Code   RO         1572    i.UART_SendData     mdr32f9qx_uart.o
+    0x2000182a   0x2000182a   0x00000002   Code   RO          336    i.USB_IRQHandler    mdr32f9qx_it.o
+    0x2000182c   0x2000182c   0x00000080   Code   RO           35    i.Uart1PinCfg       main.o
+    0x200018ac   0x200018ac   0x00000058   Code   RO           36    i.Uart1Setup        main.o
+    0x20001904   0x20001904   0x0000001c   Code   RO           39    i.UartStart         main.o
+    0x20001920   0x20001920   0x00000004   Code   RO          337    i.UsageFault_Handler  mdr32f9qx_it.o
+    0x20001924   0x20001924   0x00000002   Code   RO          338    i.WWDG_IRQHandler   mdr32f9qx_it.o
+    0x20001926   0x20001926   0x0000005a   Code   RO           40    i.convers           main.o
+    0x20001980   0x20001980   0x000004e0   Code   RO           41    i.main              main.o
+    0x20001e60   0x20001e60   0x0000000d   Data   RO           43    .conststring        main.o
+    0x20001e6d   0x20001e6d   0x00000003   PAD
+    0x20001e70   0x20001e70   0x00000020   Data   RO         1832    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20004000, Load base: 0x20001e28, Size: 0x00001a88, Max: 0x00004000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20004000, Load base: 0x20001e90, Size: 0x00001788, Max: 0x00004000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20004000   0x20001e28   0x00000118   Data   RW           43    .data               main.o
-    0x20004118   0x20001f40   0x0000000c   Data   RW          333    .data               mdr32f9qx_it.o
-    0x20004124   0x20001f4c   0x00000004   Data   RW          494    .data               system_mdr32f9qx.o
-    0x20004128        -       0x000012fc   Zero   RW           41    .bss                main.o
-    0x20005424        -       0x00000060   Zero   RW         1700    .bss                c_w.l(libspace.o)
-    0x20005484   0x20001f50   0x00000004   PAD
-    0x20005488        -       0x00000200   Zero   RW          484    HEAP                startup_mdr32f9qx.o
-    0x20005688        -       0x00000400   Zero   RW          483    STACK               startup_mdr32f9qx.o
+    0x20004000   0x20001e90   0x00000118   Data   RW           44    .data               main.o
+    0x20004118   0x20001fa8   0x0000000c   Data   RW          339    .data               mdr32f9qx_it.o
+    0x20004124   0x20001fb4   0x00000004   Data   RW          500    .data               system_mdr32f9qx.o
+    0x20004128        -       0x00000ffc   Zero   RW           42    .bss                main.o
+    0x20005124        -       0x00000060   Zero   RW         1706    .bss                c_w.l(libspace.o)
+    0x20005184   0x20001fb8   0x00000004   PAD
+    0x20005188        -       0x00000200   Zero   RW          490    HEAP                startup_mdr32f9qx.o
+    0x20005388        -       0x00000400   Zero   RW          489    STACK               startup_mdr32f9qx.o
 
 
 ==============================================================================
@@ -1229,9 +1251,10 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-      3754        382         13        280       4860     140028   main.o
+      3754        382         13        280       4092     140164   main.o
        536         84          0          0          0      10579   mdr32f9qx_adc.o
-       454         60          0         12          0      10445   mdr32f9qx_it.o
+        24          6          0          0          0        676   mdr32f9qx_bkp.o
+       532         68          0         12          0      10509   mdr32f9qx_it.o
        528         18          0          0          0       3732   mdr32f9qx_port.o
       1180         80          0          0          0      12905   mdr32f9qx_rst_clk.o
         24          0          0          0          0       1432   mdr32f9qx_timer.o
@@ -1240,9 +1263,9 @@ Image component sizes
        212         28          0          4          0       1327   system_mdr32f9qx.o
 
     ----------------------------------------------------------------------
-      7100        704        240        296       6396     188876   Object Totals
+      7204        718        240        296       5628     189752   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        16          0          3          0          0          0   (incl. Padding)
+        18          0          3          0          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -1290,15 +1313,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      7480        720        240        296       6496     184648   Grand Totals
-      7480        720        240        296       6496     184648   ELF Image Totals
-      7480        720        240        296          0          0   ROM Totals
+      7584        734        240        296       5728     185472   Grand Totals
+      7584        734        240        296       5728     185472   ELF Image Totals
+      7584        734        240        296          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 7720 (   7.54kB)
-    Total RW  Size (RW Data + ZI Data)              6792 (   6.63kB)
-    Total ROM Size (Code + RO Data + RW Data)       8016 (   7.83kB)
+    Total RO  Size (Code + RO Data)                 7824 (   7.64kB)
+    Total RW  Size (RW Data + ZI Data)              6024 (   5.88kB)
+    Total ROM Size (Code + RO Data + RW Data)       8120 (   7.93kB)
 
 ==============================================================================
 
