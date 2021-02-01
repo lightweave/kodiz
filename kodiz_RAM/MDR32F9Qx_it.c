@@ -586,8 +586,8 @@ void SSP2_IRQHandler(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void BACKUP_IRQHandler(void)
-{
+//void BACKUP_IRQHandler(void)
+//{
 //	if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF) == SET)
 //  {
 //    BKP_RTC_ITConfig(BKP_RTC_IT_SECF, DISABLE);
@@ -611,23 +611,25 @@ void BACKUP_IRQHandler(void)
 //    BKP_RTC_ITConfig(BKP_RTC_IT_SECF, ENABLE);
 //  }
 
-if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
-  {
-    if (PORT_ReadInputDataBit(MDR_PORTF,PORT_Pin_0)==0)
-    {
-      PORT_SetBits(MDR_PORTF,PORT_Pin_0);
-    }
-	else
-    {
-      PORT_ResetBits(MDR_PORTF,PORT_Pin_0);
-    }
-  }
-  if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_ALRF)==SET)
-  {
-    PORT_SetBits(MDR_PORTF,PORT_Pin_1);
-  }
-  MDR_BKP -> RTC_CS |= 0x06;
-}
+//if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
+//  {
+//    if (PORT_ReadInputDataBit(MDR_PORTF,PORT_Pin_0)==0)
+//    {
+//      PORT_SetBits(MDR_PORTF,PORT_Pin_0);
+//    }
+//	else
+//    {
+//      PORT_ResetBits(MDR_PORTF,PORT_Pin_0);
+//    }
+//  }
+//  if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_ALRF)==SET)
+//  {
+//			 Srart_Uart_sending((uint8_t *)Hello_text3, 129);
+
+//    //PORT_SetBits(MDR_PORTF,PORT_Pin_1);
+//  }
+//  MDR_BKP -> RTC_CS |= 0x06;
+//}
 /*******************************************************************************
 * Function Name  : EXT_INT1_IRQHandler
 * Description    : This function handles EXT_INT1 interrupt request.
@@ -702,7 +704,7 @@ uint32_t nCount;
 	NVIC_DisableIRQ(EXT_INT4_IRQn);
 	
 	ext_IT2_flag++;	
-}/*
+}*/
 /*******************************************************************************
 * Function Name  : EXT_INT3_IRQHandler
 * Description    : This function handles EXT_INT3 global interrupt request.

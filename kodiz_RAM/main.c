@@ -38,6 +38,16 @@
 
 #include "MDR32F9Qx_timer.h"
 
+
+// for RTC
+#define RTC_HSE_CLK
+
+#define COUNT_VALUE		0
+#define ALARM_VALUE		60
+#define PRESC_VALUE_HS	1000000 // for 80 MHz
+#define PRESC_VALUE_LS	32000
+#define RTCHS_PRESC		RST_CLK_HSIclkDIV16//RST_CLK_HSIclkDIV8
+
 /** @addtogroup __MDR32F9Qx_StdPeriph_Examples MDR32F9Qx StdPeriph Examples
   * @{
   */
@@ -297,14 +307,7 @@ uint32_t  Detectors_Flugs = 0;
 uint32_t  Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Prot_Comp_2 ,Neutron_1, Neutron_2, Neut_1, Neut_2;
 uint32_t  tick_1, tick_2, Buff_No=0, Spec_No=0, Command_No=0;
 
-// for RTC
-#define RTC_HSE_CLK
 
-#define COUNT_VALUE		0
-#define ALARM_VALUE		60
-#define PRESC_VALUE_HS	1000000
-#define PRESC_VALUE_LS	32000
-#define RTCHS_PRESC		RST_CLK_HSIclkDIV8
 
 
 
@@ -635,7 +638,7 @@ void Put_to_CODE_2(uint16_t x, uint16_t y) {
 
 // ===================================================================
 // Запуск процесса передачи массива байтов
-void Srart_Uart_sending(uint8_t * pData, int NData){
+void Start_Uart_sending(uint8_t * pData, int NData){
    P_current=pData;
    P_Last=P_current+ NData;
    PORT_SetBits(MDR_PORTB, PORT_Pin_7); // Переключить канал на передачу 
@@ -663,16 +666,16 @@ void Next_Uart_sending(void){
  void Command_Handler(uint8_t DataByte){
   switch (DataByte) {
         case 't':   
-					Srart_Uart_sending((uint8_t *)Hello_text3,129);
+					Start_Uart_sending((uint8_t *)Hello_text3,129);
         	break;
 				case 'I':   
 					NVIC_EnableIRQ(EXT_INT4_IRQn);
         	break;
         case 'k':   
-					Srart_Uart_sending((uint8_t *)Si_Buffer,Buffer_Size_Si*4);
+					Start_Uart_sending((uint8_t *)Si_Buffer,Buffer_Size_Si*4);
         	break;
         case 'z':   
-					Srart_Uart_sending((uint8_t *)Digital_test,Buffer_Size_Si);
+					Start_Uart_sending((uint8_t *)Digital_test,Buffer_Size_Si);
         	break;
         }
  }
@@ -1416,7 +1419,57 @@ void SetupExternalOscillator()
 		
 
 }
+/*******************************************************************************
+* Function Name  : BACKUP_IRQHandler
+* Description    : This function handles BACKUP global interrupt request.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void BACKUP_IRQHandler(void)
+{
+//	if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF) == SET)
+//  {
+//    BKP_RTC_ITConfig(BKP_RTC_IT_SECF, DISABLE);
 
+//    /* If counter is equal to 86339: one day was elapsed */
+//    tmp = BKP_RTC_GetCounter();
+//    if ((tmp / 3600 == 23) &&
+//        (((tmp % 3600) / 60) == 59) &&
+//        (((tmp % 3600) % 60) == 59))
+//    {
+//      /* Wait until last write operation on RTC registers has finished */
+//      BKP_RTC_WaitForUpdate();
+//      /* Reset counter value */
+//      BKP_RTC_SetCounter(0);
+//      /* Wait until last write operation on RTC registers has finished */
+//      BKP_RTC_WaitForUpdate();
+
+//      /* Increment the date */
+//      Date_Update();
+//    }
+//    BKP_RTC_ITConfig(BKP_RTC_IT_SECF, ENABLE);
+//  }
+
+if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
+  {
+    Start_Uart_sending((uint8_t *)Hello_text3, 129);
+//		if (PORT_ReadInputDataBit(MDR_PORTF,PORT_Pin_0)==0)
+//    {			
+//      PORT_SetBits(MDR_PORTF,PORT_Pin_0);
+//    }
+//	else
+//    {
+//      PORT_ResetBits(MDR_PORTF,PORT_Pin_0);
+//    }
+  }
+  if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_ALRF)==SET)
+  {
+			 //Start_Uart_sending((uint8_t *)Hello_text3, 129);
+    //PORT_SetBits(MDR_PORTF,PORT_Pin_1);
+  }
+  MDR_BKP -> RTC_CS |= 0x06;
+}
 
 ///**
 //  * @brief  Main program.
@@ -1465,7 +1518,7 @@ void SetupExternalOscillator()
 
 	
 	MltPinCfg ();
-	
+	SetupRTC();
 	//Timer_init();
 	
 	// RTC_Configuration();
@@ -1580,7 +1633,7 @@ void SetupExternalOscillator()
 	 
 	 memcpy(Hello_text3 + 8, &tcounts, 120);
 		
-	 Srart_Uart_sending((uint8_t *)Hello_text3, 129);
+	 Start_Uart_sending((uint8_t *)Hello_text3, 129);
 		
 		
 		
