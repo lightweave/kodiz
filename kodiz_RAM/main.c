@@ -91,6 +91,11 @@
  uint32_t Digital_test[Buffer_Size_Si];
  uint8_t *P_current,*P_Last;
  uint16_t Delay_timer = 100;
+ 
+ uint32_t Seconds = 0;
+
+ uint32_t Old_Second = 0;
+
 
 
 /* New Benghin's additions */
@@ -106,7 +111,7 @@ struct TKEY UKEY;
 
 
 struct Tcounts {
-	//uint32_t M[30];
+	uint32_t M[30];
 	uint32_t 
 	si11, si12, si21, si22, si_coins,
 	Cher1, Cher2, SiPM1, SiPM2, Cher_coins_SiPM,
@@ -1453,7 +1458,7 @@ void BACKUP_IRQHandler(void)
 
 if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
   {
-    Start_Uart_sending((uint8_t *)Hello_text3, 129);
+		Seconds++;
 //		if (PORT_ReadInputDataBit(MDR_PORTF,PORT_Pin_0)==0)
 //    {			
 //      PORT_SetBits(MDR_PORTF,PORT_Pin_0);
@@ -1471,6 +1476,47 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
   MDR_BKP -> RTC_CS |= 0x06;
 }
 
+void test_init_Tcounts(struct Tcounts * tcounts)
+{	 
+//	 tcounts.M = 0;
+
+	 tcounts->si11 = 1;
+	 tcounts->si12 = 2;
+	 tcounts->si21 = 3;
+	 tcounts->si22 = 4;
+	 tcounts->si_coins = 5;
+
+	 tcounts->Cher1 = 6;
+	 tcounts->Cher2 = 7;
+	 tcounts->SiPM1 = 5;
+	 tcounts->SiPM2 = 6;
+	 tcounts->Cher_coins_SiPM = 3;
+	 
+	 tcounts->n11 = 128;
+	 tcounts->n12 = 2;
+	 tcounts->n21 = 3;
+	 tcounts->n22 = 4;
+	 tcounts->ncoins = 5;
+	 
+	 tcounts->Ph11 = 6;
+	 tcounts->Ph12 = 7;
+	 tcounts->Ph21 = 8;
+	 tcounts->Ph22 = 9;
+	 tcounts->Phcois = 0;
+	 
+	 tcounts->Sum1 = 8;
+	 tcounts->Sum2 = 0;
+	 tcounts->Sum1coins = 9;
+	 tcounts->Sum2coins = 128;
+	 
+	 tcounts->Interupt_Si = 9;
+	 tcounts->Interupt_Cher = 6;
+	 tcounts->Interupt_n = 7;
+	 tcounts->Interupt_Ph = 8;
+	 tcounts->el29 = 5;
+	 tcounts->Delta_t = 4;
+}
+
 ///**
 //  * @brief  Main program.
 //  * @param  None
@@ -1485,7 +1531,7 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
 
 */
 	// it delay helps to start debugging - program cannot block jtag. But need to delete in production!!!	it works ~ 5 s in debug mode
-   Delayms(400);
+  Delayms(400);
 	
 	// источник для CPU_C1=HSE, С2=PLL, C3=C2, HCLK = C3;
 	// MDR_RST_CLK->CPU_CLOCK=0x00000106;
@@ -1494,27 +1540,18 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
 //	 RST_CLK_HSEconfig(RST_CLK_HSE_ON);
 //    while (RST_CLK_HSEstatus() != SUCCESS);
   
-   SetupExternalOscillator();  
+  SetupExternalOscillator();  
 	
-	/* Enables the clock on PORTA */
-	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTA, ENABLE);
-	/* Enables the clock on PORTB */
-	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTB, ENABLE);	
-  /* Enables the clock on PORTC */
-	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTC, ENABLE);
-	/* Enables the clock on PORTD */
-	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTD, ENABLE);
-	/* Enables the clock on PORTE */
-	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTE, ENABLE);
-	/* Enables the HSI clock on PORTF */
-  RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTF, ENABLE);
-	
-	/* Enables the HSI clock on ExtBus */
-  RST_CLK_PCLKcmd(RST_CLK_PCLK_EBC, ENABLE);	
-	/* Enables the ADC clock on ExtBus */
-	RST_CLK_PCLKcmd(RST_CLK_PCLK_ADC, ENABLE);
-	
-	//RST_CLK_PCLKcmd(RST_CLK_PCLK_TIMER2, ENABLE);
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTA, ENABLE); 	/* Enables the clock on PORTA */
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTB, ENABLE);	/* Enables the clock on PORTB */
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTC, ENABLE);  /* Enables the clock on PORTC */
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTD, ENABLE);	/* Enables the clock on PORTD */
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTE, ENABLE);	/* Enables the clock on PORTE */
+  RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTF, ENABLE);	/* Enables the HSI clock on PORTF */
+
+  RST_CLK_PCLKcmd(RST_CLK_PCLK_EBC, ENABLE);		/* Enables the HSI clock on ExtBus */
+	RST_CLK_PCLKcmd(RST_CLK_PCLK_ADC, ENABLE);		/* Enables the ADC clock on ExtBus */
+  //RST_CLK_PCLKcmd(RST_CLK_PCLK_TIMER2, ENABLE);
 
 	
 	MltPinCfg ();
@@ -1529,8 +1566,8 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
 	
 	ADC_DeInit();
 	
-	ADC1_Config(ADC_CH_ADC2);//pd2 detector 1
-	ADC2_Config(ADC_CH_ADC3);//pd3 detector 2
+	ADC1_Config(ADC_CH_ADC2);//PD2 detector 1
+	ADC2_Config(ADC_CH_ADC3);//PD3 detector 2
 	
   /* ADC2 enable */
 	ADC1_Cmd (ENABLE);
@@ -1546,9 +1583,9 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
 
 
 	//NVIC_EnableIRQ(EXT_INT1_IRQn);	
-	NVIC_EnableIRQ(EXT_INT2_IRQn);	// pc12 detector 2
+	NVIC_EnableIRQ(EXT_INT2_IRQn);	// PC12 detector 2
 	//NVIC_EnableIRQ(EXT_INT3_IRQn);	
-	NVIC_EnableIRQ(EXT_INT4_IRQn);  // pc13 detector 1
+	NVIC_EnableIRQ(EXT_INT4_IRQn);  // PC13 detector 1
 	
   // NVIC_SetPriority (EXT_INT1_IRQn, 1); // установил приоритет
 	DelayConfig();
@@ -1556,11 +1593,7 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
 	
 	UartStart(); //основные моменты с инициализацией Uart
 	
-	
-	
-	
-	
-	
+		
    uint32_t tmp ;
    Put_index=0; Get_index=0;
    for(int i=0; i<Buffer_Size_Si; i++) {Si_Buffer[i]=0; Digital_test[i]=i;}
@@ -1570,64 +1603,25 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
 	 
 
 
-
 	// =============================================================================
 	// Фрагмент main()
 
-
-	UKEY.met1=0xCC; 
-	UKEY.met2=0x55; 
-	UKEY.tip=0; 
-	UKEY.mode=1;
-
-
 	 //создадим и заполним тестовый struct Tcounts
 	 struct Tcounts tcounts;
+	 test_init_Tcounts(&tcounts);
+  //struct Tcounts tcounts = test_init_Tcounts();
 	 
-//	 tcounts.M = 0;
-
-	 tcounts.si11 = 1;
-	 tcounts.si12 = 2;
-	 tcounts.si21 = 3;
-	 tcounts.si22 = 4;
-	 tcounts.si_coins = 5;
-
-	 tcounts.Cher1 = 6;
-	 tcounts.Cher2 = 7;
-	 tcounts.SiPM1 = 5;
-	 tcounts.SiPM2 = 6;
-	 tcounts.Cher_coins_SiPM = 3;
-	 
-	 tcounts.n11 = 128;
-	 tcounts.n12 = 2;
-	 tcounts.n21 = 3;
-	 tcounts.n22 = 4;
-	 tcounts.ncoins = 5;
-	 
-	 tcounts.Ph11 = 6;
-	 tcounts.Ph12 = 7;
-	 tcounts.Ph21 = 8;
-	 tcounts.Ph22 = 9;
-	 tcounts.Phcois = 0;
-	 
-	 tcounts.Sum1 = 8;
-	 tcounts.Sum2 = 0;
-	 tcounts.Sum1coins = 9;
-	 tcounts.Sum2coins = 128;
-	 
-	 tcounts.Interupt_Si = 9;
-	 tcounts.Interupt_Cher = 6;
-	 tcounts.Interupt_n = 7;
-	 tcounts.Interupt_Ph = 8;
-	 tcounts.el29 = 5;
-	 tcounts.Delta_t = 4;
-
+	 // шапка  массива выдачи информации
+	 UKEY.met1 = 0xCC;  // метка
+	 UKEY.met2 = 0x55;  // метка
+	 UKEY.tip  = 0;     // тип массива
+	 UKEY.mode = 1;     // режим работы прибора
 	 
 	 //получим длину tcounts
 	 //tmp = sizeof(tcounts);
 	 memcpy(Hello_text3, &UKEY, 4);
 		
-		uint32_t time = 23;
+	 uint32_t time = 23;
 		
 	 memcpy(Hello_text3 + 4, 23, 4);
 	 
@@ -1637,11 +1631,16 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
 		
 		
 		
+		// структура FLUX пример начальной инициализации и обнуления счетчиков
+		
 	 Flux.key.code= UKEY.code; 
 	 Flux.time=0;
 
-//	for(int I=0; I<30; I++) 
-//		Flux. N.M[I]=0;
+	for(int I=0; I<30; I++) 
+		Flux.N.M[I]=0;
+		
+		
+		
 
 	ADC_codes.key.code= UKEY.code; 
 	ADC_codes.key.tip=5;  
@@ -1771,6 +1770,16 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
               NVIC_EnableIRQ(EXT_INT4_IRQn);    // Bключаем прерывание 4
                 // Добавить проверку, что прерывание уже не включено
         // ===== Конец обработки данных полупроводниковых детекторов ======
+				
+				
+				// ===== Обработка следующей секунды = ===============
+				if(Old_Second != Seconds)
+				{
+					Old_Second = Seconds;
+					
+					Start_Uart_sending((uint8_t *)Hello_text3, 129);
+
+				}
 				
 				
 				
