@@ -62,13 +62,14 @@
 
 
 // Модификация в файлы для создания нового варианта программы КОДИЗ
- static uint16_t  Program_flags;
+ static uint32_t  Program_flags;
  #define INTERUPT1_ON 0x0001
  #define INTERUPT2_ON 0x0002
  #define ADC1_ON 0x0004
  #define ADC2_ON 0x0008
  #define ADCS_check 0x000c //ADC1_ON | ADC2_ON
  #define Sending_ON 0x1000
+ #define SenderFull_ON 0x00010000
 
  static uint16_t State_of_PortC;
  // Значения пинов должны быть приведены в соответствие с распайкой сигналов, поступающих на порт !!!
@@ -96,13 +97,15 @@
 
  uint32_t Old_Second = 0;
 
+int J_ADC;  // индекс элемента массива, куда должно записываться очередное значение. 
+int shift;	// переключатель нижнее/верхнее полуслово
 
 
 /* New Benghin's additions */
 
 struct TKEY {
 	uint8_t met1, met2, tip, mode;
-	uint32_t code;
+	// uint32_t code;
 }; //UKEY;
 
 
@@ -111,7 +114,7 @@ struct TKEY UKEY;
 
 
 struct Tcounts {
-	uint32_t M[30];
+	// uint32_t M[30];
 	uint32_t 
 	si11, si12, si21, si22, si_coins,
 	Cher1, Cher2, SiPM1, SiPM2, Cher_coins_SiPM,
@@ -121,11 +124,13 @@ struct Tcounts {
 	Interupt_Si, Interupt_Cher, Interupt_n, Interupt_Ph, el29, Delta_t;
 } ;
 
-struct{
+struct Flux{
 	struct TKEY key;
 	uint32_t time;
 	struct Tcounts N;
-} Flux;
+} ;
+struct Flux Flux;
+struct Flux Flux_send;
 
 
 
@@ -206,47 +211,6 @@ int Flug_Buff = -3;                     //  Flag of information transmission fro
                                         // Flug_Buff >= 0 - error
 int sendingIndex;
 /* Measurements Data  */
-// ==================================================================================================
-struct {// Structure for Doase and Fluxes data collecting every minute
-  uint16_t Metka1; 
-  uint16_t metka2;
-  uint32_t day[4];		//  month, day, hour, minute
-  uint32_t Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Neut_1, Neut_2;
-  uint32_t Dose_1, Dose_2, Dose_Comp_1;
-  uint8_t DF[480];	//
-} DOSE_AND_FLUX;
-//===================================================================================================
-
-struct { // Structure for Dose and Fluxes data current values
-  uint16_t Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Neut_1, Neut_2;
-  uint32_t Dose_1, Dose_2, Dose_Comp_1;
-} D_AND_F;
-
-
-// ===========================================================================
-
-struct {
-  uint16_t Metka1; 
-  uint16_t metka2;
-  uint32_t Time;
-  uint32_t interr_reg;
-  uint32_t FLAGS;
-  uint32_t ADC_code, P1_Counter;
-  uint32_t Pr1, Pr2;
-  uint32_t Dt1, Dt2;
-  uint32_t N1, N2;
-} Temporal_buff;
-
-// ===========================================================================
-// buffer for memory chunks
-struct {
-	uint16_t Metka1; 
-  uint16_t metka2;
-  uint32_t Time;
-	
-	uint8_t memory[480];
-} Memory_buff;
-// ==================================================================================================
 
 #ifdef DEBUGBUFFER
 
@@ -288,30 +252,6 @@ uint32_t tmpADC2;
 unsigned short Spectra[Spectrum_number][Spectrum_size]; // Array for accumulation of energy deposition spectrums in detectors.
 
 // ===========================================================================
-
-//For neutron berst registration
-#define Neutron_MAX 10
-struct {
-  uint16_t Metka1; 
-  uint16_t metka2;
-  uint32_t neutron_t[127];	
-} Neutron_Bunch;
-uint32_t Old_Tick_2, Old_Sec, N_ind=Neutron_MAX, i_n_t=0;
-
-uint32_t  D_tick_2=32;  //  интервал времени меньше которого считается, что идет один всплеск, мсек/6
-float Proton_Fon=0, Proton_Level=2.5;	// Текущий фон потока протонов и уровень, выше которого нейтронные всплески не регистр.
-float Beta=0.9, Alfa= 0.1 ; 		// Константа экспоненциального сглаживания для расчета фона протонов
-
-/* Private define ------------------------------------------------------------*/
-#define METKA1  			0xf0ff// start 61695
-#define METKA2  			0xf0ff// start 61695
-
-// all main counters declared here
-uint32_t  Dose_1, Dose_2, Dose_Comp_1, Dose_Comp_2, Prot_1_Interrupt, Prot_2_Interrupt;
-uint32_t  Detectors_Flugs = 0;
-uint32_t  Counter_of_Detector_1, Prot_1, Prot_2, Prot_Comp_1, Prot_Comp_2 ,Neutron_1, Neutron_2, Neut_1, Neut_2;
-uint32_t  tick_1, tick_2, Buff_No=0, Spec_No=0, Command_No=0;
-
 
 
 
@@ -385,7 +325,7 @@ uint16_t R_2=0;
 		}
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)) //  указаны пины
 		{R_1 |=0x2000;
- Flux.N.si12++;}
+   Flux.N.si12++;}
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)) //  к которым подключены
 		{R_2  =0x9000;
  Flux.N.si21++;}
@@ -600,13 +540,24 @@ int I, m=J;
 	else if(J & 0x0400) I++;
    return J;
 }
+
+// ===================================================================
+// Запуск процесса передачи массива байтов
+void Start_Uart_sending(uint8_t * pData, int NData){
+   P_current=pData;
+   P_Last=P_current+ NData;
+   PORT_SetBits(MDR_PORTB, PORT_Pin_7); // Переключить канал на передачу 
+   Program_flags |= Sending_ON;
+   UART_SendData (MDR_UART1,*P_current);
+   P_current++;
+}
 // =============================================================================
 
-int J_ADC=0;  // индекс элемента массива, куда должно записываться очередное значение. 
-int shift=0;	// переключатель нижнее/верхнее полуслово
-
 void Put_to_CODE(uint16_t x) {
-	if(J_ADC >29) return;
+	if(J_ADC >29) {
+		Program_flags |= SenderFull_ON;
+		return;
+	}
 	uint32_t Z=0;
 	Z |=x;
 	if(shift){
@@ -626,6 +577,7 @@ void Put_to_CODE_2(uint16_t x, uint16_t y) {
 	Z |=x;
 	ADC_codes.M[J_ADC] = Z;
 	J_ADC++;
+	memcpy(Hello_text3, &ADC_codes, 129);
 }
 
 
@@ -639,17 +591,6 @@ void Put_to_CODE_2(uint16_t x, uint16_t y) {
 // ===================================================================
   void Put_to_circular_Buffer (uint32_t Si_result) {
    Si_Buffer[Put_index]= Si_result; Put_index++; Put_index &= 0x000f;
-}
-
-// ===================================================================
-// Запуск процесса передачи массива байтов
-void Start_Uart_sending(uint8_t * pData, int NData){
-   P_current=pData;
-   P_Last=P_current+ NData;
-   PORT_SetBits(MDR_PORTB, PORT_Pin_7); // Переключить канал на передачу 
-   Program_flags |= Sending_ON;
-   UART_SendData (MDR_UART1,*P_current);
-   P_current++;
 }
 // ===================================================================
 
@@ -716,71 +657,71 @@ CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;	// включение модул
 DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 DWT->CYCCNT = 0;
 }
+//// ==================================================================================================
+//void Counters_Reset(void)
+//{
+//  Counter_of_Detector_1=0;  
+//  Neutron_1=0;  Neutron_2=0;
+//  Neut_1=0;     Neut_2=0;
+//  Prot_1=0;     Prot_2=0;  
+//  Prot_1_Interrupt=0;      Prot_2_Interrupt=0;     
+//}
 // ==================================================================================================
-void Counters_Reset(void)
-{
-  Counter_of_Detector_1=0;  
-  Neutron_1=0;  Neutron_2=0;
-  Neut_1=0;     Neut_2=0;
-  Prot_1=0;     Prot_2=0;  
-  Prot_1_Interrupt=0;      Prot_2_Interrupt=0;     
-}
-// ==================================================================================================
-void FLUX_Reset(void)
-{
-//memset((char *) & D_AND_F, 0, sizeof(D_AND_F));
-//memset((char *) & DOSE_AND_FLUX, 0, sizeof(DOSE_AND_FLUX));
-DOSE_AND_FLUX.Metka1= METKA1;
-DOSE_AND_FLUX.metka2 = 0x4600; //DOSE_AND_FLUX.metka2='F';//DOSE_AND_FLUX.metka2='\0';
-}
+//void FLUX_Reset(void)
+//{
+////memset((char *) & D_AND_F, 0, sizeof(D_AND_F));
+////memset((char *) & DOSE_AND_FLUX, 0, sizeof(DOSE_AND_FLUX));
+//DOSE_AND_FLUX.Metka1= METKA1;
+//DOSE_AND_FLUX.metka2 = 0x4600; //DOSE_AND_FLUX.metka2='F';//DOSE_AND_FLUX.metka2='\0';
+//}
 
-// ==================================================================================================
-void Reset_Spectra_and_Counters (void)
-{
- int i,j;
+//// ==================================================================================================
+//void Reset_Spectra_and_Counters (void)
+//{
+// int i,j;
 
-   for(j=0; j<Spectrum_number; j++)
-   for( i=0; i < Spectrum_size; i++)   // *Spectr_size
-     Spectra[j][i] =0;
+//   for(j=0; j<Spectrum_number; j++)
+//   for( i=0; i < Spectrum_size; i++)   // *Spectr_size
+//     Spectra[j][i] =0;
 
- Counter_of_Detector_1=0;
- Prot_1=0; Prot_2=0; Prot_Comp_1=0;  Prot_Comp_2=0;
- Neutron_1=0;  Neutron_2=0;
- Dose_1=0;  Dose_2=0;  Dose_Comp_1=0;  Dose_Comp_2=0;
- Prot_1_Interrupt=0; Prot_2_Interrupt=0;
- // To whip off the vehicle meter of channel of P1
- Neut_1=0; Neut_2=0;
-}
+// Counter_of_Detector_1=0;
+// Prot_1=0; Prot_2=0; Prot_Comp_1=0;  Prot_Comp_2=0;
+// Neutron_1=0;  Neutron_2=0;
+// Dose_1=0;  Dose_2=0;  Dose_Comp_1=0;  Dose_Comp_2=0;
+// Prot_1_Interrupt=0; Prot_2_Interrupt=0;
+// // To whip off the vehicle meter of channel of P1
+// Neut_1=0; Neut_2=0;
+//}
 // ==================================================================================================
 // Setting to null circle buffer for sending by CAN
-void Data_Buffer_Reset(void)
-{
-     int i,j; 
-     Buff_Send__Index = 0;//Buffer_Number -1;
-     Buff_Write_Index=0;
-     Flug_Buff = -3;
-     for (i=0; i < Buffer_Number; i++) {
-//       memset(Data_Buffer[i].buffer, 0, Buffer_Size);
-			 for (j=0; j < Buffer_Size; j++)
-					Data_Buffer[i].buffer[j] = 7 + 48;//7 just for test! need to be 0? + 48 - makes it ascii '7'
-       Data_Buffer[i].ready=0;//change to 0
-     }
-}
+//void Data_Buffer_Reset(void)
+//{
+//     int i,j; 
+//     Buff_Send__Index = 0;//Buffer_Number -1;
+//     Buff_Write_Index=0;
+//     Flug_Buff = -3;
+//     for (i=0; i < Buffer_Number; i++) {
+////       memset(Data_Buffer[i].buffer, 0, Buffer_Size);
+//			 for (j=0; j < Buffer_Size; j++)
+//					Data_Buffer[i].buffer[j] = 7 + 48;//7 just for test! need to be 0? + 48 - makes it ascii '7'
+//       Data_Buffer[i].ready=0;//change to 0
+//     }
+//}
 // This function must be used for initialisation of all values that need 
-void Detectors_Init(void)
-{
+//void Detectors_Init(void)
+//{
 //  Clear_Registers_Bits();  
-// ===========================
-  //ConfigureTimer();  
-  Counters_Reset();
-  Data_Buffer_Reset();
-  FLUX_Reset();
-  Reset_Spectra_and_Counters ();  
- 
-  
-  
-  
-}  
+// //===========================
+//  //ConfigureTimer();  
+//  Counters_Reset();
+//  Data_Buffer_Reset();
+//  FLUX_Reset();
+//  Reset_Spectra_and_Counters ();  
+// 
+//  
+//  
+//  
+//}  
 // ==================================================================================================
 uint8_t  Counter_Compression(uint32_t j) {
   uint8_t k;
@@ -1476,45 +1417,11 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
   MDR_BKP -> RTC_CS |= 0x06;
 }
 
-void test_init_Tcounts(struct Tcounts * tcounts)
+void test_init_Tcounts(struct Tcounts *  tcounts)
 {	 
 //	 tcounts.M = 0;
 
-	 tcounts->si11 = 1;
-	 tcounts->si12 = 2;
-	 tcounts->si21 = 3;
-	 tcounts->si22 = 4;
-	 tcounts->si_coins = 5;
-
-	 tcounts->Cher1 = 6;
-	 tcounts->Cher2 = 7;
-	 tcounts->SiPM1 = 5;
-	 tcounts->SiPM2 = 6;
-	 tcounts->Cher_coins_SiPM = 3;
 	 
-	 tcounts->n11 = 128;
-	 tcounts->n12 = 2;
-	 tcounts->n21 = 3;
-	 tcounts->n22 = 4;
-	 tcounts->ncoins = 5;
-	 
-	 tcounts->Ph11 = 6;
-	 tcounts->Ph12 = 7;
-	 tcounts->Ph21 = 8;
-	 tcounts->Ph22 = 9;
-	 tcounts->Phcois = 0;
-	 
-	 tcounts->Sum1 = 8;
-	 tcounts->Sum2 = 0;
-	 tcounts->Sum1coins = 9;
-	 tcounts->Sum2coins = 128;
-	 
-	 tcounts->Interupt_Si = 9;
-	 tcounts->Interupt_Cher = 6;
-	 tcounts->Interupt_n = 7;
-	 tcounts->Interupt_Ph = 8;
-	 tcounts->el29 = 5;
-	 tcounts->Delta_t = 4;
 }
 
 ///**
@@ -1554,8 +1461,10 @@ void test_init_Tcounts(struct Tcounts * tcounts)
   //RST_CLK_PCLKcmd(RST_CLK_PCLK_TIMER2, ENABLE);
 
 	
-	MltPinCfg ();
+	MltPinCfg();
+	
 	SetupRTC();
+	
 	//Timer_init();
 	
 	// RTC_Configuration();
@@ -1582,16 +1491,16 @@ void test_init_Tcounts(struct Tcounts * tcounts)
 //	}
 
 
-	//NVIC_EnableIRQ(EXT_INT1_IRQn);	
+	// NVIC_EnableIRQ(EXT_INT1_IRQn);	
 	NVIC_EnableIRQ(EXT_INT2_IRQn);	// PC12 detector 2
-	//NVIC_EnableIRQ(EXT_INT3_IRQn);	
+	// NVIC_EnableIRQ(EXT_INT3_IRQn);	
 	NVIC_EnableIRQ(EXT_INT4_IRQn);  // PC13 detector 1
 	
   // NVIC_SetPriority (EXT_INT1_IRQn, 1); // установил приоритет
 	DelayConfig();
 	
 	
-	UartStart(); //основные моменты с инициализацией Uart
+	UartStart(); // основные моменты с инициализацией Uart
 	
 		
    uint32_t tmp ;
@@ -1606,10 +1515,52 @@ void test_init_Tcounts(struct Tcounts * tcounts)
 	// =============================================================================
 	// Фрагмент main()
 
-	 //создадим и заполним тестовый struct Tcounts
+	 //создадим тестовый struct Tcounts
 	 struct Tcounts tcounts;
-	 test_init_Tcounts(&tcounts);
-  //struct Tcounts tcounts = test_init_Tcounts();
+	 
+//	 //заполним тестовый struct Tcounts
+//	 
+//	 tcounts.si11 = 1;
+//	 tcounts.si12 = 2;
+//	 tcounts.si21 = 3;
+//	 tcounts.si22 = 4;
+//	 tcounts.si_coins = 5;
+//	 tcounts.si11 = 6;
+//	 tcounts.si12 = 7;
+//	 tcounts.si21 = 8;
+//	 tcounts.si22 = 9;
+//	 tcounts.si_coins = 10;
+//
+//	 tcounts.Cher1 = 1;
+//	 tcounts.Cher2 = 2;
+//	 tcounts.SiPM1 = 3;
+//	 tcounts.SiPM2 = 4;
+//	 tcounts.Cher_coins_SiPM = 5;
+//	 
+//	 tcounts.n11 = 1;
+//	 tcounts.n12 = 2;
+//	 tcounts.n21 = 3;
+//	 tcounts.n22 = 4;
+//	 tcounts.ncoins = 5;
+//	 
+//	 tcounts.Ph11 = 1;
+//	 tcounts.Ph12 = 2;
+//	 tcounts.Ph21 = 3;
+//	 tcounts.Ph22 = 4;
+//	 tcounts.Phcois = 5;
+//	 
+//	 tcounts.Sum1 = 1;
+//	 tcounts.Sum2 = 2;
+//	 tcounts.Sum1coins = 3;
+//	 tcounts.Sum2coins = 4;
+//	 
+//	 tcounts.Interupt_Si = 1;
+//	 tcounts.Interupt_Cher = 2;
+//	 tcounts.Interupt_n = 3;
+//	 tcounts.Interupt_Ph = 4;
+//	 tcounts.el29 = 5;
+//	 tcounts.Delta_t = 6;
+
 	 
 	 // шапка  массива выдачи информации
 	 UKEY.met1 = 0xCC;  // метка
@@ -1621,38 +1572,36 @@ void test_init_Tcounts(struct Tcounts * tcounts)
 	 //tmp = sizeof(tcounts);
 	 memcpy(Hello_text3, &UKEY, 4);
 		
-	 uint32_t time = 23;
 		
-	 memcpy(Hello_text3 + 4, 23, 4);
-	 
+//	 memcpy(Hello_text3 + 4, &Seconds, 4);
 	 memcpy(Hello_text3 + 8, &tcounts, 120);
-		
-	 Start_Uart_sending((uint8_t *)Hello_text3, 129);
-		
-		
-		
-		// структура FLUX пример начальной инициализации и обнуления счетчиков
-		
-	 Flux.key.code= UKEY.code; 
-	 Flux.time=0;
 
-	for(int I=0; I<30; I++) 
-		Flux.N.M[I]=0;
+	Start_Uart_sending((uint8_t *)Hello_text3, 129); // отправка нулевого кадра, в котором записана шапка и что-то старое
 		
 		
 		
+	// структура FLUX пример начальной инициализации	
+	Flux.key  = UKEY; 
+	Flux.time = Seconds;
+	Flux.N    = tcounts;
+	 
+		
+	// структура ADC_codes пример начальной инициализации
+	ADC_codes.key     =  UKEY;
+	ADC_codes.key.tip = 5; 
+	ADC_codes.time    = Seconds;
+	uint16_t Res_tmp1 = 0; // переменная для теста ADC_codes
 
-	ADC_codes.key.code= UKEY.code; 
-	ADC_codes.key.tip=5;  
-	ADC_codes.time=0;
 	
+	// кривой(?) сброс информации, нужно ли избавиться от всех M[I]
 	for(int I=0; I<30; I++)
 		ADC_codes.M[I]=0;
 	
-	int J_ADC=0;  // индекс элемента массива, куда должно записываться очередное значение. Одновременно критерий заполнености и готовности массива к передаче.
+	J_ADC=0;  // индекс элемента массива, куда должно записываться очередное значение. Одновременно критерий заполнености и готовности массива к передаче.
+	shift=0;	// переключатель нижнее/верхнее полуслово
 
 	for(int J=0; J<3; J++){
-		Spectr[J].key.code= UKEY.code; Spectr[J].key.tip=J+1;  //Spectr[J].key.
+		Spectr[J].key= UKEY; Spectr[J].key.tip=J+1;  //Spectr[J].key.
 		Spectr[J].time=0;
 		for(int I=0; I<30; I++) Spectr[J].M[I]=0;
 	}
@@ -1664,22 +1613,24 @@ void test_init_Tcounts(struct Tcounts * tcounts)
 	INTERUPT_J_ON[4]=0x0800;
  
  
- 
- 
+	Program_flags = 0;
+
+	
+	
+	/* Рабочий цикл, в котором висит */	 
+	
 
 
 
-	 
-	 
-	 
-	 
+
+
+	
      while (1)
      {
 			 
 	for(int INTERUPT_J=1; INTERUPT_J<5;INTERUPT_J++){
 	  if(INTERUPT_J != INTERUPT_MODE){ //это часть работает тогда, когда к этому прерыванию не подключено АЦП
-			if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){  // Добавить контроль того, 
-									 //что сигнал прерывания закончился
+			if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){  // Добавить контроль того, что сигнал прерывания закончился
 				 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
 				 EmableINTERUPT(INTERUPT_J);}
 		}
@@ -1718,12 +1669,40 @@ void test_init_Tcounts(struct Tcounts * tcounts)
 						}
 					}
 
+					
+if(Program_flags & SenderFull_ON){
+	if(!(Program_flags & Sending_ON)) {
+		memcpy(Hello_text3, &ADC_codes, 128); 							// 1) копируем текущий массив в отправочный		
+		Start_Uart_sending((uint8_t *)Hello_text3,128);			// 2) запускаем отправку данных по ADC_codes
+		//memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
+		ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
+		ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
+		J_ADC = 0;
+		Program_flags &= ~SenderFull_ON;
+		}
+	}
+					
           if((!(Program_flags & ADCS_check)) &&  // Нет не прочитанных данных АЦП
 							 (Program_flags & INTERUPT_J_ON[INTERUPT_J])) {// Признак обработки последствий прерывания не снят
 									Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];  //  Снимаем признак
-									if(Result_1 & 0x4000) 
-										Put_to_CODE_2(Result_1, Result_2); 
-									else {
+									if(Result_1 & 0x4000) {
+										
+										// тест 1: срабатывание совпадений -> выдает 2+2 байта (по 2 на каждый канал)
+											Res_tmp1++;
+											Put_to_CODE(Res_tmp1);
+//									//----	
+										
+//									// тест 2: нет совпадений -> выдает 2 байта по одному из каналов
+//										Res_tmp1++;
+//										//Res_tmp2++;
+//										if(Res_tmp1 ) Put_to_CODE(Res_tmp1); 
+//										if(Res_tmp2 ) Put_to_CODE(Res_tmp2); 
+										//----
+										
+										
+//										Put_to_CODE_2(Result_1, Result_2); // НУЖНОЕ
+										}
+										else { // сюда заходит если не было совпадения
 										if(Result_1 ) Put_to_CODE(Result_1); 
 										if(Result_2 ) Put_to_CODE(Result_2); 
 									}
@@ -1765,25 +1744,35 @@ void test_init_Tcounts(struct Tcounts * tcounts)
         }
         if((!(Program_flags  & INTERUPT1_ON)) &     // Когда все действия, связанные с прерыванием закончены
 					
-				   (!(State_of_PortC & BIT_OF_INTERUPT1)))// И сигнал прерывания тоже закончился					//!PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_13))  
+				   (!(State_of_PortC & BIT_OF_INTERUPT1)))// И сигнал прерывания тоже закончился					
+				//!PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_13))  
 
               NVIC_EnableIRQ(EXT_INT4_IRQn);    // Bключаем прерывание 4
                 // Добавить проверку, что прерывание уже не включено
         // ===== Конец обработки данных полупроводниковых детекторов ======
 				
 				
+				
+				
+				
 				// ===== Обработка следующей секунды = ===============
 				if(Old_Second != Seconds)
 				{
 					Old_Second = Seconds;
-					
-					Start_Uart_sending((uint8_t *)Hello_text3, 129);
-
+					if(Seconds%10 == 0){
+						
+						Flux_send = Flux; 															// 1) копируем текущий массив в отправочный
+						//Start_Uart_sending((uint8_t *)&Flux_send, 129); // 2) запускаем отправку данных
+						//Start_Uart_sending((uint8_t *)Hello_text3,129); // 2) запускаем отправку данных по ADC_codes
+            memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
+						Flux.key  = UKEY; 															// 4) добавляем в него текущую шапку
+						Flux.time = Seconds;														// 5) добавляем в него текущее время
+					}
 				}
-				
-				
-				
 			
+				
+				
+				
 				
         // ===== Обработка принятого по UART байта = ===============
 			if( !(MDR_UART1->FR & UART_FR_RXFE) ){
@@ -1793,12 +1782,12 @@ void test_init_Tcounts(struct Tcounts * tcounts)
 					uart1_IT_RX_byte = 0;
 			}
 				
-				//        if ((PORT_ReadInputDataBit(MDR_PORTE,PORT_Pin_3)) &
-//             UART_GetFlagStatus (MDR_UART1, UART_FLAG_RXFF)== SET )
-				//if( !(MDR_UART1->FR & UART_FR_RXFE) ){
+				//	if ((PORT_ReadInputDataBit(MDR_PORTE,PORT_Pin_3)) &
+				//	UART_GetFlagStatus (MDR_UART1, UART_FLAG_RXFF)== SET )
+				//	if( !(MDR_UART1->FR & UART_FR_RXFE) ){
 					uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
 				
-					//uart1_IT_RX_flag = SET;
+					// uart1_IT_RX_flag = SET;
           
 				
 
@@ -1812,6 +1801,8 @@ void test_init_Tcounts(struct Tcounts * tcounts)
 
      }  // End  while (1)
 }
+
+
 
 /*******************************************************************************
 * Function Name  : EXT_INT1_IRQHandler
