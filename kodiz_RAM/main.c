@@ -321,21 +321,21 @@ uint16_t R_2=0;
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)) //  Здесь должны быть
 		{
 			R_1  =0x1000;
-      Flux.N.si11++;
+      Flux.N.si11++; //si11 детектор 1 порог 1
 		}
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)) //  указаны пины
 		{R_1 |=0x2000;
-   Flux.N.si12++;}
+   Flux.N.si12++;} //si12 детектор 1 порог 2
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)) //  к которым подключены
 		{R_2  =0x9000;
- Flux.N.si21++;}
+ Flux.N.si21++;}//si21 детектор 2 порог 1
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)) //  соответствующие сигналы
 		{R_2 |=0x2000;
- Flux.N.si22++;}
+ Flux.N.si22++;}//si22 детектор 2 порог 2
 	if(R_1 && R_2) {
 		R_1 |=0x4000; 
 		R_2 |=0x4000;
-   	Flux.N.si_coins++;}
+   	Flux.N.si_coins++;} // наличие сигнала совпадения
         Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(INTERUPT_MODE != 1) return; //
@@ -348,7 +348,6 @@ uint16_t R_2=0;
         if(Result_1){
           ADC1_Start(); // Запускаем АЦП1
           Program_flags |= ADC1_ON; //  Устанавливаем признак
-          Result_1=R_1;
         }
         if(Result_2){
           ADC2_Start(); // Запускаем АЦП2
@@ -1630,7 +1629,10 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 			 
 	for(int INTERUPT_J=1; INTERUPT_J<5;INTERUPT_J++){
 	  if(INTERUPT_J != INTERUPT_MODE){ //это часть работает тогда, когда к этому прерыванию не подключено АЦП
-			if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){  // Добавить контроль того, что сигнал прерывания закончился
+			if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){  
+				
+				// Добавить контроль того, что сигнал прерывания закончился
+				
 				 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
 				 EmableINTERUPT(INTERUPT_J);}
 		}
@@ -1663,55 +1665,55 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 							
 							if(Result_2 & 0x4000) {
 								Flux.N.Sum2coins += tmp; 
-								Spectr[2].M[k]++;
+								Spectr[3].M[k]++;
 							}	
 							Program_flags &= ~ADC2_ON; //  Снимаем признак
 						}
 					}
 
 					
-if(Program_flags & SenderFull_ON){
-	if(!(Program_flags & Sending_ON)) {
-		memcpy(Hello_text3, &ADC_codes, 128); 							// 1) копируем текущий массив в отправочный		
-		Start_Uart_sending((uint8_t *)Hello_text3,128);			// 2) запускаем отправку данных по ADC_codes
-		//memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
-		ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
-		ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
-		J_ADC = 0;
-		Program_flags &= ~SenderFull_ON;
-		}
-	}
-					
-          if((!(Program_flags & ADCS_check)) &&  // Нет не прочитанных данных АЦП
-							 (Program_flags & INTERUPT_J_ON[INTERUPT_J])) {// Признак обработки последствий прерывания не снят
-									Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];  //  Снимаем признак
-									if(Result_1 & 0x4000) {
+					if(Program_flags & SenderFull_ON){
+						if(!(Program_flags & Sending_ON)) {
+							memcpy(Hello_text3, &ADC_codes, 128); 							// 1) копируем текущий массив в отправочный		
+							Start_Uart_sending((uint8_t *)Hello_text3,128);			// 2) запускаем отправку данных по ADC_codes
+							//memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
+							ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
+							ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
+							J_ADC = 0;
+							Program_flags &= ~SenderFull_ON;
+							}
+						}
 										
-										// тест 1: срабатывание совпадений -> выдает 2+2 байта (по 2 на каждый канал)
-											Res_tmp1++;
-											Put_to_CODE(Res_tmp1);
-//									//----	
-										
-//									// тест 2: нет совпадений -> выдает 2 байта по одному из каналов
-//										Res_tmp1++;
-//										//Res_tmp2++;
-//										if(Res_tmp1 ) Put_to_CODE(Res_tmp1); 
-//										if(Res_tmp2 ) Put_to_CODE(Res_tmp2); 
-										//----
-										
-										
-//										Put_to_CODE_2(Result_1, Result_2); // НУЖНОЕ
+										if((!(Program_flags & ADCS_check)) &&  // Нет не прочитанных данных АЦП
+												 (Program_flags & INTERUPT_J_ON[INTERUPT_J])) {// Признак обработки последствий прерывания не снят
+														Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];  //  Снимаем признак
+														if(Result_1 & 0x4000) {
+															
+															// тест 1: срабатывание совпадений -> выдает 2+2 байта (по 2 на каждый канал)
+					//											Res_tmp1++;
+					//											Put_to_CODE(Res_tmp1);
+					//									//----	
+															
+					//									// тест 2: нет совпадений -> выдает 2 байта по одному из каналов
+					//										Res_tmp1++;
+					//										//Res_tmp2++;
+					//										if(Res_tmp1 ) Put_to_CODE(Res_tmp1); 
+					//										if(Res_tmp2 ) Put_to_CODE(Res_tmp2); 
+															//----
+															
+															
+															Put_to_CODE_2(Result_1, Result_2); // НУЖНОЕ
+															}
+															else { // сюда заходит если не было совпадения
+															if(Result_1 ) Put_to_CODE(Result_1); 
+															if(Result_2 ) Put_to_CODE(Result_2); 
+														}
+														EmableINTERUPT(INTERUPT_J);   // Bключаем прерывание 
 										}
-										else { // сюда заходит если не было совпадения
-										if(Result_1 ) Put_to_CODE(Result_1); 
-										if(Result_2 ) Put_to_CODE(Result_2); 
-									}
-									EmableINTERUPT(INTERUPT_J);   // Bключаем прерывание 
-          }
 
-					// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-					
-	 }  // else
+										// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+										
+						 }  // else
 	}   // for
 
 
