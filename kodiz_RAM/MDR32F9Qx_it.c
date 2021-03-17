@@ -54,13 +54,13 @@ extern uint32_t tmpPORT ;
 extern uint32_t adcDelay;
 
 
-#define raw_adc_size   64 // for temporary storage of adc counts before filling spectra
-#define raw_adc_number  2 // only two avaliable adcs
-extern unsigned int raw_ADC[raw_adc_number][raw_adc_size];
+//#define raw_adc_size   64 // for temporary storage of adc counts before filling spectra
+//#define raw_adc_number  2 // only two avaliable adcs
+//extern unsigned int raw_ADC[raw_adc_number][raw_adc_size];
 
 
-extern uint32_t tmpADC;
-extern uint32_t tmpADC2;
+//extern uint32_t tmpADC;
+//extern uint32_t tmpADC2;
 
 uint32_t m_error;
 uint32_t error_none;
@@ -523,23 +523,23 @@ void ADC_IRQHandler(void)
 //    /* Turns LED1 Off */
 //    //PORT_ResetBits(MDR_PORTD, PORT_Pin_10);
 //  }
-	
-	
-	if(ADC1_GetFlagStatus(ADCx_FLAG_END_OF_CONVERSION) == SET)
-	{
-		tmpADC = MDR_ADC->ADC1_RESULT & 0x0FFF;	
-		raw_ADC[0][0] = tmpADC;
-	}
-	
-	if(ADC2_GetFlagStatus(ADCx_FLAG_END_OF_CONVERSION) == SET)
-	{
-		tmpADC2 = MDR_ADC->ADC2_RESULT & 0x0FFF;
-		raw_ADC[1][0] = tmpADC2;
-	}
-	
+//	
+//	
+//	if(ADC1_GetFlagStatus(ADCx_FLAG_END_OF_CONVERSION) == SET)
+//	{
+//		tmpADC = MDR_ADC->ADC1_RESULT & 0x0FFF;	
+//		raw_ADC[0][0] = tmpADC;
+//	}
+//	
+//	if(ADC2_GetFlagStatus(ADCx_FLAG_END_OF_CONVERSION) == SET)
+//	{
+//		tmpADC2 = MDR_ADC->ADC2_RESULT & 0x0FFF;
+//		raw_ADC[1][0] = tmpADC2;
+//	}
+//	
 	
 
-  PORT_ResetBits(MDR_PORTB, PORT_Pin_14); // Опускание ножки PB15 после считывания результата с АЦП	
+ // PORT_ResetBits(MDR_PORTB, PORT_Pin_14); // Опускание ножки PB15 после считывания результата с АЦП	
 	
 //  if(tmpADC > H_Level)
 //  {

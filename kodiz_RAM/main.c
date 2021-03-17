@@ -79,16 +79,17 @@
  #define BIT_OF_INTERUPT2 0x0200
 
  #define  Sending_Delay 10 // Задержка выключения передатчика после освобождения буфера
- #define  Buffer_Size_Si 16
+ 
+ #define  Buffer_Size_Si 16 // размер кольцевого буфера
 
 
- uint32_t Si_result, Si_Buffer[Buffer_Size_Si];
+//uint32_t Si_result, Si_Buffer[Buffer_Size_Si]; // кольцевой буфер на 16 
  uint32_t Count_Si1, Count_Si2, Count_Interrupts_1;
- uint16_t Put_index, Get_index;
- uint8_t  Hello_text[20];
- const char * Hello_text1 = "Hello string";
- char Hello_text2[20];
- char Hello_text3[130];
+ //uint16_t Put_index, Get_index;
+ //uint8_t  Hello_text[20];
+// const char * Hello_text1 = "Hello string";
+// char Hello_text2[20];
+ char Send_buffer[130];
  uint32_t Digital_test[Buffer_Size_Si];
  uint8_t *P_current,*P_Last;
  uint16_t Delay_timer = 100;
@@ -141,11 +142,13 @@ struct Tspectr{
 };
 
 struct Tspectr Spectr[4];
-
+struct Tspectr Spectr_send;
 
 
 
 struct Tspectr ADC_codes;
+struct Tspectr ADC_codes_send;
+
 
 int INTERUPT_MODE=1;
 static uint16_t  INTERUPT_J_ON[5]; 
@@ -180,7 +183,7 @@ uint16_t Result_1, Result_2;
 –	Мощность поглощенной дозы заряженных частиц космического излучения в диапазоне от 10-8 до 10-5 Грей/с.
 
 */
-
+/*
 // ===========================================================================
   // Table assigning symbol, that identifies array and array content
   // Symbol	array content
@@ -210,8 +213,9 @@ int Flug_Buff = -3;                     //  Flag of information transmission fro
                                         // -1 means that it is a buffer prepared to the transmission,
                                         // Flug_Buff >= 0 - error
 int sendingIndex;
+*/
 /* Measurements Data  */
-
+/*
 #ifdef DEBUGBUFFER
 
 unsigned char debug_buf[512];
@@ -233,16 +237,21 @@ unsigned int debug_duf_index = 0;
 #endif
 
 
+*/
+
+
+
+/*
 // ===========================================================================
 
 #define raw_adc_size   64 // for temporary storage of adc counts before filling spectra
 #define raw_adc_number  2 // only two avaliable adcs
 unsigned int raw_ADC[raw_adc_number][raw_adc_size];
-
-uint32_t tmpADC;
-uint32_t tmpADC2;
+*/
+//uint32_t tmpADC;
+//uint32_t tmpADC2;
 // ===========================================================================
-
+/*
 #define Spectrum_size   64  
 #define Spectrum_number 4
 
@@ -250,7 +259,7 @@ uint32_t tmpADC2;
 //For forming of spectra
 
 unsigned short Spectra[Spectrum_number][Spectrum_size]; // Array for accumulation of energy deposition spectrums in detectors.
-
+*/
 // ===========================================================================
 
 
@@ -318,25 +327,23 @@ uint16_t R_1=0;
 uint16_t R_2=0;
  Flux.N.Interupt_Si++;
 	NVIC_DisableIRQ(EXT_INT1_IRQn);  		//  Отключаем прерывание 1
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)) //  Здесь должны быть
-		{
-			R_1  =0x1000;
-      Flux.N.si11++; //si11 детектор 1 порог 1
-		}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)) //  указаны пины
-		{R_1 |=0x2000;
-   Flux.N.si12++;} //si12 детектор 1 порог 2
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)) //  к которым подключены
-		{R_2  =0x9000;
- Flux.N.si21++;}//si21 детектор 2 порог 1
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)) //  соответствующие сигналы
-		{R_2 |=0x2000;
- Flux.N.si22++;}//si22 детектор 2 порог 2
-	if(R_1 && R_2) {
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)){ //  Здесь должны быть
+		R_1  =0x1000;
+    Flux.N.si11++;} //si11 детектор 1 порог 1
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)){ //  указаны пины
+		R_1 |=0x2000;
+		Flux.N.si12++;} //si12 детектор 1 порог 2
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)){ //  к которым подключены
+		R_2  =0x9000;
+		Flux.N.si21++;} //si21 детектор 2 порог 1
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)){ //  соответствующие сигналы
+		R_2 |=0x2000;
+		Flux.N.si22++;} //si22 детектор 2 порог 2
+	if(R_1 && R_2){
 		R_1 |=0x4000; 
 		R_2 |=0x4000;
-   	Flux.N.si_coins++;} // наличие сигнала совпадения
-        Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
+		Flux.N.si_coins++;} // наличие сигнала совпадения
+	Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(INTERUPT_MODE != 1) return; //
           Result_1=R_1;
@@ -346,13 +353,11 @@ uint16_t R_2=0;
 	какой из порогов превышен и было ли совпадение с сигналом другого детектора.
 */
         if(Result_1){
-          ADC1_Start(); // Запускаем АЦП1
-          Program_flags |= ADC1_ON; //  Устанавливаем признак
-        }
+					ADC1_Start(); // Запускаем АЦП1
+					Program_flags |= ADC1_ON;} //  Устанавливаем признак
         if(Result_2){
-          ADC2_Start(); // Запускаем АЦП2
-          Program_flags |= ADC2_ON; //  Устанавливаем признак
-        }
+					ADC2_Start(); // Запускаем АЦП2
+					Program_flags |= ADC2_ON;} //  Устанавливаем признак
 }
 // =============================================================================
 
@@ -371,21 +376,23 @@ uint16_t R_1=0;
 uint16_t R_2=0;
  Flux.N.Interupt_Cher++;
 	NVIC_DisableIRQ(EXT_INT2_IRQn);  		//  Отключаем прерывание 2
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)) //  Здесь должны быть
-		{R_1  =0x1000;
- Flux.N.Cher1++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)) //  указаны пины
-		{R_1 |=0x2000;
- Flux.N.Cher2++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)) //  к которым подключены
-		{R_2  =0x9000;
- Flux.N.SiPM1++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)) //  соответствующие сигналы
-		{R_2 |=0x2000;
- Flux.N.SiPM2++;}
-	if(R_1 && R_2) {R_1 |=0x4000; R_2 |=0x4000;
- Flux.N.Cher_coins_SiPM++;}
-        Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)){ //  Здесь должны быть
+		R_1  =0x1000;
+		Flux.N.Cher1++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)){ //  указаны пины
+		R_1 |=0x2000;
+		Flux.N.Cher2++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)){ //  к которым подключены
+		R_2  =0x9000;
+		Flux.N.SiPM1++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)){ //  соответствующие сигналы
+		R_2 |=0x2000;
+		Flux.N.SiPM2++;}
+	if(R_1 && R_2){
+		R_1 |=0x4000;
+		R_2 |=0x4000;
+		Flux.N.Cher_coins_SiPM++;} // наличие сигнала совпадения
+  Program_flags |= INTERUPT_J_ON[2]; //  Устанавливаем признак        
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(INTERUPT_MODE != 2) return; //
           Result_1=R_1;
@@ -396,13 +403,10 @@ uint16_t R_2=0;
 */
         if(Result_1){
           ADC1_Start(); // Запускаем АЦП1
-          Program_flags |= ADC1_ON; //  Устанавливаем признак
-          Result_1=R_1;
-        }
+          Program_flags |= ADC1_ON;} //  Устанавливаем признак
         if(Result_2){
           ADC2_Start(); // Запускаем АЦП2
-          Program_flags |= ADC2_ON; //  Устанавливаем признак
-        }
+          Program_flags |= ADC2_ON;} //  Устанавливаем признак
 }
 // =============================================================================
 
@@ -421,25 +425,23 @@ uint16_t R_1=0;
 uint16_t R_2=0;
  Flux.N.Interupt_n++;
 	NVIC_DisableIRQ(EXT_INT3_IRQn);  		//  Отключаем прерывание 3
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)) //  Здесь должны быть
-		{R_1  =0x1000;
- Flux.N.n11++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)) //  указаны пины
-		{R_1 |=0x2000;
- Flux.N.n12++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)) //  к которым подключены
-		{R_2  =0x9000;
- Flux.N.n21++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)) //  соответствующие сигналы
-		{R_2 |=0x2000;
- Flux.N.n22++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)){ //  Здесь должны быть
+		R_1  =0x1000;
+		Flux.N.n11++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)){ //  указаны пины
+		R_1 |=0x2000;
+		Flux.N.n12++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)){ //  к которым подключены
+		R_2  =0x9000;
+		Flux.N.n21++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)){ //  соответствующие сигналы
+		R_2 |=0x2000;
+		Flux.N.n22++;}
 	if(R_1 && R_2) {
 		R_1 |=0x4000; 
 		R_2 |=0x4000;
-	  Flux.N.ncoins++;
-	}
-	
-  Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
+	  Flux.N.ncoins++;} // наличие сигнала совпадения
+  Program_flags |= INTERUPT_J_ON[3]; //  Устанавливаем признак        
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(INTERUPT_MODE != 3) return; //
           Result_1=R_1;
@@ -450,13 +452,11 @@ uint16_t R_2=0;
 */
         if(Result_1){
           ADC1_Start(); // Запускаем АЦП1
-          Program_flags |= ADC1_ON; //  Устанавливаем признак
-          Result_1=R_1;
-        }
+          Program_flags |= ADC1_ON;} //  Устанавливаем признак
         if(Result_2){
           ADC2_Start(); // Запускаем АЦП2
-          Program_flags |= ADC2_ON; //  Устанавливаем признак
-        }}
+          Program_flags |= ADC2_ON;} //  Устанавливаем признак
+}
 // =============================================================================
 
 
@@ -474,21 +474,23 @@ uint16_t R_1=0;
 uint16_t R_2=0;
  Flux.N.Interupt_Ph++;
 	NVIC_DisableIRQ(EXT_INT4_IRQn);  		//  Отключаем прерывание 4
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)) //  Здесь должны быть
-		{R_1  =0x1000;
- Flux.N.Ph11++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)) //  указаны пины
-		{R_1 |=0x2000;
- Flux.N.Ph12++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)) //  к которым подключены
-		{R_2  =0x9000;
- Flux.N.Ph21++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)) //  соответствующие сигналы
-		{R_2 |=0x2000;
- Flux.N.Ph22++;}
-	if(R_1 && R_2) {R_1 |=0x4000; R_2 |=0x4000;
- Flux.N.Phcois++;}
-        Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_0)){ //  Здесь должны быть
+		R_1  =0x1000;
+		Flux.N.Ph11++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_1)){ //  указаны пины
+		R_1 |=0x2000;
+		Flux.N.Ph12++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_2)){ //  к которым подключены
+		R_2  =0x9000;
+		Flux.N.Ph21++;}
+	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_3)){ //  соответствующие сигналы
+		R_2 |=0x2000;
+		Flux.N.Ph22++;}
+	if(R_1 && R_2){
+		R_1 |=0x4000;
+		R_2 |=0x4000;
+		Flux.N.Phcois++;} // наличие сигнала совпадения
+  Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        // Если писать тут INTERUPT_J_ON[4], то все ломается
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(INTERUPT_MODE != 4) return; //
           Result_1=R_1;
@@ -499,13 +501,11 @@ uint16_t R_2=0;
 */
         if(Result_1){
           ADC1_Start(); // Запускаем АЦП1
-          Program_flags |= ADC1_ON; //  Устанавливаем признак
-          Result_1=R_1;
-        }
+          Program_flags |= ADC1_ON;} //  Устанавливаем признак
         if(Result_2){
           ADC2_Start(); // Запускаем АЦП2
-          Program_flags |= ADC2_ON; //  Устанавливаем признак
-        }}
+          Program_flags |= ADC2_ON;} //  Устанавливаем признак
+}
 // =============================================================================
 void EmableINTERUPT(int I){
 switch (I){
@@ -569,14 +569,17 @@ void Put_to_CODE(uint16_t x) {
 
 // =============================================================================
 void Put_to_CODE_2(uint16_t x, uint16_t y) {
-	if(J_ADC >29) return;
+	if(J_ADC >29) {
+		Program_flags |= SenderFull_ON;
+		return;
+	}
 	uint32_t Z=0;
 	Z |=y;
 	Z <<=16; Z &= 0xffff0000;
 	Z |=x;
 	ADC_codes.M[J_ADC] = Z;
 	J_ADC++;
-	memcpy(Hello_text3, &ADC_codes, 129);
+//	memcpy(Send_buffer, &ADC_codes, 129);
 }
 
 
@@ -588,9 +591,11 @@ void Put_to_CODE_2(uint16_t x, uint16_t y) {
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 // ===================================================================
-  void Put_to_circular_Buffer (uint32_t Si_result) {
-   Si_Buffer[Put_index]= Si_result; Put_index++; Put_index &= 0x000f;
-}
+//  void Put_to_circular_Buffer (uint32_t Si_result) {
+//		Si_Buffer[Put_index]= Si_result; 
+//		Put_index++; 
+//		Put_index &= 0x000f; //сброс значения на 0 если буфер заполнен 
+//}
 // ===================================================================
 
 // Передача очередного байта или завершение процесса передачи
@@ -607,20 +612,67 @@ void Next_Uart_sending(void){
         Program_flags &= ~Sending_ON;
    }
 }
+
+
+
 // ===================================================================
  void Command_Handler(uint8_t DataByte){
   switch (DataByte) {
         case 't':   
-					Start_Uart_sending((uint8_t *)Hello_text3,129);
-        	break;
-				case 'I':   
-					NVIC_EnableIRQ(EXT_INT4_IRQn);
-        	break;
-        case 'k':   
-					Start_Uart_sending((uint8_t *)Si_Buffer,Buffer_Size_Si*4);
+					Start_Uart_sending((uint8_t *)Send_buffer,129);
         	break;
         case 'z':   
 					Start_Uart_sending((uint8_t *)Digital_test,Buffer_Size_Si);
+        	break;
+				
+				// Переключение режимов прерываний для работы с разными детекторами
+				case 'v':
+					INTERUPT_MODE = 1;
+        	break;
+				case 'b':
+					INTERUPT_MODE = 2;
+        	break;
+				case 'n':
+					INTERUPT_MODE = 3;
+        	break;
+				case 'm':
+					INTERUPT_MODE = 4;
+        	break;
+				
+				case 'a':// вывод массива А
+					UKEY.met1 = 0xCC;  // метка
+					UKEY.met2 = 0x55;  // метка
+					UKEY.tip  = 5;     // тип массива
+					UKEY.mode = 1;     // режим работы прибора		
+				
+				  ADC_codes_send = ADC_codes; 												// 1) копируем текущий массив в отправочный
+					Start_Uart_sending((uint8_t *)&ADC_codes_send, 129);// 2) запускаем отправку данных с буферного массива
+          
+				  memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
+					ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
+					ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
+        	break;
+				
+				case 'f':// вывод массива потоков
+					Flux_send = Flux; 															// 1) копируем текущий массив в отправочный
+					Start_Uart_sending((uint8_t *)&Flux_send, 129); // 2) запускаем отправку данных с буферного массива
+          memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
+					Flux.key  = UKEY; 															// 4) добавляем в него текущую шапку
+					Flux.time = Seconds;														// 5) добавляем в него текущее время
+        	break;
+				
+				case 's':// вывод массива спектра текущего
+					UKEY.met1 = 0xCC;  // метка
+					UKEY.met2 = 0x55;  // метка
+					UKEY.tip  = 1;     // тип массива
+					UKEY.mode = 1;     // режим работы прибора
+				
+					Spectr_send = Spectr[UKEY.tip - 1]; 															// 1) копируем текущий массив в отправочный
+					Start_Uart_sending((uint8_t *)&Spectr_send, 129); // 2) запускаем отправку данных с буферного массива
+          //memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
+					Spectr[UKEY.tip - 1].key  = UKEY; 															// 4) добавляем в него текущую шапку
+					Spectr[UKEY.tip - 1].time = Seconds;														// 5) добавляем в него текущее время
+				  
         	break;
         }
  }
@@ -656,70 +708,7 @@ CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;	// включение модул
 DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 DWT->CYCCNT = 0;
 }
-//// ==================================================================================================
-//void Counters_Reset(void)
-//{
-//  Counter_of_Detector_1=0;  
-//  Neutron_1=0;  Neutron_2=0;
-//  Neut_1=0;     Neut_2=0;
-//  Prot_1=0;     Prot_2=0;  
-//  Prot_1_Interrupt=0;      Prot_2_Interrupt=0;     
-//}
-// ==================================================================================================
-//void FLUX_Reset(void)
-//{
-////memset((char *) & D_AND_F, 0, sizeof(D_AND_F));
-////memset((char *) & DOSE_AND_FLUX, 0, sizeof(DOSE_AND_FLUX));
-//DOSE_AND_FLUX.Metka1= METKA1;
-//DOSE_AND_FLUX.metka2 = 0x4600; //DOSE_AND_FLUX.metka2='F';//DOSE_AND_FLUX.metka2='\0';
-//}
 
-//// ==================================================================================================
-//void Reset_Spectra_and_Counters (void)
-//{
-// int i,j;
-
-//   for(j=0; j<Spectrum_number; j++)
-//   for( i=0; i < Spectrum_size; i++)   // *Spectr_size
-//     Spectra[j][i] =0;
-
-// Counter_of_Detector_1=0;
-// Prot_1=0; Prot_2=0; Prot_Comp_1=0;  Prot_Comp_2=0;
-// Neutron_1=0;  Neutron_2=0;
-// Dose_1=0;  Dose_2=0;  Dose_Comp_1=0;  Dose_Comp_2=0;
-// Prot_1_Interrupt=0; Prot_2_Interrupt=0;
-// // To whip off the vehicle meter of channel of P1
-// Neut_1=0; Neut_2=0;
-//}
-// ==================================================================================================
-// Setting to null circle buffer for sending by CAN
-//void Data_Buffer_Reset(void)
-//{
-//     int i,j; 
-//     Buff_Send__Index = 0;//Buffer_Number -1;
-//     Buff_Write_Index=0;
-//     Flug_Buff = -3;
-//     for (i=0; i < Buffer_Number; i++) {
-////       memset(Data_Buffer[i].buffer, 0, Buffer_Size);
-//			 for (j=0; j < Buffer_Size; j++)
-//					Data_Buffer[i].buffer[j] = 7 + 48;//7 just for test! need to be 0? + 48 - makes it ascii '7'
-//       Data_Buffer[i].ready=0;//change to 0
-//     }
-//}
-// This function must be used for initialisation of all values that need 
-//void Detectors_Init(void)
-//{
-//  Clear_Registers_Bits();  
-// //===========================
-//  //ConfigureTimer();  
-//  Counters_Reset();
-//  Data_Buffer_Reset();
-//  FLUX_Reset();
-//  Reset_Spectra_and_Counters ();  
-// 
-//  
-//  
-//  
 //}  
 // ==================================================================================================
 uint8_t  Counter_Compression(uint32_t j) {
@@ -921,23 +910,8 @@ int UartStart (void)
 
 	Uart1PinCfg();
 	Uart1Setup();
-	PORT_ResetBits(MDR_PORTB, PORT_Pin_7);
-
-//	sendbyte = 'r';	
-//	PORT_SetBits(MDR_PORTB, PORT_Pin_7);
-//	
-//	UART_SendData (MDR_UART1, sendbyte);
-//	UART_SendData (MDR_UART1, sendbyte+1);
-//	UART_SendData (MDR_UART1, sendbyte+2);
-//	
-//	UART_SendData (MDR_UART1, sendbyte);
-//	UART_SendData (MDR_UART1, sendbyte+1);
-//	UART_SendData (MDR_UART1, sendbyte+2);
-//	
-//	UART_SendData (MDR_UART1, sendbyte);
-//	UART_SendData (MDR_UART1, sendbyte+1);
-
-// 
+	PORT_ResetBits(MDR_PORTB, PORT_Pin_7);// это управляющий пин приемопередатчика
+ 
 	return 0;
 }
 
@@ -1222,33 +1196,33 @@ void ADC_Temp_Sensor_Config(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void SendUARTBuffer(void)
-{
-	/* Send Data from UART1 */
-	// блокирующе пропалываем бит
-	
-	if (Data_Buffer[Buff_Send__Index].ready){
-		
-		while (MDR_UART1->FR & UART_FR_TXFE){	
-			// push maximum number bytes to uart
-			UART_SendData(MDR_UART1, Data_Buffer[Buff_Send__Index].buffer[sendingIndex]);									
-			
-			if(sendingIndex < Buffer_Size)
-				sendingIndex++;
-			else // next buffer
-			{
-				Data_Buffer[Buff_Send__Index].ready=0;
-				
-				if (Buff_Send__Index < Buffer_Number) 
-					Buff_Send__Index++;
-				else 	
-					Buff_Send__Index = 0;						
-				
-				sendingIndex=0;
-			}
-		}
-	}
-}
+//void SendUARTBuffer(void)
+//{
+//	/* Send Data from UART1 */
+//	// блокирующе пропалываем бит
+//	
+//	if (Data_Buffer[Buff_Send__Index].ready){
+//		
+//		while (MDR_UART1->FR & UART_FR_TXFE){	
+//			// push maximum number bytes to uart
+//			UART_SendData(MDR_UART1, Data_Buffer[Buff_Send__Index].buffer[sendingIndex]);									
+//			
+//			if(sendingIndex < Buffer_Size)
+//				sendingIndex++;
+//			else // next buffer
+//			{
+//				Data_Buffer[Buff_Send__Index].ready=0;
+//				
+//				if (Buff_Send__Index < Buffer_Number) 
+//					Buff_Send__Index++;
+//				else 	
+//					Buff_Send__Index = 0;						
+//				
+//				sendingIndex=0;
+//			}
+//		}
+//	}
+//}
 
 /*******************************************************************************
 * Function Name  : SetupRTC
@@ -1410,7 +1384,7 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
   }
   if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_ALRF)==SET)
   {
-			 //Start_Uart_sending((uint8_t *)Hello_text3, 129);
+			 //Start_Uart_sending((uint8_t *)Send_buffer, 129);
     //PORT_SetBits(MDR_PORTF,PORT_Pin_1);
   }
   MDR_BKP -> RTC_CS |= 0x06;
@@ -1503,8 +1477,8 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	
 		
    uint32_t tmp ;
-   Put_index=0; Get_index=0;
-   for(int i=0; i<Buffer_Size_Si; i++) {Si_Buffer[i]=0; Digital_test[i]=i;}
+ //  Put_index=0; Get_index=0;
+   //for(int i=0; i<Buffer_Size_Si; i++) {Si_Buffer[i]=0; Digital_test[i]=i;}
 	 
 	 
 	 //strcpy( Hello_text2 , "Hello srt test");
@@ -1569,18 +1543,18 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	 
 	 //получим длину tcounts
 	 //tmp = sizeof(tcounts);
-	 memcpy(Hello_text3, &UKEY, 4);
+	 memcpy(Send_buffer, &UKEY, 4);
 		
 		
-//	 memcpy(Hello_text3 + 4, &Seconds, 4);
-	 memcpy(Hello_text3 + 8, &tcounts, 120);
+	 memcpy(Send_buffer + 8, &tcounts, 120);
 
-	Start_Uart_sending((uint8_t *)Hello_text3, 129); // отправка нулевого кадра, в котором записана шапка и что-то старое
+	Start_Uart_sending((uint8_t *)Send_buffer, 129); // отправка нулевого кадра, в котором записана шапка и что-то старое
 		
 		
 		
 	// структура FLUX пример начальной инициализации	
 	Flux.key  = UKEY; 
+	Flux.key.tip = 0;
 	Flux.time = Seconds;
 	Flux.N    = tcounts;
 	 
@@ -1589,7 +1563,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	ADC_codes.key     =  UKEY;
 	ADC_codes.key.tip = 5; 
 	ADC_codes.time    = Seconds;
-	uint16_t Res_tmp1 = 0; // переменная для теста ADC_codes
+	// uint16_t Res_tmp1 = 0; // переменная для теста ADC_codes
 
 	
 	// кривой(?) сброс информации, нужно ли избавиться от всех M[I]
@@ -1600,9 +1574,11 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	shift=0;	// переключатель нижнее/верхнее полуслово
 
 	for(int J=0; J<3; J++){
-		Spectr[J].key= UKEY; Spectr[J].key.tip=J+1;  //Spectr[J].key.
+		Spectr[J].key= UKEY; 
+		Spectr[J].key.tip=J+1;  //Spectr[J].key.
 		Spectr[J].time=0;
-		for(int I=0; I<30; I++) Spectr[J].M[I]=0;
+		for(int I=0; I<30; I++) 
+			Spectr[J].M[I]=0;
 	}
 	
   INTERUPT_J_ON[0]=0x0000; 
@@ -1616,79 +1592,72 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 
 	
 	
-	/* Рабочий цикл, в котором висит */	 
+	/* Рабочий цикл, в котором висит */	 //=================================================================================================
 	
 
 
 
 
 
-	
      while (1)
      {
-			 
-	for(int INTERUPT_J=1; INTERUPT_J<5;INTERUPT_J++){
-	  if(INTERUPT_J != INTERUPT_MODE){ //это часть работает тогда, когда к этому прерыванию не подключено АЦП
-			if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){  
-				
-				// Добавить контроль того, что сигнал прерывания закончился
-				
-				 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
-				 EmableINTERUPT(INTERUPT_J);}
-		}
-		else {// когда к этому прерыванию  АЦП подключено
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        if(Program_flags & ADC1_ON){
-          if(ADC_GetFlagStatus(ADC1_FLAG_END_OF_CONVERSION)){
-            tmp =0x00000fff & ADC1_GetResult();
-            Result_1 |=  tmp;
-            Flux.N.Sum1 += tmp; 
-						int k=convers(tmp);
-						Spectr[0].M[k]++;
-						
-						if(Result_1 & 0x4000)
-							{
-								Flux.N.Sum1coins += tmp; 
-								Spectr[2].M[k]++;
-							}
-						Program_flags &= ~ADC1_ON; //  Снимаем признак
-					}
-				}
+			 for(int INTERUPT_J=1; INTERUPT_J<5;INTERUPT_J++){
+				 if(INTERUPT_J != INTERUPT_MODE){ //это часть работает тогда, когда к этому прерыванию не подключено АЦП
+					 if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){
+						 // Добавить контроль того, что сигнал прерывания закончился
+						 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
+						 EmableINTERUPT(INTERUPT_J);
+					 }
+				 }else {// когда к этому прерыванию  АЦП подключено
+					 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+					 if(Program_flags & ADC1_ON){
+						 if(ADC_GetFlagStatus(ADC1_FLAG_END_OF_CONVERSION)){
+							 tmp =0x00000fff & ADC1_GetResult();
+							 Result_1 |=  tmp;
+							 Flux.N.Sum1 += tmp; 
+							 int k=convers(tmp);
+							 Spectr[0].M[k]++;
+							 
+							 if(Result_1 & 0x4000){
+								 Flux.N.Sum1coins += tmp; 
+								 Spectr[2].M[k]++;
+							 }
+							 Program_flags &= ~ADC1_ON; //  Снимаем признак
+							 }
+					 }
 					
-          if(Program_flags & ADC2_ON){
-						if(ADC_GetFlagStatus(ADC2_FLAG_END_OF_CONVERSION)){
-							tmp =0x00000fff & ADC2_GetResult();
-							Result_2 |=  tmp;
-							Flux.N.Sum2 += tmp;  
-							int k=convers(tmp);
-							Spectr[1].M[k]++;
-							
-							if(Result_2 & 0x4000) {
-								Flux.N.Sum2coins += tmp; 
-								Spectr[3].M[k]++;
-							}	
-							Program_flags &= ~ADC2_ON; //  Снимаем признак
-						}
-					}
-
-					
-					if(Program_flags & SenderFull_ON){
-						if(!(Program_flags & Sending_ON)) {
-							memcpy(Hello_text3, &ADC_codes, 128); 							// 1) копируем текущий массив в отправочный		
-							Start_Uart_sending((uint8_t *)Hello_text3,128);			// 2) запускаем отправку данных по ADC_codes
-							//memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
-							ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
-							ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
-							J_ADC = 0;
-							Program_flags &= ~SenderFull_ON;
-							}
-						}
-										
-										if((!(Program_flags & ADCS_check)) &&  // Нет не прочитанных данных АЦП
-												 (Program_flags & INTERUPT_J_ON[INTERUPT_J])) {// Признак обработки последствий прерывания не снят
-														Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];  //  Снимаем признак
-														if(Result_1 & 0x4000) {
-															
+					 if(Program_flags & ADC2_ON){
+						 if(ADC_GetFlagStatus(ADC2_FLAG_END_OF_CONVERSION)){
+							 tmp =0x00000fff & ADC2_GetResult();
+							 Result_2 |=  tmp;
+							 Flux.N.Sum2 += tmp;  
+							 int k=convers(tmp);
+							 Spectr[1].M[k]++;
+							 
+							 if(Result_2 & 0x4000) {
+								 Flux.N.Sum2coins += tmp; 
+								 Spectr[3].M[k]++;
+							 }	
+							 Program_flags &= ~ADC2_ON; //  Снимаем признак
+							 }
+					 }
+					 if(Program_flags & SenderFull_ON){
+						 if(!(Program_flags & Sending_ON)) {
+							 memcpy(Send_buffer, &ADC_codes, 129); 							// 1) копируем текущий массив в отправочный		
+							 Start_Uart_sending((uint8_t *)Send_buffer,129);			// 2) запускаем отправку данных по ADC_codes
+							 //memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
+							 ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
+							 ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
+							 J_ADC = 0;
+							 Program_flags &= ~SenderFull_ON;
+						 }
+					 }
+					 
+					 if((!(Program_flags & ADCS_check)) &&  // Нет не прочитанных данных АЦП
+						 (Program_flags & INTERUPT_J_ON[INTERUPT_J])) {// Признак обработки последствий прерывания не снят
+							 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];  //  Снимаем признак
+							 if(Result_1 & 0x4000) {
+								 
 															// тест 1: срабатывание совпадений -> выдает 2+2 байта (по 2 на каждый канал)
 					//											Res_tmp1++;
 					//											Put_to_CODE(Res_tmp1);
@@ -1701,7 +1670,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 					//										if(Res_tmp2 ) Put_to_CODE(Res_tmp2); 
 															//----
 															
-															
+														//	Put_to_CODE(Result_1); 
 															Put_to_CODE_2(Result_1, Result_2); // НУЖНОЕ
 															}
 															else { // сюда заходит если не было совпадения
@@ -1719,7 +1688,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 
 // =============================================================================
 
-
+/*
 			 
         // ========== Обработка данных полупроводниковых детекторов ==========
         if(Program_flags & ADC1_ON){
@@ -1753,7 +1722,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
                 // Добавить проверку, что прерывание уже не включено
         // ===== Конец обработки данных полупроводниковых детекторов ======
 				
-				
+				*/
 				
 				
 				
@@ -1765,7 +1734,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 						
 						Flux_send = Flux; 															// 1) копируем текущий массив в отправочный
 						//Start_Uart_sending((uint8_t *)&Flux_send, 129); // 2) запускаем отправку данных
-						//Start_Uart_sending((uint8_t *)Hello_text3,129); // 2) запускаем отправку данных по ADC_codes
+						Start_Uart_sending((uint8_t *)Send_buffer,129); // 2) запускаем отправку данных по ADC_codes
             memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
 						Flux.key  = UKEY; 															// 4) добавляем в него текущую шапку
 						Flux.time = Seconds;														// 5) добавляем в него текущее время
