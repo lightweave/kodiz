@@ -608,8 +608,11 @@ void Next_Uart_sending(void){
         Delay_timer=0;
    } else {
     //    if( Delay_timer< Sending_Delay ) return;
-				PORT_ResetBits(MDR_PORTB, PORT_Pin_7); // Переключить канал на прием 
-        Program_flags &= ~Sending_ON;
+		 if(UART_GetFlagStatus (MDR_UART1, UART_FLAG_BUSY)!= SET)
+		 {
+			 PORT_ResetBits(MDR_PORTB, PORT_Pin_7); // Переключить канал на прием 
+       Program_flags &= ~Sending_ON;
+		 }
    }
 }
 
@@ -879,10 +882,10 @@ void Uart1Setup(void)
 	UART_Init (MDR_UART1,&UART_InitStructure);
 
 	
-	NVIC_EnableIRQ(UART1_IRQn);
+	//NVIC_EnableIRQ(UART1_IRQn);
 	
 	  /* Enable Receiver interrupt*/
-  UART_ITConfig (MDR_UART1, UART_IT_RX, ENABLE);
+  //UART_ITConfig (MDR_UART1, UART_IT_RX, ENABLE);
 	
 	    /* Enables UART1 peripheral */
   UART_Cmd(MDR_UART1,ENABLE);
@@ -910,7 +913,7 @@ int UartStart (void)
 
 	Uart1PinCfg();
 	Uart1Setup();
-	PORT_ResetBits(MDR_PORTB, PORT_Pin_7);// это управляющий пин приемопередатчика
+	PORT_ResetBits(MDR_PORTB, PORT_Pin_7);// это управляющий пин приемопередатчика, прием данных
  
 	return 0;
 }

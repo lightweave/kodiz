@@ -222,28 +222,28 @@ void DMA_IRQHandler(void)
 *******************************************************************************/
 void UART1_IRQHandler(void)
 {
-  if (UART_GetITStatusMasked(MDR_UART1, UART_IT_RX) == SET)
-  {		
-    UART_ClearITPendingBit(MDR_UART1, UART_IT_RX);
-		
-		uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-		
-		uart1_IT_RX_flag = SET;	
-		
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
-  }
+//  if (UART_GetITStatusMasked(MDR_UART1, UART_IT_RX) == SET)
+//  {		
+//    UART_ClearITPendingBit(MDR_UART1, UART_IT_RX);
+//		
+//		uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//		
+//		uart1_IT_RX_flag = SET;	
+//		
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//				uart1_IT_RX_byte = UART_ReceiveData(MDR_UART1);
+//  }
 
 
 
