@@ -489,7 +489,7 @@ uint16_t R_1=0;
 uint16_t R_2=0;
  Flux.N.Interupt_Ph++;
 	NVIC_DisableIRQ(EXT_INT4_IRQn);  		//  Отключаем прерывание 4
-	test = PORT_ReadInputData(MDR_PORTC);
+//	test = PORT_ReadInputData(MDR_PORTC);
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
 		R_1  =0x1000;
 		Flux.N.Ph11++;}
@@ -507,7 +507,7 @@ uint16_t R_2=0;
 		R_1 |=0x4000;
 		R_2 |=0x4000;
 		Flux.N.Phcois++;} // наличие сигнала совпадения
-  Program_flags |= INTERUPT_J_ON[4]; //  Устанавливаем признак        // Если писать тут INTERUPT_J_ON[4], то все ломается
+  Program_flags |= INTERUPT_J_ON[4]; //  Устанавливаем признак
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(INTERUPT_MODE != 4) return; //
           Result_1=R_1;
@@ -659,6 +659,9 @@ void Next_Uart_sending(void){
         	break;
 				case 'm':
 					INTERUPT_MODE = 4;
+        	break;
+				case 'p':
+					NVIC_EnableIRQ(EXT_INT4_IRQn);    // Bключаем прерывание 4
         	break;
 				
 				case 'a':// вывод массива А
@@ -1531,8 +1534,9 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	 UKEY.mode = 1;     // режим работы прибора
 	 
 	 
-	 memcpy(Send_buffer, &UKEY, 4);
-	 memcpy(Send_buffer + 8, "KODIZ  PROGRAM  V.0.6   AVALUABLE COMMANDS: (t)est; z; (v) INT_1; (b) INT_2; (n) INT_3; (m) INT_4; (a); (f)lux; (s)pectr", 120);
+//	 memcpy(Send_buffer, &UKEY, 4);
+//	 memcpy(Send_buffer + 8, "   KODIZPROGRAM V.0.6   AVALUABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 120);
+	 memcpy(Send_buffer, "KODIZ   SINP MSUPROGRAM v.0.6   AVAILABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 128);
 
 		
 //		case 't'//Send_buffer, 128
@@ -1604,8 +1608,19 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 				 if(INTERUPT_J != INTERUPT_MODE){ //это часть работает тогда, когда к этому прерыванию не подключено АЦП
 					 if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){
 						 // Добавить контроль того, что сигнал прерывания закончился
-						 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
-						 EmableINTERUPT(INTERUPT_J);
+						 
+//							 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
+//							 EmableINTERUPT(INTERUPT_J);
+						 
+						 if(INTERUPT_J != 4){ 														// если у нас не 4, то делаем стандартное включение прерывания
+							 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];		// (нужно сделать подобное для остальных)
+							 EmableINTERUPT(INTERUPT_J);
+						 } else{ 																					// если у нас 4, то
+							 int test = PORT_ReadInputData(MDR_PORTC); 			// считываем полностью порт С
+							 if(!(test&0x2000)){														// проверяем значение порта и включаем прерывание
+								 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
+								 EmableINTERUPT(INTERUPT_J);
+							 }}
 					 }
 				 }else {// когда к этому прерыванию  АЦП подключено
 					 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
