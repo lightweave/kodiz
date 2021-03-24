@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Comms>
+  <Ports>COM1</Ports>
+  <Ports>COM2</Ports>
+  <Ports>COM3</Ports>
+  <Ports>COM4</Ports>
+  <Ports>COM5</Ports>
+  <Ports>COM6</Ports>
+  <Ports>COM7</Ports>
+  <Ports>COM8</Ports>
+  <Ports>COM9</Ports>
+  <Ports>COM10</Ports>
+  <Ports>COM11</Ports>
+  <Ports>COM12</Ports>
+  <Ports>COM13</Ports>
+  <Ports>COM14</Ports>
+  <Ports>COM15</Ports>
+  <Ports>COM16</Ports>
+  <Ports>COM17</Ports>
+  <Ports>COM18</Ports>
+
+  <Baud>2400</Baud>
+  <Baud>4800</Baud>
+  <Baud>9600</Baud>
+  <Baud>19200</Baud>
+  <Baud>38400</Baud>
+  <Baud>57600</Baud>
+  <Baud>115200</Baud>
+  <Baud>230400</Baud>
+  <Baud>460800</Baud>
+  <Baud>921600</Baud>
+
+  <Commands>t</Commands>
+  <Commands>z</Commands>
+  <Commands>v</Commands>
+  <Commands>b</Commands>
+  <Commands>n</Commands>
+  <Commands>m</Commands>
+  <Commands>a</Commands>
+  <Commands>f</Commands>
+  <Commands>s</Commands>
+  <!--> 
+  //		case 't'//Send_buffer, 128
+//		case 'z'//Digital_test, Buffer_Size_Si
+//		// Переключение режимов прерываний для работы с разными детекторами
+//		case 'v'//INTERUPT_MODE = 1;
+//		case 'b'//INTERUPT_MODE = 2;
+//		case 'n'//INTERUPT_MODE = 3;
+//		case 'm'//INTERUPT_MODE = 4;				
+//		case 'a'// вывод массива А
+//		case 'f'// вывод массива потоков
+//		case 's'// вывод массива спектра текущего
+  </!-->
+</Comms>

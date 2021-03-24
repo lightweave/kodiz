@@ -1530,14 +1530,20 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	 // шапка  массива выдачи информации
 	 UKEY.met1 = 0xCC;  // метка
 	 UKEY.met2 = 0x55;  // метка
-	 UKEY.tip  = 0;     // тип массива
+	 UKEY.tip  = 16;    // тип массива
 	 UKEY.mode = 1;     // режим работы прибора
 	 
 	 
-//	 memcpy(Send_buffer, &UKEY, 4);
-//	 memcpy(Send_buffer + 8, "   KODIZPROGRAM V.0.6   AVALUABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 120);
-	 memcpy(Send_buffer, "KODIZ   SINP MSUPROGRAM v.0.6   AVAILABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 128);
+	 memcpy(Send_buffer, &UKEY, 4);
+	 memcpy(Send_buffer + 8, "   KODIZPROGRAM V.0.6   AVALUABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 120);
+//	 memcpy(Send_buffer, "KODIZ   SINP MSUPROGRAM v.0.6   AVAILABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 128);
 
+
+	 // шапка  массива выдачи информации
+	 UKEY.met1 = 0xCC;  // метка
+	 UKEY.met2 = 0x55;  // метка
+	 UKEY.tip  = 0;    // тип массива
+	 UKEY.mode = 1;     // режим работы прибора
 		
 //		case 't'//Send_buffer, 128
 //		case 'z'//Digital_test, Buffer_Size_Si
@@ -1751,6 +1757,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 						//Start_Uart_sending((uint8_t *)Send_buffer,128); // 2) запускаем отправку данных по ADC_codes // для теста
             memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
 						Flux.key  = UKEY; 															// 4) добавляем в него текущую шапку
+						Flux.key.tip = 0;						
 						Flux.time = Seconds;														// 5) добавляем в него текущее время
 					}
 				}
