@@ -46,6 +46,7 @@ namespace Serial_Communication_WPF
         public static byte[] bufferForData;
         public static byte[] kadr;
         public static int bufferForDataCount;
+        public static int bufferForDataCount_backup;
         private int receivedbytes;
 
         private static string DIR_path = @"";
@@ -217,7 +218,20 @@ namespace Serial_Communication_WPF
             mcFlowDoc1.Blocks.Clear();
             mcFlowDoc1.Blocks.Add(para1);
             Parsedata.Document = mcFlowDoc1;
+
             Parsedata.ScrollToEnd();
+            // Get the current caret position.
+            TextPointer caretPos = Parsedata.CaretPosition;
+
+            // Set the TextPointer to the end of the current document.
+            caretPos = caretPos.DocumentEnd;
+
+            // Specify the new caret position at the end of the current document.
+            Parsedata.CaretPosition = caretPos;
+
+
+
+            Received_txt.Text = bufferForDataCount_backup.ToString();
         }
 
         private void Show_block()
@@ -225,14 +239,16 @@ namespace Serial_Communication_WPF
             if (receivedbytes == 0)
                 return;
 
+            bufferForDataCount_backup = bufferForDataCount_backup + bufferForDataCount;
 
             sb.Clear();
             block_number++;
 
-            if (bufferForDataCount > 10000)
+            if (bufferForDataCount > 1000)
             {
-                // 
-                // sbdecoded.Clear();                
+                sb.Clear();
+                sbdecoded.Clear();
+                bufferForDataCount = 0;
             }
             
             
@@ -293,13 +309,23 @@ namespace Serial_Communication_WPF
                     case 16:
                         sbdecoded.AppendLine("Принят блок приветствие");
 
-
+                        sbdecoded.AppendFormat("Режим работы прибора {0}", kadr[3]);
                         sbdecoded.AppendFormat("Время прибора {0}", time);
+
+                        for (int j = 0; j < 128; j++)
+                        {
+                            if (j % 16 == 0)
+                                sbdecoded.AppendLine(" ");
+
+                            sbdecoded.AppendFormat(" {0} ", (char)kadr[j]);
+                        }
+
                         sbdecoded.AppendLine("");
                         
                         break;
                     case 0:
                         sbdecoded.AppendLine("Принят блок потоки и дозы");
+                        sbdecoded.AppendFormat("Режим работы прибора {0}", kadr[3]);
                         sbdecoded.AppendFormat("Время прибора {0}", time);
                         sbdecoded.AppendLine("");
 
@@ -319,30 +345,77 @@ namespace Serial_Communication_WPF
 
                     case 1:
                         sbdecoded.AppendLine("Принят блок спектр 1-го АЦП");
+                        sbdecoded.AppendFormat("Режим работы прибора {0}", kadr[3]);
                         sbdecoded.AppendFormat("Время прибора {0}", time);
                         sbdecoded.AppendLine("");
+                        for (int j = 0; j < 30; j++)
+                        {
+                            if (j % 5 == 0)
+                                sbdecoded.AppendLine(" ");
 
+                            sbdecoded.AppendFormat(" {0,6:d6} ", 
+                                kadr[4 * j + 8] + 
+                                kadr[4 * j + 9] * 256 + 
+                                kadr[4 * j + 10] * 256 * 256 + 
+                                kadr[4 * j + 11] * 256 * 256 * 256);
+                        }
+                        sbdecoded.AppendLine(" ");
                                              
 
                         break;
 
                     case 2:
                         sbdecoded.AppendLine("Принят блок спектр 2-го АЦП");
+                        sbdecoded.AppendFormat("Режим работы прибора {0}", kadr[3]);
                         sbdecoded.AppendFormat("Время прибора {0}", time);
                         sbdecoded.AppendLine("");
+                        for (int j = 0; j < 30; j++)
+                        {
+                            if (j % 5 == 0)
+                                sbdecoded.AppendLine(" ");
 
+                            sbdecoded.AppendFormat(" {0,6:d6} ", 
+                                kadr[4 * j + 8] + 
+                                kadr[4 * j + 9] * 256 + 
+                                kadr[4 * j + 10] * 256 * 256 + 
+                                kadr[4 * j + 11] * 256 * 256 * 256);
+                        }
+                        sbdecoded.AppendLine(" ");
                         break;
                     case 3:
                         sbdecoded.AppendLine("Принят блок спектр 1-го АЦП при наличии совпадений");
+                        sbdecoded.AppendFormat("Режим работы прибора {0}", kadr[3]);
                         sbdecoded.AppendFormat("Время прибора {0}", time);
                         sbdecoded.AppendLine("");
+                        for (int j = 0; j < 30; j++)
+                        {
+                            if (j % 5 == 0)
+                                sbdecoded.AppendLine(" ");
 
+                            sbdecoded.AppendFormat(" {0,6:d6} ", 
+                                kadr[4 * j + 8] + 
+                                kadr[4 * j + 9] * 256 + 
+                                kadr[4 * j + 10] * 256 * 256 + 
+                                kadr[4 * j + 11] * 256 * 256 * 256);
+                        }
+                        sbdecoded.AppendLine(" ");  
                         break;
                     case 4:
                         sbdecoded.AppendLine("Принят блок спектр 2-го АЦП при наличии совпадений");
                         sbdecoded.AppendFormat("Время прибора {0}", time);
                         sbdecoded.AppendLine("");
+                        for (int j = 0; j < 30; j++)
+                        {
+                            if (j % 5 == 0)
+                                sbdecoded.AppendLine(" ");
 
+                            sbdecoded.AppendFormat(" {0,6:d6} ", 
+                                kadr[4 * j + 8] + 
+                                kadr[4 * j + 9] * 256 + 
+                                kadr[4 * j + 10] * 256 * 256 + 
+                                kadr[4 * j + 11] * 256 * 256 * 256);
+                        }
+                        sbdecoded.AppendLine(" ");  
                         break;
                     case 5:
                         sbdecoded.AppendLine("Принят блок массив кодов АЦП");
@@ -469,6 +542,18 @@ namespace Serial_Communication_WPF
             // see https://docs.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
+        }
+
+        private void Up_Font(object sender, RoutedEventArgs e)
+        {
+            Parsedata.FontSize = Parsedata.FontSize++;
+            Commdata.FontSize = Parsedata.FontSize++;
+        }
+
+        private void Down_Font(object sender, RoutedEventArgs e)
+        {
+            Parsedata.FontSize = Parsedata.FontSize--;
+            Commdata.FontSize = Parsedata.FontSize--;
         }
 
 

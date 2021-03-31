@@ -31,24 +31,35 @@
   <Baud>921600</Baud>
 
   <Commands>t</Commands>
-  <Commands>z</Commands>
+  
   <Commands>v</Commands>
-  <Commands>b</Commands>
+  <Commands>b</Commands>  
   <Commands>n</Commands>
   <Commands>m</Commands>
+  
   <Commands>a</Commands>
   <Commands>f</Commands>
+  
   <Commands>s</Commands>
+
+  <Commands>1</Commands>
+  <Commands>2</Commands>
+  <Commands>3</Commands>
+  <Commands>4</Commands>
   <!--> 
   //		case 't'//Send_buffer, 128
 //		case 'z'//Digital_test, Buffer_Size_Si
 //		// Переключение режимов прерываний для работы с разными детекторами
+
 //		case 'v'//INTERUPT_MODE = 1;
 //		case 'b'//INTERUPT_MODE = 2;
 //		case 'n'//INTERUPT_MODE = 3;
 //		case 'm'//INTERUPT_MODE = 4;				
+
 //		case 'a'// вывод массива А
 //		case 'f'// вывод массива потоков
-//		case 's'// вывод массива спектра текущего
+//		case 's'// вывод статуса
+
+
   </!-->
 </Comms>

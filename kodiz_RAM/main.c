@@ -79,7 +79,7 @@
  #define Sending_ON 0x1000
  #define SenderFull_ON 0x00010000
 
- static uint16_t State_of_PortC;
+// static uint16_t State_of_PortC;
  // Значения пинов должны быть приведены в соответствие с распайкой сигналов, поступающих на порт !!!
  #define Si1_input 0x0001
  #define Si2_input 0x0002
@@ -158,7 +158,8 @@ struct Tspectr ADC_codes;
 struct Tspectr ADC_codes_send;
 
 
-int INTERUPT_MODE=1;
+int INTERUPT_MODE=1; // значение по умолчанию - работа с полупроводниками
+
 static uint32_t  INTERUPT_J_ON[5]; 
 
 
@@ -478,7 +479,6 @@ uint16_t R_2=0;
 *******************************************************************************/
 void EXT_INT4_IRQHandler(void)
 {
-	int test=0;
 //		test = PORT_ReadInputData(MDR_PORTB);
 //	PORT_SetBits(MDR_PORTB, PORT_Pin_15); // тест по ножкам	
 //		test = PORT_ReadInputData(MDR_PORTB);
@@ -541,20 +541,23 @@ switch (I){
 }
 }
 // =============================================================================
+// сжатие 12 бит в 30 каналов
 int convers(uint32_t X) {
 
-uint16_t J= (uint16_t) X & 0x0fff;
-if(J == 0x0fff) return 29;
-if(J > 4090) return 28;
-if(J < 5) return 0;
-int I, m=J;
-	for(I=26; I>11;I-=2){ 
-		if(J & 0x0800) break;
-		J<<=1;
-	}
-	if(I<11) return  m-4;
-	else if(J & 0x0400) I++;
-   return J;
+	uint16_t J= (uint16_t) X & 0x0fff;
+	if(J == 0x0fff) return 29;
+	if(J > 4090) return 28;
+	if(J < 5) return 0; // нижняя граница преобразования 40 кэВ
+	int I, m=J;
+	
+		for(I=26; I>11;I-=2){ // log scale
+			if(J & 0x0800) 
+				break;
+			J = J << 1;
+		}
+		if(I<11) return  m-4; // lin scale
+		else if(J & 0x0400) I++;
+		 return I;
 }
 
 
@@ -635,71 +638,94 @@ void Next_Uart_sending(void){
    }
 }
 
+// посылка спектра с 1 до 4
+void SpectrSend(int i)
+{
+		if (i < 1 | i > 4) i = 1;
+	
+		Spectr_send = Spectr[i-1]; 														// 1) копируем текущий массив в отправочный
+		Start_Uart_sending((uint8_t *)&Spectr_send, 128);   // 2) запускаем отправку данных с буферного массива
+//		memset(&Spectr[i], 0, sizeof(Spectr[i])); 								  // 3) обнуляем текущий массив						
+//		Spectr[i].key  = UKEY; 														// 4) добавляем в него текущую шапку, а нужно ли - ведь она уже заполнена?
+//		Spectr[i].key.tip  = i + 1;     									// тип массива, он по идее уже записан
+		Spectr[i-1].time = Seconds;														// 5) добавляем в него текущее время		  
 
-
+}
 // ===================================================================
  void Command_Handler(uint8_t DataByte){
   switch (DataByte) {
-        case 't':   
-					Start_Uart_sending((uint8_t *)Send_buffer,128);
-        	break;
-        case 'z':   
-					Start_Uart_sending((uint8_t *)Digital_test,Buffer_Size_Si);
-        	break;
+			case 't':   
+				Start_Uart_sending((uint8_t *)Send_buffer,128);
+				break;
+
+			
+			// Переключение режимов прерываний для работы с разными детекторами
+			case 'v':
+				INTERUPT_MODE = 1;
+			// нужно обнулить массивы данных и спектры???
+				break;
+			case 'b':
+				INTERUPT_MODE = 2;
+			  // нужно обнулить массивы данных и спектры???
+				break;
+			case 'n':
+				INTERUPT_MODE = 3;
+			  // нужно обнулить массивы данных и спектры???
+				break;
+			case 'm':
+				INTERUPT_MODE = 4;
+			  // нужно обнулить массивы данных и спектры???
+				break;
+			case 'p':
+				NVIC_EnableIRQ(EXT_INT4_IRQn);    // Bключаем прерывание 4
+				break;
+			
+			case 'a':// вывод массива А	
+			
+				ADC_codes_send = ADC_codes; 												// 1) копируем текущий массив в отправочный
+				Start_Uart_sending((uint8_t *)&ADC_codes_send, 128);// 2) запускаем отправку данных с буферного массива
 				
-				// Переключение режимов прерываний для работы с разными детекторами
-				case 'v':
-					INTERUPT_MODE = 1;
-        	break;
-				case 'b':
-					INTERUPT_MODE = 2;
-        	break;
-				case 'n':
-					INTERUPT_MODE = 3;
-        	break;
-				case 'm':
-					INTERUPT_MODE = 4;
-        	break;
-				case 'p':
-					NVIC_EnableIRQ(EXT_INT4_IRQn);    // Bключаем прерывание 4
-        	break;
-				
-				case 'a':// вывод массива А
-					UKEY.met1 = 0xCC;  // метка
-					UKEY.met2 = 0x55;  // метка
-					UKEY.tip  = 5;     // тип массива
-					UKEY.mode = 1;     // режим работы прибора		
-				
-				  ADC_codes_send = ADC_codes; 												// 1) копируем текущий массив в отправочный
-					Start_Uart_sending((uint8_t *)&ADC_codes_send, 128);// 2) запускаем отправку данных с буферного массива
-          
-				  memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
-					ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
-					ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
-        	break;
-				
-				case 'f':// вывод массива потоков
-					Flux_send = Flux; 															// 1) копируем текущий массив в отправочный
-					Start_Uart_sending((uint8_t *)&Flux_send, 128); // 2) запускаем отправку данных с буферного массива
-          memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
-					Flux.key  = UKEY; 															// 4) добавляем в него текущую шапку
-					Flux.time = Seconds;														// 5) добавляем в него текущее время
-        	break;
-				
-				case 's':// вывод массива спектра текущего
-					UKEY.met1 = 0xCC;  // метка
-					UKEY.met2 = 0x55;  // метка
-					UKEY.tip  = 1;     // тип массива
-					UKEY.mode = 1;     // режим работы прибора
-				
-					Spectr_send = Spectr[UKEY.tip - 1]; 															// 1) копируем текущий массив в отправочный
-					Start_Uart_sending((uint8_t *)&Spectr_send, 128); // 2) запускаем отправку данных с буферного массива
-          //memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
-					Spectr[UKEY.tip - 1].key  = UKEY; 															// 4) добавляем в него текущую шапку
-					Spectr[UKEY.tip - 1].time = Seconds;														// 5) добавляем в него текущее время
-				  
-        	break;
-        }
+				memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив		
+			
+				ADC_codes.key  			= UKEY; 												// 4) добавляем в новый текущую шапку
+				ADC_codes.key.tip  	= 5;     												// тип массива
+				ADC_codes.key.mode 	= INTERUPT_MODE;     						// режим работы прибора	
+				ADC_codes.time 			= Seconds;											// 5) добавляем в него текущее время
+				break;
+			
+			case 'f':// вывод массива потоков
+				Flux_send = Flux; 															// 1) копируем текущий массив в отправочный
+				Start_Uart_sending((uint8_t *)&Flux_send, 128); // 2) запускаем отправку данных с буферного массива
+			
+				memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
+			
+				Flux.key  		= UKEY; 													// 4) добавляем в него текущую шапку
+				Flux.key.tip  = 0;     													// тип массива
+				Flux.key.mode = INTERUPT_MODE;     							// режим работы прибора
+				Flux.time 		= Seconds;												// 5) добавляем в него текущее время
+				break;			
+			
+			case 's':// вывод массива статуса
+				memcpy(Send_buffer, &UKEY, 4);
+				// memcpy(Send_buffer + 8, "", 120);
+				break;
+			
+			case '1':// вывод массива спектра 
+				SpectrSend(1);	  
+				break;
+			
+			case '2':// вывод массива спектра 
+				SpectrSend(2);	  
+				break;
+
+			case '3':// вывод массива спектра 
+				SpectrSend(3);				  
+				break;
+			
+			case '4':// вывод массива спектра 
+				SpectrSend(4);		  
+				break;
+			}
  }
 
 // ==================================================================================================
@@ -720,7 +746,7 @@ void Delay(__IO uint32_t nCount)
 #pragma inline
 void Sleep(uint32_t cnt)
 {	  
-	DWT->CYCCNT = 0;
+	DWT-> CYCCNT = 0;
 	while (DWT->CYCCNT < (cnt * 80));//SYSCLK_MHZ
 }
 
@@ -734,7 +760,12 @@ DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 DWT->CYCCNT = 0;
 }
 
-//}  
+
+
+
+
+// не используется 
+
 // ==================================================================================================
 uint8_t  Counter_Compression(uint32_t j) {
   uint8_t k;
@@ -1423,7 +1454,6 @@ if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_SECF)==SET)
   }
   if (BKP_RTC_GetFlagStatus(BKP_RTC_FLAG_ALRF)==SET)
   {
-			 //Start_Uart_sending((uint8_t *)Send_buffer, 128);
     //PORT_SetBits(MDR_PORTF,PORT_Pin_1);
   }
   MDR_BKP -> RTC_CS |= 0x06;
@@ -1512,12 +1542,11 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	UartStart(); // основные моменты с инициализацией Uart
 	
 		
-   uint32_t tmp ;
- //  Put_index=0; Get_index=0;
-   //for(int i=0; i<Buffer_Size_Si; i++) {Si_Buffer[i]=0; Digital_test[i]=i;}
+	uint32_t tmp;
+//		Put_index=0; Get_index=0;
+//		for(int i=0; i<Buffer_Size_Si; i++) {Si_Buffer[i]=0; Digital_test[i]=i;}
 	 
-	 
-	 //strcpy( Hello_text2 , "Hello srt test");
+//		strcpy( Hello_text2 , "Hello srt test");
 	 
 
 
@@ -1525,64 +1554,61 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	// Фрагмент main()
 
 	 //создадим тестовый struct Tcounts
-	 struct Tcounts tcounts;
+//	 struct Tcounts tcounts;
 	 
-	 // шапка  массива выдачи информации
+	 // шапка  приветственный кадр со списком команд
 	 UKEY.met1 = 0xCC;  // метка
 	 UKEY.met2 = 0x55;  // метка
 	 UKEY.tip  = 16;    // тип массива
 	 UKEY.mode = 1;     // режим работы прибора
 	 
-	 
+	 // копирование первой шапки
 	 memcpy(Send_buffer, &UKEY, 4);
 	 memcpy(Send_buffer + 8, "   KODIZPROGRAM V.0.6   AVALUABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 120);
-//	 memcpy(Send_buffer, "KODIZ   SINP MSUPROGRAM v.0.6   AVAILABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 128);
-
-
-	 // шапка  массива выдачи информации
-	 UKEY.met1 = 0xCC;  // метка
-	 UKEY.met2 = 0x55;  // метка
-	 UKEY.tip  = 0;    // тип массива
-	 UKEY.mode = 1;     // режим работы прибора
-		
+   // memcpy(Send_buffer, "KODIZ   SINP MSUPROGRAM v.0.6   AVAILABLE CMDs: (t)est; (z); (a)(f)lux; (s)pectrINTERRUPT MODES: N1 (v); N2 (b)  N3 (n); N4 (m) ", 128);
 //		case 't'//Send_buffer, 128
 //		case 'z'//Digital_test, Buffer_Size_Si
 //		// Переключение режимов прерываний для работы с разными детекторами
+
 //		case 'v'//INTERUPT_MODE = 1;
 //		case 'b'//INTERUPT_MODE = 2;
 //		case 'n'//INTERUPT_MODE = 3;
 //		case 'm'//INTERUPT_MODE = 4;				
+
 //		case 'a'// вывод массива А
 //		case 'f'// вывод массива потоков
-//		case 's'// вывод массива спектра текущего
+//		case 's'// вывод массива спектра
+
+
+
+
+
+	 // шапка  массива выдачи информации по умолчанию 
+	 UKEY.met1 = 0xCC;  // метка
+	 UKEY.met2 = 0x55;  // метка
+	 UKEY.tip  = 0;     // тип массива - массив потоков и доз
+	 UKEY.mode = 1;     // режим работы прибора - подключение к полупроводникам
+		
+ 
+
+
 		
 	// структура FLUX пример начальной инициализации	
-	Flux.key  = UKEY; 
-	Flux.key.tip = 0;
-	Flux.time = Seconds;
-	Flux.N    = tcounts;
+	Flux.key  		= UKEY; 
+	Flux.key.tip 	= 0;
+	Flux.key.mode = INTERUPT_MODE;
+	Flux.time 		= Seconds;
+//	Flux.N    		= tcounts; // это вообще что??
 	 
 		
-	// структура ADC_codes пример начальной инициализации
-	ADC_codes.key     =  UKEY;
-	ADC_codes.key.tip = 5; 
-	ADC_codes.time    = Seconds;
-	// uint16_t Res_tmp1 = 0; // переменная для теста ADC_codes
-
-	
-	// кривой(?) сброс информации, нужно ли избавиться от всех M[I]
-	for(int I=0; I<30; I++)
-		ADC_codes.M[I]=0;
-	
-	J_ADC=0;  // индекс элемента массива, куда должно записываться очередное значение. Одновременно критерий заполнености и готовности массива к передаче.
-	shift=0;	// переключатель нижнее/верхнее полуслово
-
-	for(int J=0; J<3; J++){
-		Spectr[J].key= UKEY; 
-		Spectr[J].key.tip=J+1;  //Spectr[J].key.
-		Spectr[J].time=0;
-		for(int I=0; I<30; I++) 
-			Spectr[J].M[I]=0;
+// инициализация спектров правильными шапками
+	for(int i=0; i<=3; i++){
+		Spectr[i].key = UKEY; 
+		Spectr[i].key.tip = i + 1;  // 1-4 спектры
+		Spectr[i].key.mode = INTERUPT_MODE;
+		Spectr[i].time = Seconds;
+		for(int j=0; j<30; j++) 
+			Spectr[i].M[j]=0;
 	}
 	
   INTERUPT_J_ON[0]=0x0000; 
@@ -1592,6 +1618,21 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	INTERUPT_J_ON[4]=0x0800;
  
  
+	// структура ADC_codes пример начальной инициализации
+	ADC_codes.key      = UKEY;
+	ADC_codes.key.tip  = 5; 
+	ADC_codes.key.mode = INTERUPT_MODE;
+	ADC_codes.time     = Seconds;
+	// кривой(?) сброс информации, нужно ли избавиться от всех M[I]
+	for(int i=0; i<30; i++)
+		ADC_codes.M[i]=0;
+	
+	J_ADC=0;  // индекс элемента массива, куда должно записываться очередное значение. Одновременно критерий заполнености и готовности массива к передаче.
+	shift=0;	// переключатель нижнее/верхнее полуслово
+
+
+
+
 
 	
 	
@@ -1606,26 +1647,26 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	// NVIC_EnableIRQ(EXT_INT3_IRQn);	
 	NVIC_EnableIRQ(EXT_INT4_IRQn);  // PC13 detector 1
 	
-	 Start_Uart_sending((uint8_t *)Send_buffer, 128); // отправка нулевого кадра, в котором записана шапка и что-то старое
+	Start_Uart_sending((uint8_t *)Send_buffer, 128); // отправка нулевого кадра, в котором записана шапка и команды
 
      while (1)
      {
-			 for(int INTERUPT_J=1; INTERUPT_J<5;INTERUPT_J++){
-				 if(INTERUPT_J != INTERUPT_MODE){ //это часть работает тогда, когда к этому прерыванию не подключено АЦП
-					 if(Program_flags & INTERUPT_J_ON[INTERUPT_J]){
+			 for(int interrupt_J=1; interrupt_J<5;interrupt_J++){
+				 if(interrupt_J != INTERUPT_MODE){ //это часть работает тогда, когда к этому прерыванию не подключено АЦП
+					 if(Program_flags & INTERUPT_J_ON[interrupt_J]){
 						 // Добавить контроль того, что сигнал прерывания закончился
 						 
 //							 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
 //							 EmableINTERUPT(INTERUPT_J);
 						 
-						 if(INTERUPT_J != 4){ 														// если у нас не 4, то делаем стандартное включение прерывания
-							 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];		// (нужно сделать подобное для остальных)
-							 EmableINTERUPT(INTERUPT_J);
+						 if(interrupt_J != 4){ 														// если у нас не 4, то делаем стандартное включение прерывания
+							 Program_flags &= ~INTERUPT_J_ON[interrupt_J];		// (нужно сделать подобное для остальных)
+							 EmableINTERUPT(interrupt_J);
 						 } else{ 																					// если у нас 4, то
 							 int test = PORT_ReadInputData(MDR_PORTC); 			// считываем полностью порт С
 							 if(!(test&0x2000)){														// проверяем значение порта и включаем прерывание
-								 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
-								 EmableINTERUPT(INTERUPT_J);
+								 Program_flags &= ~INTERUPT_J_ON[interrupt_J];
+								 EmableINTERUPT(interrupt_J);
 							 }}
 					 }
 				 }else {// когда к этому прерыванию  АЦП подключено
@@ -1663,19 +1704,21 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 					 }
 					 if(Program_flags & SenderFull_ON){
 						 if(!(Program_flags & Sending_ON)) {
+							 
 							 memcpy(Send_buffer, &ADC_codes, 128); 							// 1) копируем текущий массив в отправочный		
 							 Start_Uart_sending((uint8_t *)Send_buffer,128);			// 2) запускаем отправку данных по ADC_codes
 							 //memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
 							 ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
 							 ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
+							 
 							 J_ADC = 0;
 							 Program_flags &= ~SenderFull_ON;
 						 }
 					 }
 					 
 					 if((!(Program_flags & ADCS_check)) &&  // Нет не прочитанных данных АЦП
-						 (Program_flags & INTERUPT_J_ON[INTERUPT_J])) {// Признак обработки последствий прерывания не снят
-							 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];  //  Снимаем признак
+						 (Program_flags & INTERUPT_J_ON[interrupt_J])) {// Признак обработки последствий прерывания не снят
+							 Program_flags &= ~INTERUPT_J_ON[interrupt_J];  //  Снимаем признак
 							 if(Result_1 & 0x4000) {
 								 
 															// тест 1: срабатывание совпадений -> выдает 2+2 байта (по 2 на каждый канал)
@@ -1697,7 +1740,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 															if(Result_1 ) Put_to_CODE(Result_1); 
 															if(Result_2 ) Put_to_CODE(Result_2); 
 														}
-														EmableINTERUPT(INTERUPT_J);   // Bключаем прерывание 
+														EmableINTERUPT(interrupt_J);   // Bключаем прерывание 
 										}
 
 										// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -1751,15 +1794,20 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 				{
 					Old_Second = Seconds;
 					if(Seconds%10 == 0){
-						
-						Flux_send = Flux; 															// 1) копируем текущий массив в отправочный
-						Start_Uart_sending((uint8_t *)&Flux_send, 128); // 2) запускаем отправку данных
-						//Start_Uart_sending((uint8_t *)Send_buffer,128); // 2) запускаем отправку данных по ADC_codes // для теста
-            memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
-						Flux.key  = UKEY; 															// 4) добавляем в него текущую шапку
-						Flux.key.tip = 0;						
-						Flux.time = Seconds;														// 5) добавляем в него текущее время
+						Command_Handler('f');
 					}
+//					if(Seconds%(10*60) == 0){
+//						Command_Handler(1);						
+//					}
+//					if(Seconds%(10*60+1) == 0){
+//						Command_Handler(2);						
+//					}
+//					if(Seconds%(10*60+2) == 0){
+//						Command_Handler(3);						
+//					}
+//					if(Seconds%(10*60+3) == 0){
+//						Command_Handler(4);						
+//					}
 				}
 			
 				
