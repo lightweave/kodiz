@@ -103,24 +103,20 @@
  uint16_t Delay_timer = 100;
  
  uint32_t Seconds = 0;
-
  uint32_t Old_Second = 0;
 
-int J_ADC;  // индекс элемента массива, куда должно записываться очередное значение. 
-int shift;	// переключатель нижнее/верхнее полуслово
+int J_ADC = 0;  // индекс элемента массива, куда должно записываться очередное значение. 
+int shift = 0;	// переключатель нижнее/верхнее полуслово
 
 
-/* New Benghin's additions */
+
+
 
 struct TKEY {
 	uint8_t met1, met2, tip, mode;
 	// uint32_t code;
 }; //UKEY;
-
-
 struct TKEY UKEY;
-
-
 
 struct Tcounts {
 	// uint32_t M[30];
@@ -141,19 +137,13 @@ struct Flux{
 struct Flux Flux;
 struct Flux Flux_send;
 
-
-
 struct Tspectr{
 	struct TKEY key;
 	uint32_t time;
 	uint32_t M[30];
 };
-
 struct Tspectr Spectr[4];
 struct Tspectr Spectr_send;
-
-
-
 struct Tspectr ADC_codes;
 struct Tspectr ADC_codes_send;
 
@@ -164,19 +154,6 @@ static uint32_t  INTERUPT_J_ON[5];
 
 
 uint16_t Result_1, Result_2;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -317,11 +294,6 @@ uint32_t adcDelay;
 
 
 
-/* Private Benghin functions ---------------------------------------------------------*/
-
-
-
-
 /*******************************************************************************
 * Function Name  : EXT_INT1_IRQHandler
 * Description    : This function handles EXT_INT1 interrupt request.
@@ -334,25 +306,48 @@ void EXT_INT1_IRQHandler(void)
 {
 uint16_t R_1=0; 
 uint16_t R_2=0;
- Flux.N.Interupt_Si++;
-	NVIC_DisableIRQ(EXT_INT1_IRQn);  		//  Отключаем прерывание 1
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
+	int PORTC_STATUS = PORT_ReadInputData(MDR_PORTB);
+//		if(!(PORTC_STATUS&0x2000)){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
+//		return;
+//		}
+
+uint16_t R_1=0; 
+uint16_t R_2=0;
+	Flux.N.Interupt_Si++;
+	NVIC_DisableIRQ(EXT_INT4_IRQn);  		//  Отключаем прерывание 4
+	if(PORTC_STATUS&0x0080						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
 		R_1  =0x1000;
-    Flux.N.si11++;} //si11 детектор 1 порог 1
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
+		Flux.N.Ph11++;}
+	if(PORTC_STATUS&0x0020						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
 		R_1 |=0x2000;
-		Flux.N.si12++;} //si12 детектор 1 порог 2
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
+		Flux.N.Ph12++;}
+	if(PORTC_STATUS&0x0008						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
 		R_2  =0x9000;
-		Flux.N.si21++;} //si21 детектор 2 порог 1
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
+		Flux.N.Ph21++;}
+	if(PORTC_STATUS&0x0010						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
 		R_2 |=0x2000;
-		Flux.N.si22++;} //si22 детектор 2 порог 2
-	if(R_1 && R_2){
-		R_1 |=0x4000; 
-		R_2 |=0x4000;
-		Flux.N.si_coins++;} // наличие сигнала совпадения
-	Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
+		Flux.N.Ph22++;}
+	
+
+		
+//	NVIC_DisableIRQ(EXT_INT1_IRQn);  		//  Отключаем прерывание 1
+//	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
+//		R_1  =0x1000;
+//    Flux.N.si11++;} //si11 детектор 1 порог 1
+//	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
+//		R_1 |=0x2000;
+//		Flux.N.si12++;} //si12 детектор 1 порог 2
+//	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
+//		R_2  =0x9000;
+//		Flux.N.si21++;} //si21 детектор 2 порог 1
+//	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
+//		R_2 |=0x2000;
+//		Flux.N.si22++;} //si22 детектор 2 порог 2
+//	if(R_1 && R_2){
+//		R_1 |=0x4000; 
+//		R_2 |=0x4000;
+//		Flux.N.si_coins++;} // наличие сигнала совпадения
+//	Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(INTERUPT_MODE != 1) return; //
           Result_1=R_1;
@@ -484,22 +479,26 @@ void EXT_INT4_IRQHandler(void)
 //		test = PORT_ReadInputData(MDR_PORTB);
 //	PORT_ResetBits(MDR_PORTB, PORT_Pin_15);	
 //		test = PORT_ReadInputData(MDR_PORTB);
-	
+		
+	int PORTC_STATUS = PORT_ReadInputData(MDR_PORTC);
+//		if(!(PORTC_STATUS&0x2000)){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
+//		return;
+//		}
+
 uint16_t R_1=0; 
 uint16_t R_2=0;
  Flux.N.Interupt_Ph++;
 	NVIC_DisableIRQ(EXT_INT4_IRQn);  		//  Отключаем прерывание 4
-//	test = PORT_ReadInputData(MDR_PORTC);
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
+	if(PORTC_STATUS&0x0080						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
 		R_1  =0x1000;
 		Flux.N.Ph11++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
+	if(PORTC_STATUS&0x0020						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
 		R_1 |=0x2000;
 		Flux.N.Ph12++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
+	if(PORTC_STATUS&0x0008						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
 		R_2  =0x9000;
 		Flux.N.Ph21++;}
-	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
+	if(PORTC_STATUS&0x0010						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
 		R_2 |=0x2000;
 		Flux.N.Ph22++;}
 	
@@ -660,69 +659,59 @@ void SpectrSend(int i)
 
 			
 			// Переключение режимов прерываний для работы с разными детекторами
-			case 'v':
-				INTERUPT_MODE = 1;
-			// нужно обнулить массивы данных и спектры???
+			case 'v': // for silicom semiconductors
+				INTERUPT_MODE = 1;			// нужно обнулить массивы данных и спектры???
 				break;
-			case 'b':
-				INTERUPT_MODE = 2;
-			  // нужно обнулить массивы данных и спектры???
+			case 'b': // for FEU and SiPM detectors
+				INTERUPT_MODE = 2;			  // нужно обнулить массивы данных и спектры???
 				break;
-			case 'n':
-				INTERUPT_MODE = 3;
-			  // нужно обнулить массивы данных и спектры???
+			case 'n': // for neutron FEU
+				INTERUPT_MODE = 3;			  // нужно обнулить массивы данных и спектры???
 				break;
-			case 'm':
-				INTERUPT_MODE = 4;
-			  // нужно обнулить массивы данных и спектры???
+			case 'm': // for silicom Photomultipliers
+				INTERUPT_MODE = 4;			  // нужно обнулить массивы данных и спектры???
 				break;
-			case 'p':
+			case 'p': // manual activation of INT4
 				NVIC_EnableIRQ(EXT_INT4_IRQn);    // Bключаем прерывание 4
 				break;
 			
-			case 'a':// вывод массива А	
-			
+			case 'a':// вывод массива кодов АЦП
 				ADC_codes_send = ADC_codes; 												// 1) копируем текущий массив в отправочный
 				Start_Uart_sending((uint8_t *)&ADC_codes_send, 128);// 2) запускаем отправку данных с буферного массива
-				
 				memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив		
-			
 				ADC_codes.key  			= UKEY; 												// 4) добавляем в новый текущую шапку
-				ADC_codes.key.tip  	= 5;     												// тип массива
-				ADC_codes.key.mode 	= INTERUPT_MODE;     						// режим работы прибора	
-				ADC_codes.time 			= Seconds;											// 5) добавляем в него текущее время
+				ADC_codes.key.tip  	= 5;     												// 											тип массива
+				ADC_codes.key.mode 	= INTERUPT_MODE;     						// 											режим работы прибора	
+				ADC_codes.time 			= Seconds;											// 											текущее время
 				break;
 			
 			case 'f':// вывод массива потоков
 				Flux_send = Flux; 															// 1) копируем текущий массив в отправочный
 				Start_Uart_sending((uint8_t *)&Flux_send, 128); // 2) запускаем отправку данных с буферного массива
-			
 				memset(&Flux, 0, sizeof(Flux)); 								// 3) обнуляем текущий массив						
-			
 				Flux.key  		= UKEY; 													// 4) добавляем в него текущую шапку
-				Flux.key.tip  = 0;     													// тип массива
-				Flux.key.mode = INTERUPT_MODE;     							// режим работы прибора
-				Flux.time 		= Seconds;												// 5) добавляем в него текущее время
+				Flux.key.tip  = 0;     													// 										 тип массива
+				Flux.key.mode = INTERUPT_MODE;     							// 										 режим работы прибора
+				Flux.time 		= Seconds;												// 										 текущее время
 				break;			
 			
-			case 's':// вывод массива статуса
+			case 's':	// вывод массива статуса
 				memcpy(Send_buffer, &UKEY, 4);
+				Start_Uart_sending((uint8_t *)Send_buffer,4); // терминал не очень хорошо это ловит, надежнее запрашивать тестовый
 				// memcpy(Send_buffer + 8, "", 120);
 				break;
 			
-			case '1':// вывод массива спектра 
+			// Вывод отдельных массивов спектров
+			case '1':
 				SpectrSend(1);	  
 				break;
-			
-			case '2':// вывод массива спектра 
+			case '2':
 				SpectrSend(2);	  
 				break;
-
-			case '3':// вывод массива спектра 
+			case '3':
 				SpectrSend(3);				  
 				break;
-			
-			case '4':// вывод массива спектра 
+			case '4':
 				SpectrSend(4);		  
 				break;
 			}
@@ -1006,6 +995,21 @@ void MltPinCfg (void)
 
 	PORT_Init(MDR_PORTB, &PortInit);
 	
+		/* PORTC ext interrupt PB 12,-15*/ // for kodiz board
+		/* Fill PortInit structure*/
+    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
+    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
+    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
+    PortInit.PORT_PD = PORT_PD_OPEN; // here we make this port open for tri state, so we can connect more than one inputs to each pin
+    PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
+		/* Configure PORTB pins  for mlt inout data  */
+		PortInit.PORT_Pin   = (PORT_Pin_12|PORT_Pin_13|PORT_Pin_14|PORT_Pin_15);
+		PortInit.PORT_OE    = PORT_OE_IN;
+		PortInit.PORT_FUNC  = PORT_FUNC_PORT;
+		PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+		PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
+
+		PORT_Init(MDR_PORTC, &PortInit);
 	
 	/* PORTC ext interrupt PC12*/ // for kodiz board
 	/* Fill PortInit structure*/
@@ -1048,7 +1052,7 @@ void MltPinCfg (void)
     PortInit.PORT_PD = PORT_PD_OPEN; // here we make this port open for tri state, so we can connect more than one inputs to each pin
     PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
 		/* Configure PORTC pins 13 for mlt inout data  */
-		PortInit.PORT_Pin   = (PORT_Pin_10|PORT_Pin_11|PORT_Pin_14|PORT_Pin_15);
+		PortInit.PORT_Pin   = (PORT_Pin_3|PORT_Pin_4|PORT_Pin_5|PORT_Pin_7|PORT_Pin_10|PORT_Pin_11|PORT_Pin_14|PORT_Pin_15);
 		PortInit.PORT_OE    = PORT_OE_IN;
 		PortInit.PORT_FUNC  = PORT_FUNC_PORT;
 		PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
@@ -1575,7 +1579,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 //		case 'n'//INTERUPT_MODE = 3;
 //		case 'm'//INTERUPT_MODE = 4;				
 
-//		case 'a'// вывод массива А
+//		case 'a'// вывод массива кодов АЦП
 //		case 'f'// вывод массива потоков
 //		case 's'// вывод массива спектра
 
@@ -1623,8 +1627,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	ADC_codes.key.tip  = 5; 
 	ADC_codes.key.mode = INTERUPT_MODE;
 	ADC_codes.time     = Seconds;
-	// кривой(?) сброс информации, нужно ли избавиться от всех M[I]
-	for(int i=0; i<30; i++)
+	for(int i=0; i<30; i++) // кривой сброс информации
 		ADC_codes.M[i]=0;
 	
 	J_ADC=0;  // индекс элемента массива, куда должно записываться очередное значение. Одновременно критерий заполнености и готовности массива к передаче.
