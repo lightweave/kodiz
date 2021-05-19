@@ -22,7 +22,7 @@
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="*" MinWidth="300" />
                 <ColumnDefinition Width="*" MinWidth="300" />
-                
+
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="78" />
@@ -48,7 +48,7 @@
                 <Button Content="a" Click="Down_Font" Style="{DynamicResource Send_Btn_Style}"/>
                 <TextBox x:Name="Received_txt" HorizontalAlignment="Stretch"/>
             </StackPanel>
-            
+
 
 
             <TextBlock Grid.Column="0" Grid.Row="4" Text="Recieved Data" TextAlignment="Center" Foreground="Black"/>
@@ -63,7 +63,7 @@
                 </Hyperlink>
             </TextBlock>
 
-            <Button Content="Button" Grid.Column="2" RenderTransformOrigin="1.684,0.257" Height="19" Style="{DynamicResource Close_Btn_Stle}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="19" Margin="0,0,10,0" Click="Close_Form"/>
+            <Button Content="Button" Grid.Column="2" RenderTransformOrigin="1.684,0.257" Height="19" Style="{DynamicResource Close_Btn_Stle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="19" Margin="0,0,10,59" Click="Close_Form"/>
             <Button Content="Button" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="0,0,30,0" Width="19" Height="19" Style="{DynamicResource Maximise_Btn_Style}" Click="Max_size"/>
             <Button Content="Button" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="0,0,49,0" Width="19" Height="19" Style="{DynamicResource Minimise_Btn_Styl}" Click="Min_size"/>
 

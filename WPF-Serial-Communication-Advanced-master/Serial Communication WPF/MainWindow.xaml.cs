@@ -53,10 +53,12 @@ namespace Serial_Communication_WPF
         // private string DIR_path = @"e:\\RESULTS\\";
         private FileStream Frez_bin;
         BinaryWriter InputDataCopy;
-        StreamWriter Frez_text;
+        TextWriter Frez_text;
+        TextWriter ADC_text;
 
         public static StringBuilder sb;
         public static StringBuilder sbdecoded;
+        public static StringBuilder sbdecodedADC;
         public static int bufferSize = 256;
         int block_number = 0;
 
@@ -81,6 +83,7 @@ namespace Serial_Communication_WPF
 
             sb = new StringBuilder(bufferSize);
             sbdecoded = new StringBuilder(bufferSize);
+            sbdecodedADC = new StringBuilder(bufferSize);
 
             // Opening of files
             {
@@ -91,6 +94,7 @@ namespace Serial_Communication_WPF
                 try
                 {
                     Frez_text = new StreamWriter(file_path + @".txt"); //, FileMode.Create
+                    ADC_text = new StreamWriter(file_path + @".tab"); //, FileMode.Create
                 }
                 catch
                 {
@@ -110,17 +114,32 @@ namespace Serial_Communication_WPF
                 }
             }
 
-            Frez_text.Write("Sib\t Time");
-            DateTime DT = DateTime.Now;
+            Frez_text.Write("Time\t");
+            Frez_text.Write( DateTime.Now.ToString());
+            Frez_text.Write("\n");
+
+            ADC_text.Write("Time \t detnuber \t coincidence \t highthreshold \t lowthreshold \t adc \t \t detnuber \t coincidence \t highthreshold \t lowthreshold \t adc \n");
+            // Frez_text.Dispose();
 
         }
         ~MainWindow()
         {
-            InputDataCopy.Close();
-            Frez_bin.Close();
-            
-            //Frez_text.Close();
-            
+            //InputDataCopy.Close();
+
+            //try
+            //{
+
+            //    //Frez_text.Flush();
+            //    Frez_text.Write("end");
+            //}
+            //finally
+            //{
+            //    if (Frez_text != null) Frez_text.Close();
+            //}
+            //Frez_bin.Close();
+
+
+
 
             if (serial.IsOpen)
                 serial.Close();
@@ -203,7 +222,7 @@ namespace Serial_Communication_WPF
             Show_block();
 
 
-            // Assign the value of the recieved_data to the RichTextBox.
+            // Assign the value of the recieved_data to the RichTextBox. RAW
             para.Inlines.Clear();
             para.Inlines.Add(sb.ToString());
 
@@ -213,6 +232,8 @@ namespace Serial_Communication_WPF
             Commdata.Document = mcFlowDoc;
             Commdata.ScrollToEnd();
 
+
+            // Assign the value of the recieved_data to the RichTextBox. DECODED
             para1.Inlines.Clear();
             para1.Inlines.Add(sbdecoded.ToString());
             mcFlowDoc1.Blocks.Clear();
@@ -220,6 +241,12 @@ namespace Serial_Communication_WPF
             Parsedata.Document = mcFlowDoc1;
 
             Parsedata.ScrollToEnd();
+
+
+            
+
+
+
             // Get the current caret position.
             TextPointer caretPos = Parsedata.CaretPosition;
 
@@ -230,8 +257,10 @@ namespace Serial_Communication_WPF
             Parsedata.CaretPosition = caretPos;
 
 
-
             Received_txt.Text = bufferForDataCount_backup.ToString();
+
+
+
         }
 
         private void Show_block()
@@ -244,7 +273,7 @@ namespace Serial_Communication_WPF
             sb.Clear();
             block_number++;
 
-            if (bufferForDataCount > 1000)
+            if (bufferForDataCount > 128*1000)
             {
                 sb.Clear();
                 sbdecoded.Clear();
@@ -262,6 +291,10 @@ namespace Serial_Communication_WPF
                     sb.AppendFormat(" {0,2:x2} ", recieveData[j]);
                 }
                 sb.AppendLine(" ");
+
+
+                int old_length = sbdecoded.Length;
+                int old_length_adc = sbdecodedADC.Length;
 
                 sbdecoded.AppendFormat("Принят блок номер: {0,6:d2} Длина блока: {1,6:d2}", block_number, receivedbytes);
                 sbdecoded.AppendLine(" ");
@@ -427,10 +460,18 @@ namespace Serial_Communication_WPF
                             if (j % 2 == 0)
                                 sbdecoded.AppendLine(" ");
 
-                            sbdecoded.AppendFormat("   {0,1:x1} {1,4:d4}  {2,1:x1} {3,4:d4} ",
+                            sbdecoded.AppendFormat("   {0,1:x1} {1,4:d4}  {2,1:x1} {3,4:d4}  ",
                                 kadr[4 * j + 9] & 0xf0,
                                 kadr[4 * j + 8] + (kadr[4 * j + 9] & 0x0f) * 256,
                                 kadr[4 * j + 11] & 0xf0,
+                                kadr[4 * j + 10] + (kadr[4 * j + 11] & 0x0f) * 256);
+
+                            // запись значений ацп в файл для R
+                            sbdecodedADC.AppendFormat("\n{0}\t{1,1:x1}\t{2,1:x1}\t{3,1:x1}\t{4,1:x1}\t{5,4:d4}\t{6,1:x1}\t{7,1:x1}\t{8,1:x1}\t{9,1:x1}\t{10,4:d4} ",
+                                time,
+                                kadr[4 * j + 9] & 0x80,kadr[4 * j + 9] & 0x40,kadr[4 * j + 9] & 0x20,kadr[4 * j + 9] & 0x10,
+                                kadr[4 * j + 8] + (kadr[4 * j + 9] & 0x0f) * 256,
+                                kadr[4 * j + 11] & 0x80, kadr[4 * j + 11] & 0x40, kadr[4 * j + 11] & 0x20, kadr[4 * j + 11] & 0x10,
                                 kadr[4 * j + 10] + (kadr[4 * j + 11] & 0x0f) * 256);
                         }
                         sbdecoded.AppendLine(" ");  
@@ -441,10 +482,10 @@ namespace Serial_Communication_WPF
                         break;
                 }
 
-            
 
-
-            
+                // DECODED to file
+                Frez_text.Write(sbdecoded.ToString(old_length, sbdecoded.Length - old_length));
+                ADC_text.Write(sbdecodedADC.ToString(old_length_adc, sbdecodedADC.Length - old_length_adc));
         }
         #endregion
 
@@ -503,6 +544,27 @@ namespace Serial_Communication_WPF
 
         private void Close_Form(object sender, RoutedEventArgs e)
         {
+            InputDataCopy.Close();
+
+            try
+            {
+
+                //Frez_text.Flush();
+                Frez_text.Write("end");
+                
+            }
+            finally
+            {
+                if (Frez_text != null) Frez_text.Close();
+                if (ADC_text != null) ADC_text.Close();
+            }
+            Frez_bin.Close();
+
+
+
+
+            if (serial.IsOpen)
+                serial.Close();
             if (serial.IsOpen) serial.Close();
             this.Close();
         }

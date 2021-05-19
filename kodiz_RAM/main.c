@@ -60,6 +60,7 @@
   * @{
   */
 
+int setreset = 1;
 
 // Модификация в файлы для создания нового варианта программы КОДИЗ
  static uint32_t  Program_flags = 0;
@@ -78,6 +79,7 @@
  
  #define Sending_ON 0x1000
  #define SenderFull_ON 0x00010000
+ 
 
 // static uint16_t State_of_PortC;
  // Значения пинов должны быть приведены в соответствие с распайкой сигналов, поступающих на порт !!!
@@ -121,12 +123,12 @@ struct TKEY UKEY;
 struct Tcounts {
 	// uint32_t M[30];
 	uint32_t 
-	si11, si12, si21, si22, si_coins,
-	Cher1, Cher2, SiPM1, SiPM2, Cher_coins_SiPM,
-	n11, n12, n21, n22, ncoins,
-	Ph11, Ph12, Ph21, Ph22, Phcois,
-	Sum1, Sum2, Sum1coins, Sum2coins, 
-	Interupt_Si, Interupt_Cher, Interupt_n, Interupt_Ph, el29, Delta_t;
+	si11,          si12,       si21,        si22,       si_coins,
+	Cher1,         Cher2,      SiPM1,       SiPM2,      Cher_coins_SiPM,
+	n11,           n12,        n21,         n22,        ncoins,
+	Ph11,          Ph12,       Ph21,        Ph22,       Phcois,
+	Sum1,          Sum2,       Sum1coins,   Sum2coins, 	Interupt_Si,
+	Interupt_Cher, Interupt_n, Interupt_Ph, el29,       Delta_t;
 } ;
 
 struct Flux{
@@ -260,6 +262,7 @@ uint32_t uart1_IT_RX_flag = RESET;
 uint32_t uart2_IT_RX_flag = RESET;
 uint16_t sendbyte;
 
+
 	uint16_t ext_IT2_flag_previous = 0;	
   uint16_t ext_IT4_flag_previous = 0;	
   uint32_t tmpPORTc = 0;
@@ -306,34 +309,38 @@ void EXT_INT1_IRQHandler(void)
 {
 uint16_t R_1=0; 
 uint16_t R_2=0;
-	int PORTC_STATUS = PORT_ReadInputData(MDR_PORTB);
-//		if(!(PORTC_STATUS&0x2000)){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
-//		return;
-//		}
-
-uint16_t R_1=0; 
-uint16_t R_2=0;
-	Flux.N.Interupt_Si++;
-	NVIC_DisableIRQ(EXT_INT4_IRQn);  		//  Отключаем прерывание 4
-	if(PORTC_STATUS&0x0080						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
-		R_1  =0x1000;
-		Flux.N.Ph11++;}
-	if(PORTC_STATUS&0x0020						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
-		R_1 |=0x2000;
-		Flux.N.Ph12++;}
-	if(PORTC_STATUS&0x0008						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
-		R_2  =0x9000;
-		Flux.N.Ph21++;}
-	if(PORTC_STATUS&0x0010						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
-		R_2 |=0x2000;
-		Flux.N.Ph22++;}
+	int PORTB_STATUS = PORT_ReadInputData(MDR_PORTB);
 	
+	if(!(PORTB_STATUS&PORT_Pin_11))	return;
+		
+	Flux.N.Interupt_Si++;
+	
+	NVIC_DisableIRQ(EXT_INT1_IRQn);  		//  Отключаем прерывание 1
+	
+	if(PORTB_STATUS&PORT_Pin_14					){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
+		R_1  =0x1000;
+		Flux.N.si11++;}//si11 детектор 1 порог 1
+	if(PORTB_STATUS&PORT_Pin_15						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
+		R_1 |=0x2000;
+		Flux.N.si12++;}
+	if(PORTB_STATUS&PORT_Pin_13						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
+		R_2  =0x9000;
+		Flux.N.si21++;}
+	if(PORTB_STATUS&PORT_Pin_12						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
+		R_2 |=0xA000;
+		Flux.N.si22++;}
+	
+	if(R_1 && R_2){// наличие сигнала совпадения
+		R_1 |=0x4000; 
+		R_2 |=0x4000;
+		Flux.N.si_coins++;
+	} 
 
 		
 //	NVIC_DisableIRQ(EXT_INT1_IRQn);  		//  Отключаем прерывание 1
 //	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
 //		R_1  =0x1000;
-//    Flux.N.si11++;} //si11 детектор 1 порог 1
+//    Flux.N.si11++;} 
 //	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
 //		R_1 |=0x2000;
 //		Flux.N.si12++;} //si12 детектор 1 порог 2
@@ -343,11 +350,8 @@ uint16_t R_2=0;
 //	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
 //		R_2 |=0x2000;
 //		Flux.N.si22++;} //si22 детектор 2 порог 2
-//	if(R_1 && R_2){
-//		R_1 |=0x4000; 
-//		R_2 |=0x4000;
-//		Flux.N.si_coins++;} // наличие сигнала совпадения
-//	Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
+
+	Program_flags |= INTERUPT_J_ON[1]; //  Устанавливаем признак        
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if(INTERUPT_MODE != 1) return; //
           Result_1=R_1;
@@ -390,8 +394,9 @@ uint16_t R_2=0;
 		R_2  =0x9000;
 		Flux.N.SiPM1++;}
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
-		R_2 |=0x2000;
+		R_2 |=0xA000;
 		Flux.N.SiPM2++;}
+	
 	if(R_1 && R_2){
 		R_1 |=0x4000;
 		R_2 |=0x4000;
@@ -439,8 +444,9 @@ uint16_t R_2=0;
 		R_2  =0x9000;
 		Flux.N.n21++;}
 	if(PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
-		R_2 |=0x2000;
+		R_2 |=0xA000;
 		Flux.N.n22++;}
+	
 	if(R_1 && R_2) {
 		R_1 |=0x4000; 
 		R_2 |=0x4000;
@@ -481,25 +487,26 @@ void EXT_INT4_IRQHandler(void)
 //		test = PORT_ReadInputData(MDR_PORTB);
 		
 	int PORTC_STATUS = PORT_ReadInputData(MDR_PORTC);
-//		if(!(PORTC_STATUS&0x2000)){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
-//		return;
-//		}
+	
+	if(!(PORTC_STATUS&PORT_Pin_13))return;
 
-uint16_t R_1=0; 
-uint16_t R_2=0;
- Flux.N.Interupt_Ph++;
+  uint16_t R_1=0; 
+  uint16_t R_2=0;
+	
+  Flux.N.Interupt_Ph++;
+	
 	NVIC_DisableIRQ(EXT_INT4_IRQn);  		//  Отключаем прерывание 4
-	if(PORTC_STATUS&0x0080						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
+	if(PORTC_STATUS&PORT_Pin_5						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_10)){ //  Здесь должны быть
 		R_1  =0x1000;
 		Flux.N.Ph11++;}
-	if(PORTC_STATUS&0x0020						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
+	if(PORTC_STATUS&PORT_Pin_7						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_14)){ //  указаны пины
 		R_1 |=0x2000;
 		Flux.N.Ph12++;}
-	if(PORTC_STATUS&0x0008						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
+	if(PORTC_STATUS&PORT_Pin_3						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_11)){ //  к которым подключены
 		R_2  =0x9000;
 		Flux.N.Ph21++;}
-	if(PORTC_STATUS&0x0010						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
-		R_2 |=0x2000;
+	if(PORTC_STATUS&PORT_Pin_4						){		//PORT_ReadInputDataBit(MDR_PORTC,PORT_Pin_15)){ //  соответствующие сигналы
+		R_2 |=0xA000;
 		Flux.N.Ph22++;}
 	
 	if(R_1 && R_2){
@@ -523,7 +530,7 @@ uint16_t R_2=0;
           Program_flags |= ADC2_ON;} //  Устанавливаем признак
 }
 // =============================================================================
-void EmableINTERUPT(int I){
+void EnableINTERUPT(int I){
 switch (I){
 	case 1:
 		NVIC_EnableIRQ(EXT_INT1_IRQn);    // Bключаем прерывание 1
@@ -570,10 +577,14 @@ void Put_to_CODE(uint16_t x) {
 	uint32_t Z=0;
 	Z |=x;
 	if(shift){
-	Z <<=16; Z &= 0xffff0000; ADC_codes.M[J_ADC] |= Z;
-	J_ADC++; shift=0;
+		Z <<=16; 
+		Z &= 0xffff0000; 
+		ADC_codes.M[J_ADC] |= Z;
+		J_ADC++; 
+		shift=0;
 	} else {
-	ADC_codes.M[J_ADC] = Z; shift=1;
+		ADC_codes.M[J_ADC] = Z;
+		shift=1;
 	}
 }
 
@@ -589,6 +600,7 @@ void Put_to_CODE_2(uint16_t x, uint16_t y) {
 	Z |=x;
 	ADC_codes.M[J_ADC] = Z;
 	J_ADC++;
+	shift=0;
 //	memcpy(Send_buffer, &ADC_codes, 128);
 }
 
@@ -650,6 +662,143 @@ void SpectrSend(int i)
 		Spectr[i-1].time = Seconds;														// 5) добавляем в него текущее время		  
 
 }
+/*******************************************************************************
+* Function Name  : ADC_Config
+* Description    : Configure the ADC1 for TRIM using.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void ADC1_Config(uint32_t acd_ch)
+{
+  /* ADC Configuration */
+  /* Reset all ADC settings */
+  // ADC_DeInit();
+  ADC_StructInit(&sADC);
+	sADC.ADC_StartDelay = 0;
+  ADC_Init (&sADC);
+
+  ADCx_StructInit (&sADCx);
+  sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
+  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;//ADC_SAMPLING_MODE_CICLIC_CONV
+  sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
+  sADCx.ADC_ChannelNumber    = acd_ch;//ADC_CH_ADC5;
+  sADCx.ADC_Channels         = 0;
+  sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;//ADC_LEVEL_CONTROL_Enable
+  sADCx.ADC_LowLevel         = 0x800;//L_Level noise level
+  sADCx.ADC_HighLevel        = 0x900;//H_Level
+  sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
+  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
+  sADCx.ADC_Prescaler        = ADC_CLK_div_8;//ADC_CLK_div_32768;
+  sADCx.ADC_DelayGo          = 0x0;
+  ADC1_Init (&sADCx);
+	
+	//uint32_t tmpreg_CFG = MDR_ADC->ADC2_CFG;
+
+  /* Enable ADC2 EOCIF and AWOIFEN interrupts */
+  // ADC1_ITConfig((ADC1_IT_END_OF_CONVERSION  | ADC1_IT_OUT_OF_RANGE), ENABLE);
+
+}
+
+void ADC2_Config(uint32_t acd_ch)
+{
+  	
+	/* ADC Configuration */
+  /* Reset all ADC settings */
+  // ADC_DeInit();
+  ADC_StructInit(&sADC);
+	sADC.ADC_StartDelay = 0;
+  ADC_Init (&sADC);
+
+  ADCx_StructInit (&sADCx);
+  sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
+  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;//ADC_SAMPLING_MODE_CICLIC_CONV
+  sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
+  sADCx.ADC_ChannelNumber    = acd_ch;//ADC_CH_ADC3;
+  sADCx.ADC_Channels         = 0;
+  sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;//ADC_LEVEL_CONTROL_Enable
+  sADCx.ADC_LowLevel         = 0x800;//L_Level
+  sADCx.ADC_HighLevel        = 0x900;//H_Level
+  sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
+  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
+  sADCx.ADC_Prescaler        = ADC_CLK_div_8;//ADC_CLK_div_32768;
+  sADCx.ADC_DelayGo          = 0x0;
+  ADC2_Init (&sADCx);
+	
+	//uint32_t tmpreg_CFG = MDR_ADC->ADC2_CFG;
+
+  /* Enable ADC2 EOCIF and AWOIFEN interrupts */
+  // ADC2_ITConfig((ADC2_IT_END_OF_CONVERSION  | ADC2_IT_OUT_OF_RANGE), ENABLE);
+
+}
+
+/*******************************************************************************
+* Function Name  : ADC_Temp_Sensor_Config
+* Description    : Configure the ADC1 for temperature sensor reading.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void ADC_Temp_Sensor_Config(void)
+{
+  /* Enable the RTCHSE clock on ADC1 */
+  RST_CLK_PCLKcmd((RST_CLK_PCLK_ADC), ENABLE);
+
+  /* ADC Configuration */
+  /* Reset all ADC settings */
+  // ADC_DeInit();
+
+  ADC_StructInit(&sADC);
+  sADC.ADC_TempSensor           = ADC_TEMP_SENSOR_Enable;
+  sADC.ADC_TempSensorAmplifier  = ADC_TEMP_SENSOR_AMPLIFIER_Enable;
+  sADC.ADC_TempSensorConversion = ADC_TEMP_SENSOR_CONVERSION_Enable;
+  ADC_Init (&sADC);
+	
+  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_CICLIC_CONV;
+  sADCx.ADC_ChannelNumber    = ADC_CH_TEMP_SENSOR;
+  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_EXACT;
+  sADCx.ADC_Prescaler        = ADC_CLK_div_32;//ADC_CLK_div_32768;
+  sADCx.ADC_DelayGo          = 0x0;
+  ADC1_Init (&sADCx);
+	
+	
+}
+
+/*******************************************************************************
+* Function Name  : ADC_Temp_Sensor_Config
+* Description    : Configure the ADC1 for temperature sensor reading.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+//void SendUARTBuffer(void)
+//{
+//	/* Send Data from UART1 */
+//	// блокирующе пропалываем бит
+//	
+//	if (Data_Buffer[Buff_Send__Index].ready){
+//		
+//		while (MDR_UART1->FR & UART_FR_TXFE){	
+//			// push maximum number bytes to uart
+//			UART_SendData(MDR_UART1, Data_Buffer[Buff_Send__Index].buffer[sendingIndex]);									
+//			
+//			if(sendingIndex < Buffer_Size)
+//				sendingIndex++;
+//			else // next buffer
+//			{
+//				Data_Buffer[Buff_Send__Index].ready=0;
+//				
+//				if (Buff_Send__Index < Buffer_Number) 
+//					Buff_Send__Index++;
+//				else 	
+//					Buff_Send__Index = 0;						
+//				
+//				sendingIndex=0;
+//			}
+//		}
+//	}
+//}
+
 // ===================================================================
  void Command_Handler(uint8_t DataByte){
   switch (DataByte) {
@@ -659,8 +808,10 @@ void SpectrSend(int i)
 
 			
 			// Переключение режимов прерываний для работы с разными детекторами
-			case 'v': // for silicom semiconductors
+			case 'v': // for scintillator (silicon Photomultipliers?)
 				INTERUPT_MODE = 1;			// нужно обнулить массивы данных и спектры???
+				ADC1_Config(ADC_CH_ADC11);//PD12 detector 1
+				ADC2_Config(ADC_CH_ADC10);//PD13 detector 2
 				break;
 			case 'b': // for FEU and SiPM detectors
 				INTERUPT_MODE = 2;			  // нужно обнулить массивы данных и спектры???
@@ -668,11 +819,16 @@ void SpectrSend(int i)
 			case 'n': // for neutron FEU
 				INTERUPT_MODE = 3;			  // нужно обнулить массивы данных и спектры???
 				break;
-			case 'm': // for silicom Photomultipliers
+			case 'm': // for silicom semiconductors
 				INTERUPT_MODE = 4;			  // нужно обнулить массивы данных и спектры???
+				ADC1_Config(ADC_CH_ADC13);//PD10 detector 1
+				ADC2_Config(ADC_CH_ADC12);//PD11 detector 2
 				break;
-			case 'p': // manual activation of INT4
-				NVIC_EnableIRQ(EXT_INT4_IRQn);    // Bключаем прерывание 4
+			
+			
+			case 'k': // переключение АЦП на потенциометры для калибровки
+				ADC1_Config(ADC_CH_ADC7);//PD7 potentiometr 1
+				ADC2_Config(ADC_CH_ADC8);//PD8 potentiometr 2
 				break;
 			
 			case 'a':// вывод массива кодов АЦП
@@ -701,19 +857,64 @@ void SpectrSend(int i)
 				// memcpy(Send_buffer + 8, "", 120);
 				break;
 			
-			// Вывод отдельных массивов спектров
+			case 'w':
+				setreset = 0;					  
+				break;
+			case 'q':
+				setreset = 1;					  
+				break;
+			
 			case '1':
-				SpectrSend(1);	  
+				if(setreset)  PORT_SetBits  (MDR_PORTC, PORT_Pin_15);
+				else				  PORT_ResetBits(MDR_PORTC, PORT_Pin_15);
 				break;
 			case '2':
-				SpectrSend(2);	  
+				if(setreset)	PORT_SetBits  (MDR_PORTC, PORT_Pin_14);
+				else  			  PORT_ResetBits(MDR_PORTC, PORT_Pin_14);	  
 				break;
 			case '3':
-				SpectrSend(3);				  
+				if(setreset)  PORT_SetBits  (MDR_PORTC, PORT_Pin_2);
+				else 			    PORT_ResetBits(MDR_PORTC, PORT_Pin_2);				  
 				break;
 			case '4':
-				SpectrSend(4);		  
+				if(setreset)  PORT_SetBits  (MDR_PORTC, PORT_Pin_1);
+				else  			  PORT_ResetBits(MDR_PORTC, PORT_Pin_1);		  
 				break;
+			case '5':
+				if(setreset)  PORT_SetBits  (MDR_PORTB, PORT_Pin_9);
+				else  				PORT_ResetBits(MDR_PORTB, PORT_Pin_9);
+				break;
+			case '6':
+				if(setreset)  PORT_SetBits  (MDR_PORTB, PORT_Pin_10);
+				else  			  PORT_ResetBits(MDR_PORTB, PORT_Pin_10);	  
+				break;
+			case '7':
+				if(setreset)  PORT_SetBits  (MDR_PORTD, PORT_Pin_3);
+				else				  PORT_ResetBits(MDR_PORTD, PORT_Pin_3);		  
+				break;
+			case '8':
+				if(setreset)	PORT_SetBits  (MDR_PORTD, PORT_Pin_5);
+				else  			  PORT_ResetBits(MDR_PORTD, PORT_Pin_5);				  
+				break;
+			
+				
+				
+			// Вывод отдельных массивов спектров
+//			case '1':
+//				SpectrSend(1);	  
+//				break;
+//			case '2':
+//				SpectrSend(2);	  
+//				break;
+//			case '3':
+//				SpectrSend(3);				  
+//				break;
+//			case '4':
+//				SpectrSend(4);		  
+//				break;
+			
+			
+			
 			}
  }
 
@@ -892,12 +1093,12 @@ void Uart1PinCfg(void)
     PORT_Init(MDR_PORTB, &PortInit);
 		
 		/* Configure PORTB pins 15 (DE pin tranceiver) as output */ 			
-    PortInit.PORT_Pin = (PORT_Pin_15);
-	  PortInit.PORT_OE    = PORT_OE_OUT;
-	  PortInit.PORT_FUNC  = PORT_FUNC_PORT;
-	  PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
-	  PortInit.PORT_SPEED = PORT_SPEED_FAST;
-    PORT_Init(MDR_PORTB, &PortInit);
+//    PortInit.PORT_Pin = (PORT_Pin_15);
+//	  PortInit.PORT_OE    = PORT_OE_OUT;
+//	  PortInit.PORT_FUNC  = PORT_FUNC_PORT;
+//	  PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+//	  PortInit.PORT_SPEED = PORT_SPEED_FAST;
+//    PORT_Init(MDR_PORTB, &PortInit);
 
 }
 
@@ -991,9 +1192,10 @@ void MltPinCfg (void)
 	PortInit.PORT_OE    = PORT_OE_IN;
 	PortInit.PORT_FUNC  = PORT_FUNC_ALTER;
 	PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
-	PortInit.PORT_SPEED = PORT_SPEED_SLOW; //what does it means? maybe power connected to port?
+	PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
 
 	PORT_Init(MDR_PORTB, &PortInit);
+
 	
 		/* PORTC ext interrupt PB 12,-15*/ // for kodiz board
 		/* Fill PortInit structure*/
@@ -1009,7 +1211,23 @@ void MltPinCfg (void)
 		PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
 		PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
 
-		PORT_Init(MDR_PORTC, &PortInit);
+		PORT_Init(MDR_PORTB, &PortInit);
+	/* PORTC ext interrupt PB9,PB10 */ // for prohibit
+		/* Fill PortInit structure*/
+    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
+    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
+    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
+    PortInit.PORT_PD = PORT_PD_DRIVER; // here we make this port open for tri state, so we can connect more than one inputs to each pin
+    PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
+		/* Configure PORTC pins 13 for mlt inout data  */
+		PortInit.PORT_Pin   = (PORT_Pin_9|PORT_Pin_10);
+		PortInit.PORT_OE    = PORT_OE_OUT;
+		PortInit.PORT_FUNC  = PORT_FUNC_PORT;
+		PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+		PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
+
+		PORT_Init(MDR_PORTB, &PortInit);
+	
 	
 	/* PORTC ext interrupt PC12*/ // for kodiz board
 	/* Fill PortInit structure*/
@@ -1059,10 +1277,58 @@ void MltPinCfg (void)
 		PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
 
 		PORT_Init(MDR_PORTC, &PortInit);
+		/* PORTC ext interrupt PC1,2, 14 15*/ // for prohibit
+		/* Fill PortInit structure*/
+    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
+    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
+    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
+    PortInit.PORT_PD = PORT_PD_DRIVER; 
+    PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
+		/* Configure PORTC pins 13 for mlt inout data  */
+		PortInit.PORT_Pin   = (PORT_Pin_1|PORT_Pin_2|PORT_Pin_14|PORT_Pin_15);
+		PortInit.PORT_OE    = PORT_OE_OUT;
+		PortInit.PORT_FUNC  = PORT_FUNC_PORT;
+		PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+		PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
+
+		PORT_Init(MDR_PORTC, &PortInit);
+		
+		
+	
+		/* PORTD ext interrupt PD3,PD5 */ // for prohibit
+		/* Fill PortInit structure*/
+    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
+    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
+    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
+    PortInit.PORT_PD = PORT_PD_DRIVER; 
+    PortInit.PORT_GFEN = PORT_GFEN_OFF; //filter off!
+		/* Configure PORTC pins 13 for mlt inout data  */
+		PortInit.PORT_Pin   = (PORT_Pin_3|PORT_Pin_5);
+		PortInit.PORT_OE    = PORT_OE_OUT;
+		PortInit.PORT_FUNC  = PORT_FUNC_PORT;
+		PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+		PortInit.PORT_SPEED = PORT_SPEED_MAXFAST; //what does it means? maybe power connected to port?
+
+		PORT_Init(MDR_PORTD, &PortInit);
 	
 		/* PORTB UART pins*/
 		// Uart1PinCfg();
 
+
+
+	
+		/* Configure PORTD pin 2 It ac brake JTAG */		
+		/* Configure ADC pin: PD7, 8 10 11 12 13  */
+		PortInit.PORT_Pin   = (PORT_Pin_7 | PORT_Pin_8 | PORT_Pin_10 | PORT_Pin_11 | PORT_Pin_12 | PORT_Pin_13);
+		PortInit.PORT_OE    = PORT_OE_IN;
+		PortInit.PORT_MODE  = PORT_MODE_ANALOG;
+		PORT_Init(MDR_PORTD, &PortInit);
+
+		PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_ON;
+		PortInit.PORT_Pin   = ( PORT_Pin_12 | PORT_Pin_13);
+		PortInit.PORT_OE    = PORT_OE_IN;
+		PortInit.PORT_MODE  = PORT_MODE_ANALOG;
+		PORT_Init(MDR_PORTD, &PortInit);
 		/* PORTE input of all counters*/
 		/* Fill PortInit structure*/
     PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
@@ -1075,37 +1341,27 @@ void MltPinCfg (void)
 		PortInit.PORT_OE    = PORT_OE_OUT;
 
 		PORT_Init(MDR_PORTE, &PortInit);
-
-	
-		/* Configure ADC1 and ADC2 pin: PD2 PD3 */
-		/* Configure PORTD pin 2 It ac brake JTAG B*/
-		PortInit.PORT_Pin   = (PORT_Pin_2 | PORT_Pin_3 | PORT_Pin_4 | PORT_Pin_5);
-		PortInit.PORT_OE    = PORT_OE_IN;
-		PortInit.PORT_MODE  = PORT_MODE_ANALOG;
-		PORT_Init(MDR_PORTD, &PortInit);
-
-
 		// Инициализация ножек PB14 и PB15 на выход
 		// Ножка PB15 поднимается в начале функции EXT_INT2_IRQHandler, в этой же функции после запускается АЦП1
 		// Ножка PB14 поднимается в начале функции EXT_INT4_IRQHandler, в этой же функции после запускается АЦП2
 	
 	  /* Fill PortInit structure*/
-    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
-    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
-    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
-    PortInit.PORT_PD = PORT_PD_DRIVER;
-    PortInit.PORT_GFEN = PORT_GFEN_OFF;
-    PortInit.PORT_FUNC = PORT_FUNC_ALTER;
-    PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
-    PortInit.PORT_MODE = PORT_MODE_DIGITAL;
-	
-	  /* Configure PORTB pins 13 ( pins for ADC and uart timing debug) as output */ 			
-    PortInit.PORT_Pin = (PORT_Pin_13|PORT_Pin_14|PORT_Pin_15);
-	  PortInit.PORT_OE    = PORT_OE_OUT;
-	  PortInit.PORT_FUNC  = PORT_FUNC_PORT;
-	  PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
-	  PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
-    PORT_Init(MDR_PORTB, &PortInit);
+//    PortInit.PORT_PULL_UP = PORT_PULL_UP_OFF;
+//    PortInit.PORT_PULL_DOWN = PORT_PULL_DOWN_OFF;
+//    PortInit.PORT_PD_SHM = PORT_PD_SHM_OFF;
+//    PortInit.PORT_PD = PORT_PD_DRIVER;
+//    PortInit.PORT_GFEN = PORT_GFEN_OFF;
+//    PortInit.PORT_FUNC = PORT_FUNC_ALTER;
+//    PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
+//    PortInit.PORT_MODE = PORT_MODE_DIGITAL;
+//	
+//	  /* Configure PORTB pins 13 ( pins for ADC and uart timing debug) as output */ 			
+//    PortInit.PORT_Pin = (PORT_Pin_13|PORT_Pin_14|PORT_Pin_15);
+//	  PortInit.PORT_OE    = PORT_OE_OUT;
+//	  PortInit.PORT_FUNC  = PORT_FUNC_PORT;
+//	  PortInit.PORT_MODE  = PORT_MODE_DIGITAL;
+//	  PortInit.PORT_SPEED = PORT_SPEED_MAXFAST;
+//    PORT_Init(MDR_PORTB, &PortInit);
 
 
 
@@ -1161,142 +1417,7 @@ void Timer_init(void)
 }
 
 
-/*******************************************************************************
-* Function Name  : ADC_Config
-* Description    : Configure the ADC1 for TRIM using.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void ADC1_Config(uint32_t acd_ch)
-{
-  /* ADC Configuration */
-  /* Reset all ADC settings */
-  // ADC_DeInit();
-  ADC_StructInit(&sADC);
-	sADC.ADC_StartDelay = 0;
-  ADC_Init (&sADC);
 
-  ADCx_StructInit (&sADCx);
-  sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
-  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;//ADC_SAMPLING_MODE_CICLIC_CONV
-  sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
-  sADCx.ADC_ChannelNumber    = acd_ch;//ADC_CH_ADC5;
-  sADCx.ADC_Channels         = 0;
-  sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;//ADC_LEVEL_CONTROL_Enable
-  sADCx.ADC_LowLevel         = 0x800;//L_Level noise level
-  sADCx.ADC_HighLevel        = 0x900;//H_Level
-  sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
-  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
-  sADCx.ADC_Prescaler        = ADC_CLK_div_8;//ADC_CLK_div_32768;
-  sADCx.ADC_DelayGo          = 0x0;
-  ADC1_Init (&sADCx);
-	
-	//uint32_t tmpreg_CFG = MDR_ADC->ADC2_CFG;
-
-  /* Enable ADC2 EOCIF and AWOIFEN interrupts */
-  // ADC1_ITConfig((ADC1_IT_END_OF_CONVERSION  | ADC1_IT_OUT_OF_RANGE), ENABLE);
-
-}
-
-void ADC2_Config(uint32_t acd_ch)
-{
-  	
-	/* ADC Configuration */
-  /* Reset all ADC settings */
-  // ADC_DeInit();
-  ADC_StructInit(&sADC);
-	sADC.ADC_StartDelay = 0;
-  ADC_Init (&sADC);
-
-  ADCx_StructInit (&sADCx);
-  sADCx.ADC_ClockSource      = ADC_CLOCK_SOURCE_CPU;
-  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_SINGLE_CONV;//ADC_SAMPLING_MODE_CICLIC_CONV
-  sADCx.ADC_ChannelSwitching = ADC_CH_SWITCHING_Disable;
-  sADCx.ADC_ChannelNumber    = acd_ch;//ADC_CH_ADC3;
-  sADCx.ADC_Channels         = 0;
-  sADCx.ADC_LevelControl     = ADC_LEVEL_CONTROL_Disable;//ADC_LEVEL_CONTROL_Enable
-  sADCx.ADC_LowLevel         = 0x800;//L_Level
-  sADCx.ADC_HighLevel        = 0x900;//H_Level
-  sADCx.ADC_VRefSource       = ADC_VREF_SOURCE_INTERNAL;
-  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_INEXACT;
-  sADCx.ADC_Prescaler        = ADC_CLK_div_8;//ADC_CLK_div_32768;
-  sADCx.ADC_DelayGo          = 0x0;
-  ADC2_Init (&sADCx);
-	
-	//uint32_t tmpreg_CFG = MDR_ADC->ADC2_CFG;
-
-  /* Enable ADC2 EOCIF and AWOIFEN interrupts */
-  // ADC2_ITConfig((ADC2_IT_END_OF_CONVERSION  | ADC2_IT_OUT_OF_RANGE), ENABLE);
-
-}
-
-/*******************************************************************************
-* Function Name  : ADC_Temp_Sensor_Config
-* Description    : Configure the ADC1 for temperature sensor reading.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void ADC_Temp_Sensor_Config(void)
-{
-  /* Enable the RTCHSE clock on ADC1 */
-  RST_CLK_PCLKcmd((RST_CLK_PCLK_ADC), ENABLE);
-
-  /* ADC Configuration */
-  /* Reset all ADC settings */
-  // ADC_DeInit();
-
-  ADC_StructInit(&sADC);
-  sADC.ADC_TempSensor           = ADC_TEMP_SENSOR_Enable;
-  sADC.ADC_TempSensorAmplifier  = ADC_TEMP_SENSOR_AMPLIFIER_Enable;
-  sADC.ADC_TempSensorConversion = ADC_TEMP_SENSOR_CONVERSION_Enable;
-  ADC_Init (&sADC);
-	
-  sADCx.ADC_SamplingMode     = ADC_SAMPLING_MODE_CICLIC_CONV;
-  sADCx.ADC_ChannelNumber    = ADC_CH_TEMP_SENSOR;
-  sADCx.ADC_IntVRefSource    = ADC_INT_VREF_SOURCE_EXACT;
-  sADCx.ADC_Prescaler        = ADC_CLK_div_32;//ADC_CLK_div_32768;
-  sADCx.ADC_DelayGo          = 0x0;
-  ADC1_Init (&sADCx);
-	
-	
-}
-
-/*******************************************************************************
-* Function Name  : ADC_Temp_Sensor_Config
-* Description    : Configure the ADC1 for temperature sensor reading.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
-//void SendUARTBuffer(void)
-//{
-//	/* Send Data from UART1 */
-//	// блокирующе пропалываем бит
-//	
-//	if (Data_Buffer[Buff_Send__Index].ready){
-//		
-//		while (MDR_UART1->FR & UART_FR_TXFE){	
-//			// push maximum number bytes to uart
-//			UART_SendData(MDR_UART1, Data_Buffer[Buff_Send__Index].buffer[sendingIndex]);									
-//			
-//			if(sendingIndex < Buffer_Size)
-//				sendingIndex++;
-//			else // next buffer
-//			{
-//				Data_Buffer[Buff_Send__Index].ready=0;
-//				
-//				if (Buff_Send__Index < Buffer_Number) 
-//					Buff_Send__Index++;
-//				else 	
-//					Buff_Send__Index = 0;						
-//				
-//				sendingIndex=0;
-//			}
-//		}
-//	}
-//}
 
 /*******************************************************************************
 * Function Name  : SetupRTC
@@ -1509,6 +1630,17 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	
 	MltPinCfg();
 	
+	PORT_ResetBits(MDR_PORTB, PORT_Pin_9);
+	PORT_ResetBits(MDR_PORTB, PORT_Pin_10);
+	
+	PORT_ResetBits(MDR_PORTC, PORT_Pin_1);
+	PORT_ResetBits(MDR_PORTC, PORT_Pin_2);
+	PORT_ResetBits(MDR_PORTC, PORT_Pin_14);
+	PORT_ResetBits(MDR_PORTC, PORT_Pin_15);
+	
+	PORT_ResetBits(MDR_PORTD, PORT_Pin_3);
+	PORT_ResetBits(MDR_PORTD, PORT_Pin_5);
+	
 	SetupRTC();
 	
 	//Timer_init();
@@ -1521,8 +1653,8 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 	
 	ADC_DeInit();
 	
-	ADC1_Config(ADC_CH_ADC2);//PD2 detector 1
-	ADC2_Config(ADC_CH_ADC3);//PD3 detector 2
+	ADC1_Config(ADC_CH_ADC11);//PD12 detector 1
+	ADC2_Config(ADC_CH_ADC10);//PD13 detector 2
 	
   /* ADC2 enable */
 	ADC1_Cmd (ENABLE);
@@ -1645,9 +1777,9 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 
 	Program_flags = 0;
 	
-	// NVIC_EnableIRQ(EXT_INT1_IRQn);	
+	 NVIC_EnableIRQ(EXT_INT1_IRQn);	
 	NVIC_EnableIRQ(EXT_INT2_IRQn);	// PC12 detector 2
-	// NVIC_EnableIRQ(EXT_INT3_IRQn);	
+//	 NVIC_EnableIRQ(EXT_INT3_IRQn);	
 	NVIC_EnableIRQ(EXT_INT4_IRQn);  // PC13 detector 1
 	
 	Start_Uart_sending((uint8_t *)Send_buffer, 128); // отправка нулевого кадра, в котором записана шапка и команды
@@ -1660,16 +1792,16 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 						 // Добавить контроль того, что сигнал прерывания закончился
 						 
 //							 Program_flags &= ~INTERUPT_J_ON[INTERUPT_J];
-//							 EmableINTERUPT(INTERUPT_J);
+//							 EnableINTERUPT(INTERUPT_J);
 						 
 						 if(interrupt_J != 4){ 														// если у нас не 4, то делаем стандартное включение прерывания
 							 Program_flags &= ~INTERUPT_J_ON[interrupt_J];		// (нужно сделать подобное для остальных)
-							 EmableINTERUPT(interrupt_J);
+							 EnableINTERUPT(interrupt_J);
 						 } else{ 																					// если у нас 4, то
 							 int test = PORT_ReadInputData(MDR_PORTC); 			// считываем полностью порт С
 							 if(!(test&0x2000)){														// проверяем значение порта и включаем прерывание
 								 Program_flags &= ~INTERUPT_J_ON[interrupt_J];
-								 EmableINTERUPT(interrupt_J);
+								 EnableINTERUPT(interrupt_J);
 							 }}
 					 }
 				 }else {// когда к этому прерыванию  АЦП подключено
@@ -1706,16 +1838,20 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 							 }
 					 }
 					 if(Program_flags & SenderFull_ON){
-						 if(!(Program_flags & Sending_ON)) {
-							 
-							 memcpy(Send_buffer, &ADC_codes, 128); 							// 1) копируем текущий массив в отправочный		
-							 Start_Uart_sending((uint8_t *)Send_buffer,128);			// 2) запускаем отправку данных по ADC_codes
-							 //memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
-							 ADC_codes.key  = UKEY; 															// 4) добавляем в него текущую шапку
-							 ADC_codes.time = Seconds;														// 5) добавляем в него текущее время
-							 
-							 J_ADC = 0;
-							 Program_flags &= ~SenderFull_ON;
+						 if(ADC_codes.time != Seconds){// посылка не чаще чем 1 раз в секунду
+							 if(!(Program_flags & Sending_ON)) {
+								 
+								 memcpy(Send_buffer, &ADC_codes, 128); 							// 1) копируем текущий массив в отправочный		
+								 Start_Uart_sending((uint8_t *)Send_buffer,128);			// 2) запускаем отправку данных по ADC_codes
+								 //memset(&ADC_codes, 0, sizeof(ADC_codes)); 					// 3) обнуляем текущий массив						
+									ADC_codes.key  			= UKEY; 												// 4) добавляем в новый текущую шапку
+									ADC_codes.key.tip  	= 5;     												// 											тип массива
+									ADC_codes.key.mode 	= INTERUPT_MODE;     						// 											режим работы прибора	
+									ADC_codes.time 			= Seconds;											// 											текущее время
+					
+								 J_ADC = 0;
+								 Program_flags &= ~SenderFull_ON;
+						 }
 						 }
 					 }
 					 
@@ -1743,7 +1879,7 @@ void test_init_Tcounts(struct Tcounts *  tcounts)
 															if(Result_1 ) Put_to_CODE(Result_1); 
 															if(Result_2 ) Put_to_CODE(Result_2); 
 														}
-														EmableINTERUPT(interrupt_J);   // Bключаем прерывание 
+														EnableINTERUPT(interrupt_J);   // Bключаем прерывание 
 										}
 
 										// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
