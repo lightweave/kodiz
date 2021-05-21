@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\kodiz2.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\kodiz2.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed May 19 18:04:35 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu May 20 12:43:58 2021
 <BR><P>
 <H3>Maximum Stack Usage =        124 bytes + Unknown(Functions without stacksize, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -197,7 +197,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
 </UL>
 
-<P><STRONG><a name="[43]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text))
+<P><STRONG><a name="[44]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -210,7 +210,7 @@ Global Symbols
 
 <P><STRONG><a name="[a7]"></a>_memcpy_lastbytes_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_w.o(.text), UNUSED)
 
-<P><STRONG><a name="[44]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text))
+<P><STRONG><a name="[45]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = __aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Command_Handler
@@ -291,7 +291,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Config
 </UL>
 
-<P><STRONG><a name="[49]"></a>ADC1_Start</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, mdr32f9qx_adc.o(i.ADC1_Start))
+<P><STRONG><a name="[4a]"></a>ADC1_Start</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, mdr32f9qx_adc.o(i.ADC1_Start))
 <BR><BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT4_IRQHandler
 <LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT3_IRQHandler
 <LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT2_IRQHandler
@@ -322,7 +322,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Config
 </UL>
 
-<P><STRONG><a name="[4a]"></a>ADC2_Start</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, mdr32f9qx_adc.o(i.ADC2_Start))
+<P><STRONG><a name="[4b]"></a>ADC2_Start</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, mdr32f9qx_adc.o(i.ADC2_Start))
 <BR><BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT4_IRQHandler
 <LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT3_IRQHandler
 <LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT2_IRQHandler
@@ -420,16 +420,17 @@ Global Symbols
 <P><STRONG><a name="[1b]"></a>COMPARATOR_IRQHandler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, mdr32f9qx_it.o(i.COMPARATOR_IRQHandler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mdr32f9qx.o(RESET)
 </UL>
-<P><STRONG><a name="[41]"></a>Command_Handler</STRONG> (Thumb, 546 bytes, Stack size 8 bytes, main.o(i.Command_Handler))
+<P><STRONG><a name="[41]"></a>Command_Handler</STRONG> (Thumb, 542 bytes, Stack size 8 bytes, main.o(i.Command_Handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = Command_Handler &rArr; Start_Uart_sending
 </UL>
-<BR>[Calls]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_SetBits
-<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ResetBits
+<BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_SetBits
+<LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ResetBits
 <LI><a href="#[42]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Start_Uart_sending
 <LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Config
 <LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Config
-<LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_EnableIRQ
+<LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
+<LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -453,47 +454,47 @@ Global Symbols
 <P><STRONG><a name="[1e]"></a>EXT_INT1_IRQHandler</STRONG> (Thumb, 220 bytes, Stack size 16 bytes, main.o(i.EXT_INT1_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = EXT_INT1_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputData
-<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Start
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Start
-<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_DisableIRQ
+<BR>[Calls]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputData
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Start
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Start
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_DisableIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mdr32f9qx.o(RESET)
 </UL>
 <P><STRONG><a name="[1f]"></a>EXT_INT2_IRQHandler</STRONG> (Thumb, 228 bytes, Stack size 16 bytes, main.o(i.EXT_INT2_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = EXT_INT2_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputDataBit
-<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Start
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Start
-<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_DisableIRQ
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputDataBit
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Start
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Start
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_DisableIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mdr32f9qx.o(RESET)
 </UL>
 <P><STRONG><a name="[20]"></a>EXT_INT3_IRQHandler</STRONG> (Thumb, 228 bytes, Stack size 16 bytes, main.o(i.EXT_INT3_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = EXT_INT3_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputDataBit
-<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Start
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Start
-<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_DisableIRQ
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputDataBit
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Start
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Start
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_DisableIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mdr32f9qx.o(RESET)
 </UL>
 <P><STRONG><a name="[21]"></a>EXT_INT4_IRQHandler</STRONG> (Thumb, 220 bytes, Stack size 16 bytes, main.o(i.EXT_INT4_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = EXT_INT4_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputData
-<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Start
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Start
-<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_DisableIRQ
+<BR>[Calls]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputData
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Start
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Start
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_DisableIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mdr32f9qx.o(RESET)
 </UL>
-<P><STRONG><a name="[4c]"></a>EnableINTERUPT</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, main.o(i.EnableINTERUPT))
+<P><STRONG><a name="[4d]"></a>EnableINTERUPT</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, main.o(i.EnableINTERUPT))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EnableINTERUPT
 </UL>
-<BR>[Calls]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_EnableIRQ
+<BR>[Calls]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_EnableIRQ
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -523,7 +524,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SendData
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_GetFlagStatus
-<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ResetBits
+<LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ResetBits
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -535,25 +536,25 @@ Global Symbols
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MltPinCfg
 </UL>
 
-<P><STRONG><a name="[47]"></a>PORT_ReadInputData</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, mdr32f9qx_port.o(i.PORT_ReadInputData))
+<P><STRONG><a name="[48]"></a>PORT_ReadInputData</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, mdr32f9qx_port.o(i.PORT_ReadInputData))
 <BR><BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT4_IRQHandler
 <LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT1_IRQHandler
 </UL>
 
-<P><STRONG><a name="[4b]"></a>PORT_ReadInputDataBit</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, mdr32f9qx_port.o(i.PORT_ReadInputDataBit))
+<P><STRONG><a name="[4c]"></a>PORT_ReadInputDataBit</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, mdr32f9qx_port.o(i.PORT_ReadInputDataBit))
 <BR><BR>[Called By]<UL><LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT3_IRQHandler
 <LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT2_IRQHandler
 </UL>
 
-<P><STRONG><a name="[46]"></a>PORT_ResetBits</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, mdr32f9qx_port.o(i.PORT_ResetBits))
+<P><STRONG><a name="[47]"></a>PORT_ResetBits</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, mdr32f9qx_port.o(i.PORT_ResetBits))
 <BR><BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UartStart
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Uart_sending
 <LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Command_Handler
 </UL>
 
-<P><STRONG><a name="[45]"></a>PORT_SetBits</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, mdr32f9qx_port.o(i.PORT_SetBits))
+<P><STRONG><a name="[46]"></a>PORT_SetBits</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, mdr32f9qx_port.o(i.PORT_SetBits))
 <BR><BR>[Called By]<UL><LI><a href="#[42]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Start_Uart_sending
 <LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Command_Handler
 </UL>
@@ -717,7 +718,7 @@ Global Symbols
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BKP_RTC_Reset
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BKP_RTC_ITConfig
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BKP_RTC_Enable
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_EnableIRQ
+<LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_EnableIRQ
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -726,7 +727,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Start_Uart_sending
 </UL>
 <BR>[Calls]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SendData
-<LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_SetBits
+<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_SetBits
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Command_Handler
@@ -840,7 +841,7 @@ Global Symbols
 <P><STRONG><a name="[76]"></a>UartStart</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, main.o(i.UartStart))
 <BR><BR>[Stack]<UL><LI>Max Depth = 124<LI>Call Chain = UartStart &rArr; Uart1Setup &rArr; UART_Init &rArr; RST_CLK_GetClocksFreq
 </UL>
-<BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ResetBits
+<BR>[Calls]<UL><LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ResetBits
 <LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Uart1Setup
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Uart1PinCfg
 </UL>
@@ -864,8 +865,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_ReceiveData
 <LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RST_CLK_PCLKcmd
-<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ResetBits
-<LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputData
+<LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ResetBits
+<LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORT_ReadInputData
 <LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_GetFlagStatus
 <LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_DeInit
 <LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_GetResult
@@ -881,14 +882,14 @@ Global Symbols
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Put_to_CODE
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Uart_sending
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MltPinCfg
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnableINTERUPT
+<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnableINTERUPT
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delayms
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DelayConfig
 <LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Command_Handler
 <LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC2_Config
 <LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Config
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_EnableIRQ
-<LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_EnableIRQ
+<LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
@@ -896,17 +897,18 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[48]"></a>NVIC_DisableIRQ</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, main.o(i.NVIC_DisableIRQ))
+<P><STRONG><a name="[49]"></a>NVIC_DisableIRQ</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, main.o(i.NVIC_DisableIRQ))
 <BR><BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT4_IRQHandler
 <LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT3_IRQHandler
 <LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT2_IRQHandler
 <LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXT_INT1_IRQHandler
 </UL>
 
-<P><STRONG><a name="[4d]"></a>NVIC_EnableIRQ</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, main.o(i.NVIC_EnableIRQ))
+<P><STRONG><a name="[43]"></a>NVIC_EnableIRQ</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, main.o(i.NVIC_EnableIRQ))
 <BR><BR>[Called By]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetupRTC
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnableINTERUPT
+<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnableINTERUPT
+<LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Command_Handler
 </UL>
 <P>
 <H3>

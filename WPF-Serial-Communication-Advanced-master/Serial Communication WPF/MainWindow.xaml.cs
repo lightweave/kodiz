@@ -118,7 +118,7 @@ namespace Serial_Communication_WPF
             Frez_text.Write( DateTime.Now.ToString());
             Frez_text.Write("\n");
 
-            ADC_text.Write("Time \t detnuber \t coincidence \t highthreshold \t lowthreshold \t adc \t \t detnuber \t coincidence \t highthreshold \t lowthreshold \t adc \n");
+            ADC_text.Write("Time \t detnuber \t coincidence \t highthreshold \t lowthreshold \t adc \t detnuber_1 \t coincidence_1 \t highthreshold_1 \t lowthreshold_1 \t adc_1 \n");
             // Frez_text.Dispose();
 
         }

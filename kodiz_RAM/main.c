@@ -824,7 +824,9 @@ void ADC_Temp_Sensor_Config(void)
 				ADC1_Config(ADC_CH_ADC13);//PD10 detector 1
 				ADC2_Config(ADC_CH_ADC12);//PD11 detector 2
 				break;
-			
+			case 'p': // in case of interrupt failture
+				NVIC_EnableIRQ(EXT_INT4_IRQn);  // PC13 detector 1
+				break;
 			
 			case 'k': // переключение АЦП на потенциометры для калибровки
 				ADC1_Config(ADC_CH_ADC7);//PD7 potentiometr 1

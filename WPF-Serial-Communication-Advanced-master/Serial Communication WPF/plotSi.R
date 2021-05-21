@@ -1,12 +1,29 @@
+library('readr')
+library('dplyr')
+library(lattice)
+
+
+library('Rmisc')
+library('tidyr')
+library('stringr')
+library('hexbin')
+library('maps')
+library('modeest')
+library('lubridate')
+
+library(latticeExtra)
+library(RColorBrewer)
+library(colorspace)
+
+
+library(ggplot2)
 
 setwd("D:/Cortex/KODIZ/kodiz/WPF-Serial-Communication-Advanced-master/Serial Communication WPF/bin/Release")
 
 
-adcdata <- read_tsv('17.05.2021_17-29.tab', skip = 1 )
 
-adcdata <- read_tsv('20.05.2021_12-51_int_1_VB.tab' )
+adcdata <- read_tsv('20.05.2021_13-25_int_4_VB.tab' )
 
-adcdata <- read_tsv('19.05.2021_17-42int1PhNechaev.tab' )
 # значения ацп прочитались символами, преобразуем в числа
 adcdata$adc <- as.numeric(adcdata$adc)
 adcdata$adc_1 <- as.numeric(adcdata$adc_1)
@@ -14,19 +31,19 @@ adcdata$adc_1 <- as.numeric(adcdata$adc_1)
 # обираем совпадения
 coinsedence<-filter(adcdata,coincidence > 0, adc>0) 
 # диаграмма рассеяния для совпадений
-plot(4000 - coinsedence$adc, 4000 - coinsedence$adc_1, 
-   #  xlim = c(0,4200),ylim = c(0,4200),
+plot (coinsedence$adc, coinsedence$adc_1, 
+    # xlim = c(0,200),ylim = c(0,200),
      main = "Диаграмма рассеяния для совпадений")
 
 
-histogram(4000 - coinsedence$adc, nint = length(4000 - coinsedence$adc), type = "count",
+histogram(coinsedence$adc, nint = length(coinsedence$adc), type = "count",
           main = "Спектр первого детектора при совпадениях")
 
-histogram(4000 - coinsedence$adc_1, nint = length(4000 - coinsedence$adc_1), type = "count",
+histogram(coinsedence$adc_1, nint = length( coinsedence$adc_1), type = "count",
           main = "Спектр второго детектора при совпадениях")
 
 #  первый детектор
-test1<-filter(adcdata,detnuber==0, adc>1000) 
+test1<-filter(adcdata,detnuber==0, adc>0) 
 densityplot(as.numeric(test1$adc))
 histogram(as.numeric(test1$adc), nint = length(test1$adc))
 
@@ -35,6 +52,8 @@ test2<-filter(adcdata,detnuber==08, adc>1000)
 densityplot(as.numeric(test2$adc))
 
 densityplot(as.numeric(adcdata[adcdata$adc_1>1000,]$adc_1))
+
+
 
 
 
@@ -54,7 +73,7 @@ det1 <- rbind(det1, work)
 # фильтруем значения 
 det1 <-   filter(det1, adc>0) 
 # гистограмма значений ацп
-histogram(4000 - det1$adc, nint = length(4000 - det1$adc), type = "count",
+histogram(det1$adc, nint = length(det1$adc), type = "count",
           main = "Спектр первого детектора без совпадений")
 
 
@@ -66,5 +85,5 @@ work <-   work[,c(1,9, 10, 11 ) ]
 names(work)<- names(det2)
 det2 <- rbind(det2, work)
 det2 <-   filter(det2, adc>0) 
-histogram(4000 - det2$adc, nint = length(4000 - det2$adc), type = "count",
+histogram(det2$adc, nint = length(det2$adc), type = "count",
           main = "Спектр второго детектора без совпадений")
